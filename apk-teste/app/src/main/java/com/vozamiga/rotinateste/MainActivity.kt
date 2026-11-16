@@ -194,6 +194,9 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
       billing?.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder().setPurchaseToken(token).build()) { }
     }
     @JavascriptInterface fun restaurarCompras() = restaurar()
+    /** Travar app (fixar a tela): a criança não sai do Voz Amiga. Os pais destravam pelos ajustes. */
+    @JavascriptInterface fun travar() = runOnUiThread { try { startLockTask() } catch (_: Exception) {} }
+    @JavascriptInterface fun destravar() = runOnUiThread { try { stopLockTask() } catch (_: Exception) {} }
 
     /** MIGRAÇÃO: lê (sem apagar nada) o que o Voz Amiga 1.0.24 guardou no celular: chaves "vozAmiga*" do AsyncStorage. */
     @JavascriptInterface fun lerAppAntigo(): String {
