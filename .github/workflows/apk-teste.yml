@@ -1,6 +1,8 @@
 # Monta o APK de TESTE (com.vozamiga.rotinateste): instala AO LADO do app da loja, não substitui nada.
 name: APK de teste
 on: workflow_dispatch
+permissions:
+  contents: write
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -33,3 +35,9 @@ jobs:
         with:
           name: VozAmiga-TESTE-v14.8
           path: apk-teste/app/build/outputs/apk/debug/*.apk
+      - name: Deixar o APK num ramo separado (para o Claude puxar; depois é apagado)
+        run: |
+          A=$(ls apk-teste/app/build/outputs/apk/debug/*.apk | head -1)
+          mkdir -p /tmp/saida && cp "$A" /tmp/saida/VozAmiga-TESTE-v14.8.apk
+          cd /tmp/saida && git init -q -b apk-saida && git add . && git -c user.name=bot -c user.email=bot@local commit -q -m "APK de teste ${{ github.run_number }}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" apk-saida
