@@ -1,0 +1,138 @@
+VOZ AMIGA — RESUMO PARA CONTINUAR (16/11/2026, 15h55)
+Escrito pelo Claude da conversa anterior, para outro Claude continuar o trabalho.
+Dono do app: Adriano. Falar sempre em português simples, sem termos técnicos.
+
+======================================================================
+1) REGRAS QUE O ADRIANO PEDIU (VALEM SEMPRE)
+======================================================================
+- Nunca pedir, ler ou mostrar a chave de assinatura (.jks) nem a senha dela no chat.
+  Nunca enviar vozamiga-release.jks, SENHA-DA-CHAVE.txt nem vozamiga-v1.2.1-codigo-fonte.zip
+  (esse zip antigo tem a chave e a senha dentro).
+- Publicar na Play Store: só o Adriano aperta "publicar". Primeiro em "Teste interno".
+- Firebase: até agora NÃO foi mexido. Ele AUTORIZOU mexer a partir de agora (ver item 4).
+- Pagamentos: até agora NÃO ligados. Ele AUTORIZOU ligar agora (ver item 4).
+- Sempre: 3 idiomas (pt, es, en), cores do autismo, mascote oficial (skill "mascote-voz-amiga",
+  nunca redesenhar), a tela da criança nunca piora, tudo novo pode ser desligado.
+- Antes de entregar: testar por dentro, um por um, e rodar a skill de segurança (26 itens),
+  com outro agente conferindo.
+
+======================================================================
+2) O QUE JÁ FOI FEITO (APP DE TESTE, ÚLTIMA VERSÃO v14.6)
+======================================================================
+Arquivos entregues (pasta de saída da conversa anterior):
+- VozAmiga-Rotina-TESTE-v14.6.apk  -> APK de TESTE (pacote com.vozamiga.rotinateste,
+  chave de teste). Instala ao lado do app da loja, NÃO no lugar dele.
+- VozAmiga-RotinaAmiga-desenvolvedor-v14.6.zip -> todo o código (módulo rotina-amiga,
+  app de teste, testes, guia INTEGRACAO-V14.md, conferência dos pedidos), sem chaves.
+Relatórios no projeto "VOZ AMIGA" do Claude: claude/relatorio-entrega-v14.md até v14.6.
+
+Principais funções prontas e testadas:
+- Tela inicial: CRIAR PRANCHA no meio, em cima, verde e em destaque (selo "COMECE AQUI"
+  na 1ª vez); PRÊMIOS no fim da fileira; sem "Adicionar prancha" embaixo.
+- Aviso pequeno azul "Segure 3 s para abrir" nas 2 primeiras vezes.
+- A prancha só fala quando toca em FALAR (mesmo com 1 palavra); sugestões numa linha só.
+- Ajustes completos (Criar prancha, Editar pranchas, Gerir abas, Editar abas, Baixar pacotes,
+  Assinatura, Sobre, Rotina Amiga, Relatório, Ajuda e tour, Curso para pais, Definições)
+  + destaque CONQUISTAS E PRÊMIOS (conquistas do mês renovadas + conquistas da família).
+- Definições: voz num lugar só, IA (opcional) e "Funções do app" (liga/desliga tudo).
+- CRIAÇÃO RÁPIDA (dentro do Criar prancha, no topo): o pai só TOCA. 6 perguntas da rotina
+  (pedir, manhã, escola, tarde, noite, gostos); cada botão vai sozinho para a categoria (aba)
+  certa; começa com 10 botões (recomendação dos especialistas, com a fonte discreta);
+  plano grátis cria até 10 por vez (o resto aparece com 👑). Substituiu o "criar falando"
+  (que não entendia a fala e foi retirado a pedido do Adriano).
+- Pacotes em grade, o que tem cada pacote fixo embaixo, desenhos do ARASAAC com créditos
+  oficiais (licença NÃO comercial: o Adriano precisa pedir autorização ao ARASAAC).
+- Mascote OFICIAL dentro do app (15 poses geradas pelo código oficial da skill), acena,
+  pisca, aponta e a boca acompanha a fala (tour, curso, criação rápida).
+- Curso para pais (10 lições), tour por partes, Ajuda que entende a dúvida + "Me leve até lá".
+- Relatório geral sem nome de profissional + "O que o app percebeu".
+- IA opcional: baixar Gemma 3 270M com porcentagem, ou usar o ChatGPT dos pais (chave só no
+  celular, fora do backup). Serve para sugerir palavras de qualquer tema.
+- Backup, senha dos pais, emergência, tela calma, botões grandes, níveis, etc.
+- Testes: lógica, dados corrompidos, cliques (celular, celular barato, tablet, 3 idiomas,
+  sem internet), tour 59 passos x 3 idiomas, conferência de 24 pedidos: tudo passando na v14.6.
+
+======================================================================
+3) O QUE ESTAVA SENDO FEITO QUANDO PAROU (v14.7 — PLANO GRÁTIS x COMPLETO)
+======================================================================
+O Adriano APROVOU este plano ("está sim"):
+
+  REGRA DE OURO: a criança nunca perde a fala nem a segurança. Falar, emergência, backup
+  e senha dos pais: sempre grátis.
+
+  Área                 | GRÁTIS                                  | PLANO COMPLETO
+  Pranchas (botões)    | 15 (as que já existem nunca são apagadas)| ilimitadas
+  Criação rápida       | 10 por vez                              | todos de uma vez
+  Pacotes prontos      | 3 (Ações, Bebidas, Banho)               | todos os 26
+  Voz gravada dos pais | 3 pranchas                              | todas
+  Rotina               | 1 rotina, 3 tarefas                     | ilimitado + temporizador e horário
+  Prêmios e metas      | 3 prêmios, sem metas                    | ilimitados, metas, conquistas família
+  Relatório            | resumo da semana                        | completo + "o que o app percebeu" + PDF
+  Crescer              | -                                       | níveis de frase e visual por idade
+  IA                   | -                                       | IA no celular e ChatGPT
+  Conforto             | tela calma, botões grandes, tempo de    | estilos de botão e fundo animado
+                       | toque, celular/tablet (acessibilidade)  |
+  Pais                 | curso, modo exemplo, dúvidas, missão    | -
+  Anúncios             | sim (só na área dos pais)               | sem anúncios
+  Teste grátis         | 7 dias do Plano Completo (configurar como oferta na Play Console)
+
+  Como o pai "sente falta" sem se irritar:
+  1. Caixinha amigável quando bate no limite (16º botão, pacote com 👑, 4ª voz gravada),
+     nunca no meio do uso da criança.
+  2. Relatório mostra 1 frase do "O que o app percebeu" e o resto embaçado com 👑.
+  3. Curso em pop-up, um pouco por dia (o que é CAA, é normal demorar, não desistir),
+     e no último dia sugere o plano. O Adriano vai mandar os PRINTS do curso do app original
+     para copiar o estilo (eles não foram encontrados na memória).
+  4. Teste grátis de 7 dias.
+
+  Tudo controlado pelo Firebase (sem atualizar o app). Hoje o Firebase dele só limita botões;
+  ele quer controlar TODAS as limitações.
+
+Situação do código v14.7 (só no ambiente da conversa anterior, NÃO está no zip v14.6):
+- Começado: novos limites (pranchas 15, vozGravada 3, pacotesGratis) no plano.ts, textos
+  dos avisos nos 3 idiomas, função pedirPlano, plano padrão das funções pagas.
+- NÃO terminado: aplicar os limites nas telas, prévia embaçada do relatório, curso em
+  pop-up, testes, APK. Se não tiver acesso ao código da conversa anterior, refazer a partir
+  do zip v14.6 seguindo esta tabela.
+
+======================================================================
+4) PRÓXIMOS PASSOS (NESTA ORDEM)
+======================================================================
+1. Terminar o plano grátis no app (item 3) e testar.
+2. FIREBASE: ligar o conector oficial do Firebase (o Adriano entra com a conta dele).
+   Criar/ajustar os nós de limitações (limitações/rotina e limitações/recursos) com a tabela
+   acima, regras com escrita bloqueada para o app, e de preferência um painel simples
+   de liga/desliga para ele.
+3. PAGAMENTO (Google Play Billing): o Adriano cria a assinatura na Play Console (o Claude
+   diz onde clicar); o código confere o pagamento e libera o Plano Completo (hasAccess /
+   assinante === true; só o servidor muda esse campo).
+4. Curso em pop-up por dias (quando chegarem os prints).
+5. PUBLICAR NO LUGAR DO APP DA LOJA: precisa do código do app oficial (provavelmente no
+   repositório GitHub privado maistempodigital-svg/voz-amiga-app; o acesso precisa ser
+   aprovado pelo Adriano), mesmo nome de pacote da loja (provavelmente com.vozamiga),
+   versionCode maior que o publicado, formato .aab e assinatura com a chave dele.
+   Forma segura: a chave e a senha guardadas como "segredos" no GitHub (Settings > Secrets),
+   o GitHub monta e assina o .aab, o Adriano sobe na Play Console em "Teste interno".
+   Perguntar ao Adriano: nome do pacote na loja e versão publicada hoje.
+
+Pendências antigas que continuam:
+- Autorização do ARASAAC (licença não comercial x plano pago).
+- App oficial: allowBackup="false", revisar BootReceiver exportado, App Check,
+  restringir chaves, verificação em 2 etapas nas contas (só o Adriano ativa).
+
+======================================================================
+ESTE ZIP
+======================================================================
+- rotina-amiga/  = o módulo (React Native / Expo) com TODAS as telas novas. É aqui que está a v14.7
+  em andamento (plano grátis): logica/plano.ts (pranchas 15, vozGravada 3, pacotesGratis, pedirPlano),
+  v14/recursos.ts (REGRAS_PADRAO: níveis, visual por idade, IA, estilos, fundo animado e evolução no
+  relatório são do Plano Completo), textos2.ts (avisos plan_prancha, plan_pacote, plan_vozGravada,
+  plan_funcao nos 3 idiomas). Ainda falta aplicar nas telas e testar.
+- app-de-teste/ = o app de teste (Expo web dentro da casca Android). demo/voz/ imita as telas do Voz
+  (home, ajustes, criar prancha, pacotes); App.tsx liga o módulo. Rodar: npm ci, depois ./sync.sh
+  (copia o módulo), npx expo export -p web. Testes: python3 fluxos_v14.py, fluxos.py, tour_teste.py,
+  conferir_pedidos.py (Playwright).
+- teste/ = testes de lógica (npx tsx --test teste/*.test.ts).
+- integracao-firebase/ = modelos dos nós do Firebase (limitações).
+- INTEGRACAO-V14.md = guia para colocar tudo no app oficial.
+Não há chaves nem senhas neste zip.

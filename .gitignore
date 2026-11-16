@@ -1,0 +1,22 @@
+# nunca subir chaves, senhas ou cópias de assinatura
+*.jks
+*.keystore
+*.p12
+SENHA*
+senha*
+chave-*
+.env*
+.dev.vars
+.claude/settings.local.json
+node_modules/
+dist/
+
+node_modules/
+app-de-teste/dist/
+app-de-teste/src/
+app-de-teste/telas-teste/
+*.jks
+*.keystore
+*SENHA*
+google-services.json
+service-account*.json

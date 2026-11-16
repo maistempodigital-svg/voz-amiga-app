@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel Voz Amiga</title>
+<style>
+  :root { --roxo:#7C3AED; --verde:#16A34A; --tinta:#0F172A; --cinza:#475569; --linha:#E2E8F0; --fundo:#F8FAFC; --azul:#2563EB; --amarelo:#FEF3C7; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--fundo); color: var(--tinta); }
+  header { background: linear-gradient(90deg,#2563EB,#7C3AED,#DC2626,#F59E0B); color:#fff; padding:16px; }
+  header h1 { margin:0; font-size:20px; }
+  header p { margin:4px 0 0; opacity:.9; font-size:13px; }
+  main { max-width: 860px; margin: 0 auto; padding: 16px; }
+  section { background:#fff; border:1px solid var(--linha); border-radius:16px; padding:16px; margin-bottom:16px; }
+  h2 { margin:0 0 4px; font-size:17px; }
+  .dica { color: var(--cinza); font-size:13px; margin:0 0 12px; }
+  .grade { display:grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap:10px; }
+  label.campo { display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:700; border:1px solid var(--linha); border-radius:12px; padding:10px; }
+  label.campo small { font-weight:400; color: var(--cinza); }
+  input[type=number], input[type=text], select { font: inherit; padding:8px; border:1.5px solid var(--linha); border-radius:10px; }
+  .linha { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  button { font: inherit; font-weight:800; border:0; border-radius:12px; padding:10px 14px; cursor:pointer; }
+  .prim { background: var(--roxo); color:#fff; }
+  .sec { background:#E2E8F0; color: var(--tinta); }
+  .ok { background: var(--verde); color:#fff; }
+  .mudou { outline: 3px solid #F59E0B; }
+  .aviso { background: var(--amarelo); border-radius:12px; padding:10px; font-size:13px; }
+  .erro { background:#FEE2E2; color:#991B1B; border-radius:12px; padding:10px; font-size:13px; }
+  .escolha { display:grid; gap:8px; margin:12px 0; }
+  .escolha label { border:1.5px solid var(--linha); border-radius:12px; padding:10px; display:flex; gap:8px; align-items:flex-start; cursor:pointer; }
+  .escolha label:has(input:checked) { border-color: var(--roxo); background:#FAF5FF; }
+  table { width:100%; border-collapse: collapse; font-size:13px; }
+  td, th { padding:6px; border-bottom:1px solid var(--linha); text-align:left; }
+  #toast { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); background:#0F172A; color:#fff; padding:10px 16px; border-radius:12px; display:none; }
+  .oculto { display:none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Painel Voz Amiga</h1>
+  <p>Limites do plano grátis, funções premium, teste premium e sábado — sem atualizar o app.</p>
+</header>
+<main>
+  <section id="entrar">
+    <h2>Entrar</h2>
+    <p class="dica">Só a conta do dono do app consegue salvar mudanças.</p>
+    <button class="prim" id="btnEntrar">Entrar com Google</button>
+    <p id="quem" class="dica"></p>
+  </section>
+
+  <div id="tudo" class="oculto">
+    <section>
+      <h2>Plano grátis — app novo</h2>
+      <p class="dica">Valem para quem não assina e não está no teste premium. Nada que a família já criou é apagado.</p>
+      <div class="grade" id="gradeRotina"></div>
+      <div class="escolha">
+        <strong>Para quem vale a mudança?</strong>
+        <label><input type="radio" name="para" value="todos" checked> <span><b>Para todos</b><br><small>Quem já usa e quem baixar daqui para frente.</small></span></label>
+        <label><input type="radio" name="para" value="novos"> <span><b>Só para quem baixar daqui para frente</b><br><small>Quem já usa continua com o valor de antes.</small></span></label>
+        <label><input type="radio" name="para" value="antigos"> <span><b>Só para quem já usa</b><br><small>Quem baixar depois fica com o valor atual.</small></span></label>
+      </div>
+      <button class="prim" id="salvarRotina">Salvar plano grátis</button>
+      <p class="dica" id="infoPorData"></p>
+    </section>
+
+    <section>
+      <h2>Funções premium (👑)</h2>
+      <p class="dica">“Plano Completo” = só para quem assina ou está no teste. “Desligada” = some para todos. Senha dos pais, emergência e cópia de segurança são sempre grátis.</p>
+      <table id="tabelaRecursos"><thead><tr><th>Função</th><th>Plano</th></tr></thead><tbody></tbody></table>
+      <p><button class="prim" id="salvarRecursos">Salvar funções</button></p>
+    </section>
+
+    <section>
+      <h2>Sábado (sem cobrança)</h2>
+      <p class="dica">O botão de pagar fica travado nesse horário — no horário do cliente e no seu (São Paulo).</p>
+      <div class="grade" id="gradeSabado"></div>
+      <p><button class="prim" id="salvarSabado">Salvar horário do sábado</button></p>
+    </section>
+
+    <section>
+      <h2>App antigo (versão 24 que está na loja hoje)</h2>
+      <p class="dica">Só vale para quem ainda não atualizou.</p>
+      <div class="grade" id="gradeAntigo"></div>
+      <p><button class="prim" id="salvarAntigo">Salvar app antigo</button></p>
+    </section>
+
+    <section>
+      <h2>Planos que aparecem na tela de Assinatura</h2>
+      <p class="dica">Ligue só os planos que estão ATIVOS na Play Console (hoje: Mensal e Vitalício).</p>
+      <div class="grade" id="gradePlanos"></div>
+      <p><button class="prim" id="salvarPlanos">Salvar planos</button></p>
+    </section>
+  </div>
+</main>
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getDatabase, ref, get, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+import { CONFIG, DONO } from './config.js';
+
+const app = initializeApp(CONFIG);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const $ = (id) => document.getElementById(id);
+const toast = (m) => { const t = $('toast'); t.textContent = m; t.style.display = 'block'; setTimeout(() => (t.style.display = 'none'), 3200); };
+
+// campos do plano grátis (mesmos nomes que o app lê em limitações/rotina)
+const CAMPOS = [
+  ['pranchas', 'num', 'Pranchas (botões)', 'Quantas a família pode ter no grátis'],
+  ['botoesPorVez', 'num', 'Criação rápida: botões por vez', ''],
+  ['rotinas', 'num', 'Rotinas (turnos)', 'Manhã, tarde ou noite'],
+  ['tarefasPorRotina', 'num', 'Tarefas por rotina', ''],
+  ['premios', 'num', 'Prêmios', ''],
+  ['vozGravada', 'num', 'Pranchas com voz gravada', '0 = travado'],
+  ['testePremiumDias', 'num', 'Dias do teste premium', 'Sem cartão. 0 = sem teste'],
+  ['pacotesGratis', 'txt', 'Pacotes grátis', 'Ex.: ACOES,BEBIDAS,HIGIENE'],
+  ['fotos', 'bool', 'Foto, galeria e desenhos', 'Desligado = só emojis'],
+  ['temporizador', 'bool', 'Temporizador nas tarefas', ''],
+  ['horario', 'bool', 'Horário fixo e alarme', ''],
+  ['metas', 'bool', 'Metas e conquistas', ''],
+  ['relatorioCompleto', 'bool', 'Relatório completo', ''],
+  ['frasesPersonalizadas', 'bool', 'Frases personalizadas', ''],
+  ['anuncios', 'bool', 'Mostrar anúncios', 'Só na área dos pais'],
+];
+const RECURSOS = [
+  ['vozes', 'Escolher a voz'], ['vozGravada', 'Voz gravada dos pais'], ['curso', 'Curso para os pais'], ['missaoDia', 'Missão do dia'],
+  ['lembretePais', 'Lembrete para os pais'], ['modoExemplo', 'Modo exemplo'], ['mensagensApoio', 'Mensagens de apoio'], ['avisoSemanas', 'Aviso "é normal demorar"'],
+  ['duvidas', 'Dúvidas comuns'], ['pacotesRotina', 'Pacotes por rotina'], ['rotinaPranchas', 'Rotina mostra as pranchas certas'], ['niveis', 'Níveis de frase'],
+  ['gradeCrescente', 'Poucos botões no começo'], ['visualIdade', 'Visual por idade'], ['relatorioEvolucao', 'Relatório de evolução'], ['marcos', 'Marcos'],
+  ['ia', 'IA (sugestões)'], ['telaCalma', 'Tela calma'], ['botoesGrandes', 'Botões grandes'], ['tempoToque', 'Tempo de toque'],
+  ['estilosBotao', 'Estilos de botão'], ['fundoAnimado', 'Fundo animado'], ['modoTablet', 'Modo tablet'],
+];
+const PADRAO_COMPLETO = ['niveis', 'visualIdade', 'ia', 'estilosBotao', 'fundoAnimado', 'relatorioEvolucao'];
+const DIAS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+
+let atual = {};
+const campo = (k, tipo, titulo, ajuda, valor, onde) => {
+  const l = document.createElement('label'); l.className = 'campo';
+  l.innerHTML = `<span>${titulo}</span>${ajuda ? `<small>${ajuda}</small>` : ''}`;
+  let i;
+  if (tipo === 'bool') { i = document.createElement('select'); i.innerHTML = '<option value="true">Liberado</option><option value="false">Travado</option>'; i.value = String(valor === true); }
+  else if (tipo === 'dia') { i = document.createElement('select'); i.innerHTML = DIAS.map((d, n) => `<option value="${n}">${d}</option>`).join(''); i.value = String(valor); }
+  else { i = document.createElement('input'); i.type = tipo === 'num' ? 'number' : 'text'; if (tipo === 'num') { i.min = '0'; i.max = '99999'; } i.value = valor ?? ''; }
+  i.dataset.k = k; i.dataset.t = tipo; i.dataset.orig = i.value;
+  i.addEventListener('input', () => i.classList.toggle('mudou', i.value !== i.dataset.orig));
+  i.addEventListener('change', () => i.classList.toggle('mudou', i.value !== i.dataset.orig));
+  l.appendChild(i); $(onde).appendChild(l);
+};
+const ler = (el) => (el.dataset.t === 'bool' ? el.value === 'true' : el.dataset.t === 'num' || el.dataset.t === 'dia' ? Math.max(0, Math.round(Number(el.value) || 0)) : el.value.trim().slice(0, 300));
+const mudados = (onde) => [...$(onde).querySelectorAll('[data-k]')].filter((e) => e.value !== e.dataset.orig);
+
+async function carregar() {
+  // lê só o que o painel usa (o resto do banco, como e-mails de clientes, continua fechado)
+  const [l, ps] = await Promise.all([get(ref(db, 'limitações')), get(ref(db, 'appConfig/planSelection'))]);
+  atual = { 'limitações': l.val() || {}, appConfig: { planSelection: ps.val() || {} } };
+  const lim = atual['limitações'] || {};
+  const rot = lim.rotina || {};
+  $('gradeRotina').innerHTML = '';
+  for (const [k, t, ti, aj] of CAMPOS) campo(k, t, ti, aj, rot[k], 'gradeRotina');
+  const pd = lim.porData;
+  $('infoPorData').textContent = pd && pd.corte ? `Regra "antigos" ativa: quem começou antes de ${new Date(pd.corte).toLocaleString('pt-BR')} usa ${JSON.stringify(pd.antigos || {})}.` : '';
+  // recursos
+  const rec = lim.recursos || {};
+  const tb = $('tabelaRecursos').querySelector('tbody'); tb.innerHTML = '';
+  for (const [id, nome] of RECURSOS) {
+    const r = rec[id] || {};
+    const v = r.liberado === false ? 'off' : (r.plano || (PADRAO_COMPLETO.includes(id) ? 'completo' : 'gratis'));
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${nome}</td><td><select data-id="${id}" data-orig="${v}"><option value="gratis">Grátis</option><option value="completo">Plano Completo 👑</option><option value="off">Desligada</option></select></td>`;
+    tr.querySelector('select').value = v; tb.appendChild(tr);
+  }
+  // sábado
+  const sb = { ativo: true, inicioDia: 5, inicioHora: 17, fimDia: 6, fimHora: 20, ...(lim.sabado || {}) };
+  $('gradeSabado').innerHTML = '';
+  campo('ativo', 'bool', 'Trava do sábado', 'Liberado = trava ligada', sb.ativo !== false, 'gradeSabado');
+  campo('inicioDia', 'dia', 'Começa no dia', '', sb.inicioDia, 'gradeSabado');
+  campo('inicioHora', 'num', 'Começa às (hora)', '0 a 23', sb.inicioHora, 'gradeSabado');
+  campo('fimDia', 'dia', 'Termina no dia', '', sb.fimDia, 'gradeSabado');
+  campo('fimHora', 'num', 'Termina às (hora)', '0 a 23', sb.fimHora, 'gradeSabado');
+  // app antigo
+  $('gradeAntigo').innerHTML = '';
+  campo('cardsGlobais/quantidade', 'num', 'Botões no grátis (app antigo)', 'Hoje: 8', lim.cardsGlobais?.quantidade, 'gradeAntigo');
+  campo('cardsGlobais/enabled', 'bool', 'Limite de botões ligado', '', lim.cardsGlobais?.enabled === true, 'gradeAntigo');
+  campo('cardsPorAba/quantidade', 'num', 'Botões por aba', '', lim.cardsPorAba?.quantidade, 'gradeAntigo');
+  campo('cardsPorAba/enabled', 'bool', 'Limite por aba ligado', '', lim.cardsPorAba?.enabled === true, 'gradeAntigo');
+  // planos
+  const ps = atual.appConfig?.planSelection || {};
+  $('gradePlanos').innerHTML = '';
+  for (const [id, nome] of [['monthly', 'Mensal'], ['semiannual', 'Semestral'], ['annual', 'Anual'], ['lifetime', 'Vitalício']]) campo(`${id}/enabled`, 'bool', `Plano ${nome}`, 'Liberado = aparece no app', ps[id]?.enabled === true, 'gradePlanos');
+}
+
+const confirmar = (texto) => window.confirm(texto + '\n\nConfirmar e salvar?');
+
+$('salvarRotina').onclick = async () => {
+  const m = mudados('gradeRotina');
+  if (!m.length) return toast('Nada foi mudado.');
+  const para = document.querySelector('input[name=para]:checked').value;
+  const lim = atual['limitações'] || {};
+  const rot = lim.rotina || {};
+  const pd = lim.porData || {};
+  const antigos = { ...(pd.antigos || {}) };
+  const upd = {};
+  const corte = pd.corte || Date.now();
+  for (const e of m) {
+    const k = e.dataset.k, v = ler(e);
+    if (para === 'todos') { upd[`limitações/rotina/${k}`] = v; delete antigos[k]; }
+    if (para === 'novos') { upd[`limitações/rotina/${k}`] = v; if (!(k in antigos)) antigos[k] = rot[k] ?? null; }
+    if (para === 'antigos') { antigos[k] = v; }
+  }
+  const temAntigos = Object.values(antigos).some((v) => v !== null && v !== undefined);
+  upd['limitações/porData'] = temAntigos ? { corte, antigos } : null;
+  const resumo = m.map((e) => `• ${e.parentElement.querySelector('span').textContent}: ${e.dataset.orig || '(vazio)'} → ${e.value}`).join('\n');
+  if (!confirmar(`Mudar o plano grátis (${para === 'todos' ? 'para todos' : para === 'novos' ? 'só para quem baixar daqui para frente' : 'só para quem já usa'}):\n${resumo}`)) return;
+  try { await update(ref(db), upd); toast('Salvo! O app pega na próxima abertura.'); await carregar(); } catch (e) { toast('Não salvou: ' + e.message); }
+};
+
+$('salvarRecursos').onclick = async () => {
+  const sel = [...$('tabelaRecursos').querySelectorAll('select')].filter((s) => s.value !== s.dataset.orig);
+  if (!sel.length) return toast('Nada foi mudado.');
+  const upd = {};
+  for (const s of sel) upd[`limitações/recursos/${s.dataset.id}`] = s.value === 'off' ? { liberado: false } : { plano: s.value };
+  if (!confirmar(sel.map((s) => `• ${s.closest('tr').firstChild.textContent}: ${s.value}`).join('\n'))) return;
+  try { await update(ref(db), upd); toast('Funções salvas!'); await carregar(); } catch (e) { toast('Não salvou: ' + e.message); }
+};
+
+$('salvarSabado').onclick = async () => {
+  const m = mudados('gradeSabado'); if (!m.length) return toast('Nada foi mudado.');
+  const upd = {};
+  for (const e of m) { let v = ler(e); if (e.dataset.k.endsWith('Hora')) v = Math.min(23, v); upd[`limitações/sabado/${e.dataset.k}`] = v; }
+  if (!confirmar('Mudar o horário do sábado?')) return;
+  try { await update(ref(db), upd); toast('Sábado salvo!'); await carregar(); } catch (e) { toast('Não salvou: ' + e.message); }
+};
+
+$('salvarAntigo').onclick = async () => {
+  const m = mudados('gradeAntigo'); if (!m.length) return toast('Nada foi mudado.');
+  const upd = {}; for (const e of m) upd[`limitações/${e.dataset.k}`] = ler(e);
+  if (!confirmar('Isto muda o app que está na loja AGORA para quem ainda não atualizou.')) return;
+  try { await update(ref(db), upd); toast('App antigo salvo!'); await carregar(); } catch (e) { toast('Não salvou: ' + e.message); }
+};
+
+$('salvarPlanos').onclick = async () => {
+  const m = mudados('gradePlanos'); if (!m.length) return toast('Nada foi mudado.');
+  const upd = {}; for (const e of m) upd[`appConfig/planSelection/${e.dataset.k}`] = ler(e);
+  if (!confirmar('Mudar os planos que aparecem no app? Ligue só os que estão ativos na Play Console.')) return;
+  try { await update(ref(db), upd); toast('Planos salvos!'); await carregar(); } catch (e) { toast('Não salvou: ' + e.message); }
+};
+
+$('btnEntrar').onclick = async () => {
+  try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { $('quem').textContent = 'Não entrou: ' + e.message; }
+};
+onAuthStateChanged(auth, async (u) => {
+  if (!u) { $('tudo').classList.add('oculto'); return; }
+  if ((u.email || '').toLowerCase() !== DONO) { $('quem').innerHTML = `<span class="erro">A conta ${u.email} não tem acesso a este painel.</span>`; await auth.signOut(); return; }
+  $('quem').textContent = `Entrou como ${u.email}.`;
+  $('btnEntrar').classList.add('oculto');
+  $('tudo').classList.remove('oculto');
+  try { await carregar(); } catch (e) { $('quem').innerHTML = `<span class="erro">Não consegui ler o Firebase: ${e.message}</span>`; }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# Confere se a chave guardada nos Secrets é a CHAVE DE UPLOAD que a Play Console espera.
+# Não mostra a chave nem a senha: só diz "CERTA" ou "ERRADA".
+name: Conferir chave de upload
+on: workflow_dispatch
+jobs:
+  conferir:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conferir impressão digital (SHA-1)
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ESPERADO: '1D:AB:51:CA:AE:3E:AD:35:57:5C:8B:67:1D:42:D8:18:E7:E7:DD:6E'
+        run: |
+          set -e
+          if [ -z "$KS_B64" ]; then echo "::error::Falta o segredo ANDROID_KEYSTORE_BASE64"; exit 1; fi
+          echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/k.jks"
+          SHA=$(keytool -list -v -keystore "$RUNNER_TEMP/k.jks" -storepass "$KS_PASS" -alias "$KEY_ALIAS" 2>/dev/null | grep -m1 'SHA1:' | awk '{print $2}' || true)
+          rm -f "$RUNNER_TEMP/k.jks"
+          if [ -z "$SHA" ]; then echo "::error::Não abriu: a senha do keystore ou o alias estão errados."; exit 1; fi
+          if [ "$SHA" = "$ESPERADO" ]; then echo "✅ CHAVE CERTA: é a chave de upload do Voz Amiga."; else echo "::error::❌ CHAVE ERRADA: não é a chave de upload que a Play Console espera."; exit 1; fi

@@ -1,0 +1,17 @@
+{
+  "rotina": {
+    "rotinas": 1,
+    "tarefasPorRotina": 3,
+    "premios": 3,
+    "temporizador": false,
+    "horario": false,
+    "metas": false,
+    "relatorioCompleto": false,
+    "frasesPersonalizadas": false,
+    "anuncios": true,
+    "botoesPorVez": 10,
+    "pranchas": 15,
+    "vozGravada": 3,
+    "pacotesGratis": "ACOES,BEBIDAS,HIGIENE"
+  }
+}

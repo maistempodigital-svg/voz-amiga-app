@@ -1,0 +1,112 @@
+{
+  "recursos": {
+    "backupAuto": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "apagarPranchas": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "senhaPais": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "emergencia": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "vozes": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "vozGravada": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "curso": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "missaoDia": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "lembretePais": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "modoExemplo": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "mensagensApoio": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "avisoSemanas": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "duvidas": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "pacotesRotina": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "rotinaPranchas": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "niveis": {
+      "liberado": true,
+      "plano": "completo"
+    },
+    "gradeCrescente": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "visualIdade": {
+      "liberado": true,
+      "plano": "completo"
+    },
+    "relatorioEvolucao": {
+      "liberado": true,
+      "plano": "completo"
+    },
+    "marcos": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "ia": {
+      "liberado": true,
+      "plano": "completo"
+    },
+    "telaCalma": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "botoesGrandes": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "tempoToque": {
+      "liberado": true,
+      "plano": "gratis"
+    },
+    "estilosBotao": {
+      "liberado": true,
+      "plano": "completo"
+    },
+    "fundoAnimado": {
+      "liberado": true,
+      "plano": "completo"
+    },
+    "modoTablet": {
+      "liberado": true,
+      "plano": "gratis"
+    }
+  }
+}
