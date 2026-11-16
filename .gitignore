@@ -20,3 +20,7 @@ app-de-teste/telas-teste/
 *SENHA*
 google-services.json
 service-account*.json
+apk-teste/app/src/main/assets/
+apk-teste/build/
+apk-teste/app/build/
+apk-teste/.gradle/
