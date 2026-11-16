@@ -1,6 +1,7 @@
 // SIMULAÇÃO do Voz Amiga para o APK de teste (só para mostrar o módulo Rotina funcionando dentro dele).
 // No app oficial são usadas as telas ORIGINAIS do Voz — nada daqui vai para o projeto real.
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { lerAntigo, montarEstadoMigrado } from '../migrarNoCelular';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
 import { Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
@@ -61,7 +62,8 @@ export interface AbaVoz { id: string; nome: string; tema: string }
 export interface PranchaVoz { id: string; texto: string; abaId: string; emoji?: string; imagem?: string; audio?: string }
 export interface DefsVoz { idioma: 'pt' | 'en' | 'es'; colunasAuto: boolean; colunas: number; sugestoes: boolean; tecladoAvancado: boolean; bloquearApp: boolean; voz: string; volume: number; /** só no app de teste */ assinanteTeste?: boolean;
   /** v14.8: teste premium (no app real fica no servidor, na conta da família). */ testeInicio?: number; testeDias?: number; avisosTeste?: number[];
-  /** v14.8: pranchas que os pais escolheram para ficar no plano grátis */ pranchasFixas?: string[] }
+  /** v14.8: pranchas que os pais escolheram para ficar no plano grátis */ pranchasFixas?: string[];
+  /** v14.8: quando a família começou a usar (0 = veio do app antigo 1.0.24) e quando migrou */ inicioUso?: number; migradoV24?: number }
 export interface EstadoVoz { abas: AbaVoz[]; pranchas: PranchaVoz[]; defs: DefsVoz; modo: 'normal' | 'editar' | 'excluir'; editarAbas: boolean; seguinte: Record<string, Record<string, number>>;
   /** v14.2: dicas da primeira vez ("comece por aqui" e "segure 3 s") */
   dicas?: { criou?: boolean; toques?: Record<string, number> } }
@@ -225,8 +227,25 @@ export function VozProvider({ children }: { children: React.ReactNode }) {
   const [pronto, setPronto] = useState(false);
   const [msg, setMsg] = useState('');
   const [rev, setRev] = useState(0);
+  const [migrando, setMigrando] = useState(false);
   useEffect(() => {
-    AsyncStorage.getItem(CHAVE).then((t) => { if (t) { try { setS(migrarVoz({ ...estadoVozPadrao(), ...JSON.parse(t) })); } catch { /* */ } } setPronto(true); }).catch(() => setPronto(true));
+    AsyncStorage.getItem(CHAVE).then(async (t) => {
+      if (t) { try { setS(migrarVoz({ ...estadoVozPadrao(), ...JSON.parse(t) })); } catch { /* */ } setPronto(true); return; }
+      // 1ª abertura: o celular tinha o Voz Amiga 1.0.24? Traz tudo (sem apagar o original).
+      const antigo = lerAntigo();
+      if (antigo) {
+        setMigrando(true);
+        try {
+          await AsyncStorage.setItem(CHAVE + '/v24-bruto', JSON.stringify(antigo)).catch(() => undefined); // cópia crua, por segurança
+          const { estado } = await montarEstadoMigrado(antigo, estadoVozPadrao(), (u) => reduzirImagem(u));
+          setS(migrarVoz(estado));
+        } catch { /* se falhar, abre normal; a cópia crua fica guardada */ }
+        setMigrando(false);
+      } else {
+        setS((x) => ({ ...x, defs: { ...x.defs, inicioUso: Date.now() } }));
+      }
+      setPronto(true);
+    }).catch(() => setPronto(true));
   }, []);
   useEffect(() => { if (pronto) AsyncStorage.setItem(CHAVE, JSON.stringify(s)).catch(() => toast('Memória cheia: use imagens menores.')); }, [s, pronto]); // eslint-disable-line react-hooks/exhaustive-deps
   const mudar = (f: (x: EstadoVoz) => EstadoVoz) => { const n = f(ref.current); if (n === ref.current) return; ref.current = n; setS(n); setRev((r) => r + 1); };
@@ -239,6 +258,13 @@ export function VozProvider({ children }: { children: React.ReactNode }) {
     }
     falar(p.texto);
   };
+  if (migrando) return (
+    <View accessibilityLabel="trazendo pranchas" style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: '#FFF7E8' }}>
+      <Text style={{ fontSize: 48 }}>💙</Text>
+      <Text style={{ fontSize: 20, fontWeight: '900', color: '#0F172A', textAlign: 'center', marginTop: 12 }}>Trazendo as suas pranchas…</Text>
+      <Text style={{ fontSize: 14, color: '#475569', textAlign: 'center', marginTop: 8 }}>Só leva um instante. Nada do que vocês montaram será perdido.</Text>
+    </View>
+  );
   return <VozCtx.Provider value={{ s, mudar, falar, tocar, toast, msg, rev }}>{children}</VozCtx.Provider>;
 }
 

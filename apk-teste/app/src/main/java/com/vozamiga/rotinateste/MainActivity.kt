@@ -36,7 +36,10 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     tts = TextToSpeech(this, this)
-    val loader = WebViewAssetLoader.Builder().addPathHandler("/", WebViewAssetLoader.AssetsPathHandler(this)).build()
+    // "/arquivos/..." = pasta de arquivos do app (fotos e áudios que o app antigo 1.0.24 guardou); o resto = o app
+    val loader = WebViewAssetLoader.Builder()
+      .addPathHandler("/arquivos/", WebViewAssetLoader.InternalStoragePathHandler(this, filesDir))
+      .addPathHandler("/", WebViewAssetLoader.AssetsPathHandler(this)).build()
     web = WebView(this)
     setContentView(web)
     web.settings.apply {
@@ -110,5 +113,23 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
       try { startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, t.take(60000)), "Compartilhar")) } catch (_: Exception) {}
     }
     @JavascriptInterface fun sair() = runOnUiThread { finish() }
+
+    /** MIGRAÇÃO: lê (sem apagar nada) o que o Voz Amiga 1.0.24 guardou no celular: chaves "vozAmiga*" do AsyncStorage. */
+    @JavascriptInterface fun lerAppAntigo(): String {
+      val out = org.json.JSONObject()
+      try {
+        val f = getDatabasePath("RKStorage")
+        if (!f.exists()) return "{}"
+        val db = android.database.sqlite.SQLiteDatabase.openDatabase(f.path, null, android.database.sqlite.SQLiteDatabase.OPEN_READONLY)
+        db.use {
+          it.rawQuery("SELECT key, value FROM catalystLocalStorage WHERE key LIKE 'vozAmiga%'", null).use { c ->
+            while (c.moveToNext()) out.put(c.getString(0), c.getString(1))
+          }
+        }
+      } catch (_: Exception) {}
+      return out.toString()
+    }
+    /** Pasta de arquivos do app (para trocar "file:///data/user/0/com.vozamiga/files/..." por "/arquivos/..."). */
+    @JavascriptInterface fun pastaArquivos(): String = filesDir.absolutePath
   }
 }

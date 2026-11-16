@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 import { pagamentoTravado, pagamentoLiberaEm, tp, JanelaSabado, JANELA_PADRAO, EstadoTeste, estadoTeste, temPremium, podeOferecerTeste } from '../src/rotina-amiga/v14/premium';
 import { useVoz } from './voz/base';
+import { veioProntaV24 } from './migracaoV24';
 
 const BUSCA = typeof window !== 'undefined' && window.location ? window.location.search : '';
 const P = new URLSearchParams(BUSCA);
@@ -106,7 +107,8 @@ export function BlocoPlanos({ idioma, planos, comprar, teste, podeTestar, dias, 
 export function EscolherFixas({ limite }: { limite: number }) {
   const { s, mudar } = useVoz();
   const fixas = s.defs.pranchasFixas || [];
-  if (s.pranchas.length <= limite) return null;
+  const contam = s.pranchas.filter((q) => !veioProntaV24(q.id));
+  if (contam.length <= limite) return null;
   const alternar = (id: string) => mudar((x) => {
     const f = x.defs.pranchasFixas || [];
     const n = f.includes(id) ? f.filter((y) => y !== id) : f.length < limite ? [...f, id] : f;
@@ -117,7 +119,7 @@ export function EscolherFixas({ limite }: { limite: number }) {
       <Text style={{ fontSize: 15, fontWeight: '900', color: '#92400E' }}>Quais pranchas ficam no plano grátis? ({fixas.length}/{limite})</Text>
       <Text style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>Escolha as mais importantes para a criança. As que você não escolher, o app completa com as mais usadas. Nenhuma é apagada: as outras ficam guardadas com 👑 e voltam ao assinar.</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>
-        {s.pranchas.map((q) => {
+        {contam.map((q) => {
           const on = fixas.includes(q.id);
           return (
             <Pressable key={q.id} onPress={() => alternar(q.id)} accessibilityRole="checkbox" accessibilityState={{ checked: on }} accessibilityLabel={`fica ${q.texto}`}

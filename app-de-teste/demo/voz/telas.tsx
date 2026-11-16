@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AlvoTour, CreditoArasaac, DestaqueCriacaoRapida, DicaEspecialistas, FuncoesDoApp, RolagemTour, useItensAjustesRotina, useRotina } from '../../src/rotina-amiga';
 import { PACOTES_ROTINA, itensPacote } from '../../src/rotina-amiga/v14/pacotes';
 import { pacoteGratis } from '../../src/rotina-amiga/logica/plano';
+import { contarParaLimite } from '../migracaoV24';
 import { sugerirBotaoIA } from '../../src/rotina-amiga/v14/ia';
 import { precisaLembrete, TEXTO_LEMBRETE } from '../../src/rotina-amiga/v14/pais';
 import { chaveDia } from '../../src/rotina-amiga/logica/tempo';
@@ -166,7 +167,7 @@ export function CriarPrancha({ id, abaId, voltar, casa }: Nav & { id?: string; a
   const salvar = () => {
     if (!p.texto.trim()) { toast('Escreva o que a prancha diz.'); return; }
     if (!p.abaId) { toast('Selecione uma aba.'); return; }
-    if (!orig && s.pranchas.length >= limites.pranchas) { pedirPlano('prancha'); return; }
+    if (!orig && contarParaLimite(s.pranchas) >= limites.pranchas) { pedirPlano('prancha'); return; }
     // grátis: foto/desenho/voz gravada que sobrou de antes não é salva numa prancha NOVA
     if (!orig && ((p.imagem && !fotoLiberada) || (p.audio && !vozLiberada))) { pedirPlano(p.imagem && !fotoLiberada ? 'foto' : 'vozGravada'); return; }
     const abaFinal = p.abaId === 'auto' || p.abaId === 'geral' ? categoriaAuto(p.texto) : p.abaId;
@@ -429,7 +430,7 @@ export function Pacotes({ voltar, casa }: Nav) {
   const transferir = async () => {
     if (!p || baixando) return;
     if (!gratis(p.id)) { pedirPlano('pacote'); return; }
-    const espaco = premium ? Infinity : limites.pranchas - s.pranchas.length;
+    const espaco = premium ? Infinity : limites.pranchas - contarParaLimite(s.pranchas);
     if (espaco <= 0) { pedirPlano('prancha'); return; }
     let cortou = false;
     const nome = nomeDe(p.r);

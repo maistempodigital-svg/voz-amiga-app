@@ -9,6 +9,7 @@ import { BotaoCor, PranchaVoz, ponte, tema, useVoz } from './base';
 import { NovaAbaModal, TelaVoz } from './telas';
 import { maxPalavras, pranchasVisiveis, somarPalavra, VISUAIS } from '../../src/rotina-amiga/v14/crescer';
 import { pranchasQueFicam } from '../../src/rotina-amiga/v14/premium';
+import { contarParaLimite, veioProntaV24 } from '../migracaoV24';
 import { pacoteDaTarefa } from '../../src/rotina-amiga/v14/pacotes';
 
 const FRASES_SOS = {
@@ -104,11 +105,12 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
   // v14.8: no grátis (ou quando o teste premium acaba) a criança CONTINUA falando com as pranchas do limite:
   // as escolhidas pelos pais + as mais usadas. As outras ficam guardadas (nunca apagadas) e voltam ao assinar.
   const pranchasDoPlano = React.useMemo(() => {
-    if (premium || s.pranchas.length <= limites.pranchas) return s.pranchas;
+    if (premium || contarParaLimite(s.pranchas) <= limites.pranchas) return s.pranchas;
     const usos: Record<string, number> = {};
     for (const e of estRotina.log || []) if (e.tipo === 'prancha' && e.rotulo) usos[e.rotulo.toLowerCase()] = (usos[e.rotulo.toLowerCase()] || 0) + 1;
-    const fica = pranchasQueFicam(s.pranchas.map((q, i) => ({ id: q.id, usos: usos[q.texto.toLowerCase()] || 0, criadaEm: i })), limites.pranchas, s.defs.pranchasFixas || []);
-    return s.pranchas.filter((q) => fica.has(q.id));
+    const contam = s.pranchas.filter((q) => !veioProntaV24(q.id));
+    const fica = pranchasQueFicam(contam.map((q, i) => ({ id: q.id, usos: usos[q.texto.toLowerCase()] || 0, criadaEm: i })), limites.pranchas, s.defs.pranchasFixas || []);
+    return s.pranchas.filter((q) => veioProntaV24(q.id) || fica.has(q.id));
   }, [premium, s.pranchas, limites.pranchas, estRotina.log, s.defs.pranchasFixas]);
   const fotoOk = premium || pode('foto');
   const vozOk = premium || limites.vozGravada > 0;
@@ -148,7 +150,7 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
   const [larg, setLarg] = useState(360);
   // prancha nova criada: mostra a aba onde ela foi parar
   const qtd = React.useRef(s.pranchas.length);
-  React.useEffect(() => { if (s.pranchas.length > qtd.current) setAba(s.pranchas[s.pranchas.length - 1].abaId); qtd.current = s.pranchas.length; }, [s.pranchas]);
+  React.useEffect(() => { if (s.pranchas.length > qtd.current && !(qtd.current === 0 && s.defs.migradoV24)) setAba(s.pranchas[s.pranchas.length - 1].abaId); qtd.current = s.pranchas.length; }, [s.pranchas]); // v14.8: depois de trazer as pranchas do app antigo, fica na GERAL
   // v14: a rotina do dia abre a aba das pranchas daquela hora (ex.: tarefa "Banho" → aba Banho, se existir)
   const tarefaAtivaId = estRotina.tarefaAtiva?.tarefaId;
   React.useEffect(() => {
