@@ -1,0 +1,53 @@
+# Monta o .aab da LOJA (com.vozamiga), assinado com a chave de upload guardada nos Secrets.
+# O arquivo vai para "Teste interno" na Play Console. Quem aperta publicar é o Adriano.
+name: AAB para a Play Store
+on:
+  workflow_dispatch:
+    inputs:
+      versao_codigo: { description: 'versionCode (maior que 24)', required: true, default: '25' }
+      versao_nome: { description: 'versionName', required: true, default: '2.0.0' }
+permissions:
+  contents: write
+jobs:
+  aab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Montar a parte web do app
+        working-directory: app-de-teste
+        run: |
+          npm ci --no-audit --no-fund
+          rm -rf src && mkdir -p src && cp -r ../rotina-amiga src/rotina-amiga
+          npx expo export -p web --output-dir dist
+      - run: rm -rf apk-teste/app/src/main/assets && mkdir -p apk-teste/app/src/main/assets && cp -r app-de-teste/dist/. apk-teste/app/src/main/assets/
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: '8.9' }
+      - name: Montar e assinar o .aab
+        working-directory: apk-teste
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          APP_ID: com.vozamiga
+          NOME_APP: Voz Amiga
+          VERSAO_CODIGO: ${{ inputs.versao_codigo }}
+          VERSAO_NOME: ${{ inputs.versao_nome }}
+        run: |
+          set -e
+          export KS_FILE="$RUNNER_TEMP/upload.jks"
+          echo "$KS_B64" | base64 -d > "$KS_FILE"
+          gradle bundleRelease --stacktrace
+          rm -f "$KS_FILE"
+          SHA=$(keytool -printcert -jarfile app/build/outputs/bundle/release/app-release.aab | grep -m1 'SHA1:' | awk '{print $2}')
+          echo "Assinado com: $SHA"
+          [ "$SHA" = "1D:AB:51:CA:AE:3E:AD:35:57:5C:8B:67:1D:42:D8:18:E7:E7:DD:6E" ] || { echo "::error::assinatura errada"; exit 1; }
+      - name: Deixar o .aab num ramo separado (para baixar; depois é substituído)
+        run: |
+          mkdir -p /tmp/saida && cp apk-teste/app/build/outputs/bundle/release/app-release.aab "/tmp/saida/VozAmiga-v${{ inputs.versao_codigo }}.aab"
+          cd /tmp/saida && git init -q -b aab-saida && git add . && git -c user.name=bot -c user.email=bot@local commit -q -m "aab" && git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" aab-saida
