@@ -1,6 +1,6 @@
-wait 20
-shot depois-de-45s
+wait 15
+shot inicio
 expect CRIAR PRANCHA
-tap EU
-tap QUERO
-shot frase
+tap Agora
+wait 3
+shot depois
