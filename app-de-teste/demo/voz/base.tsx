@@ -63,7 +63,7 @@ export interface PranchaVoz { id: string; texto: string; abaId: string; emoji?: 
 export interface DefsVoz { idioma: 'pt' | 'en' | 'es'; colunasAuto: boolean; colunas: number; sugestoes: boolean; tecladoAvancado: boolean; bloquearApp: boolean; voz: string; volume: number; /** só no app de teste */ assinanteTeste?: boolean;
   /** v14.8: teste premium (no app real fica no servidor, na conta da família). */ testeInicio?: number; testeDias?: number; avisosTeste?: number[];
   /** v14.8: pranchas que os pais escolheram para ficar no plano grátis */ pranchasFixas?: string[];
-  /** v14.8: quando a família começou a usar (0 = veio do app antigo 1.0.24) e quando migrou */ inicioUso?: number; migradoV24?: number }
+  /** v14.8: quando a família começou a usar (0 = veio do app antigo 1.0.24) e quando migrou */ inicioUso?: number; migradoV24?: number; pediuEntrarV24?: boolean }
 export interface EstadoVoz { abas: AbaVoz[]; pranchas: PranchaVoz[]; defs: DefsVoz; modo: 'normal' | 'editar' | 'excluir'; editarAbas: boolean; seguinte: Record<string, Record<string, number>>;
   /** v14.2: dicas da primeira vez ("comece por aqui" e "segure 3 s") */
   dicas?: { criou?: boolean; toques?: Record<string, number> } }

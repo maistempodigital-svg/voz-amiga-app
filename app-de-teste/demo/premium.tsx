@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 import { pagamentoTravado, pagamentoLiberaEm, tp, JanelaSabado, JANELA_PADRAO, EstadoTeste, estadoTeste, temPremium, podeOferecerTeste } from '../src/rotina-amiga/v14/premium';
 import { useVoz } from './voz/base';
+import { useConta } from './contaUI';
+import { iniciarTesteServidor, temCompraNativa } from './conta';
 import { veioProntaV24 } from './migracaoV24';
 
 const BUSCA = typeof window !== 'undefined' && window.location ? window.location.search : '';
@@ -13,15 +15,27 @@ export const DIAS_TESTE = (() => { const n = Number(P.get('testeDias')); return 
 /** Estado do plano no app de teste (no app real: Google Play + Firestore users/{uid}). */
 export function usePremiumDemo() {
   const { s, mudar, toast } = useVoz();
+  const conta = useConta();
+  const diasFb = (conta.remoto.rotina as { testePremiumDias?: unknown } | undefined)?.testePremiumDias;
+  const dias = P.get('testeDias') ? DIAS_TESTE : typeof diasFb === 'number' && diasFb >= 0 && diasFb <= 365 ? Math.round(diasFb) : DIAS_TESTE;
   // ?testeInicioDiasAtras=N só para testar avisos e o fim do teste
   const atras = Number(P.get('testeInicioDiasAtras'));
-  const inicio = Number.isFinite(atras) && P.get('testeInicioDiasAtras') ? Date.now() - atras * 86400000 : s.defs.testeInicio;
-  const teste = estadoTeste({ inicio, dias: s.defs.testeDias ?? DIAS_TESTE }, Date.now(), DIAS_TESTE);
-  const pago = P.get('plano') === 'completo' || s.defs.assinanteTeste === true;
+  // o início do teste vale do servidor (não volta ao reinstalar); sem servidor, o do celular
+  const inicio = Number.isFinite(atras) && P.get('testeInicioDiasAtras') ? Date.now() - atras * 86400000 : conta.plano?.testePremium?.inicio ?? s.defs.testeInicio;
+  const teste = estadoTeste({ inicio, dias: conta.plano?.testePremium?.dias ?? s.defs.testeDias ?? dias }, Date.now(), dias);
+  // pago de verdade = servidor (Google Play, Kiwify, liberado no painel). O "simular" só existe fora da loja.
+  const simulado = !temCompraNativa() && (P.get('plano') === 'completo' || s.defs.assinanteTeste === true);
+  const travado = conta.plano?.bloqueado === true || conta.plano?.soGratis === true; // escolhido pelo dono no painel
+  const testeDono = conta.plano?.testeDono ? estadoTeste(conta.plano.testeDono, Date.now(), dias) : undefined;
+  const pago = !travado && (conta.plano?.hasAccess === true || simulado || testeDono?.fase === 'ativo');
   return {
-    teste, pago, premium: temPremium(pago, teste), dias: DIAS_TESTE,
-    podeTestar: !pago && podeOferecerTeste({ inicio }, DIAS_TESTE),
-    iniciar: () => { mudar((x) => (x.defs.testeInicio ? x : { ...x, defs: { ...x.defs, testeInicio: Date.now(), testeDias: DIAS_TESTE, avisosTeste: [] } })); toast(`🎁 Teste premium liberado por ${DIAS_TESTE} dias!`); },
+    teste, pago, premium: !travado && temPremium(pago, teste), dias, simulado: !temCompraNativa(),
+    podeTestar: !pago && !travado && podeOferecerTeste({ inicio }, dias),
+    iniciar: async () => {
+      const r = conta.usuario ? await iniciarTesteServidor() : undefined;
+      mudar((x) => (x.defs.testeInicio ? x : { ...x, defs: { ...x.defs, testeInicio: r?.inicio ?? Date.now(), testeDias: r?.dias ?? dias, avisosTeste: [] } }));
+      toast(`🎁 Teste premium liberado por ${r?.dias ?? dias} dias!`);
+    },
   };
 }
 

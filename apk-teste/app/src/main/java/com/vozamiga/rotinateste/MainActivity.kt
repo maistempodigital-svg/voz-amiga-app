@@ -13,7 +13,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.webkit.WebViewAssetLoader
 import org.json.JSONArray
+import org.json.JSONObject
 import java.util.Locale
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.android.billingclient.api.*
 
 /** Casca de TESTE: mostra o app (versão web) dentro do celular, com a voz do Android, fotos e microfone. */
 class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
@@ -22,6 +30,45 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
   private var ttsPronto = false
   private var arquivoCallback: ValueCallback<Array<Uri>>? = null
   private var pedidoMic: PermissionRequest? = null
+  private var billing: BillingClient? = null
+  private var produtoPedido = ""
+  // webClientId do Firebase (o mesmo que o app 1.0.24 usa)
+  private val WEB_CLIENT_ID = "219818609699-8aibcbol80sj75cvgj5fcsagrihameph.apps.googleusercontent.com"
+
+  private fun js(cod: String) = runOnUiThread { web.evaluateJavascript(cod, null) }
+  private fun avisarCompra(o: JSONObject) = js("window.__vozCompra && window.__vozCompra(" + JSONObject.quote(o.toString()) + ")")
+
+  private val ouvinteCompra = PurchasesUpdatedListener { r, compras ->
+    when (r.responseCode) {
+      BillingClient.BillingResponseCode.OK -> compras?.forEach { c ->
+        val o = JSONObject().put("produto", c.products.firstOrNull() ?: produtoPedido).put("token", c.purchaseToken)
+        o.put("estado", if (c.purchaseState == Purchase.PurchaseState.PURCHASED) "comprado" else "pendente")
+        avisarCompra(o)
+      }
+      BillingClient.BillingResponseCode.USER_CANCELED -> avisarCompra(JSONObject().put("estado", "cancelado"))
+      BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> restaurar()
+      else -> avisarCompra(JSONObject().put("estado", "erro").put("motivo", "codigo-" + r.responseCode))
+    }
+  }
+  private fun conectar(depois: () -> Unit) {
+    val b = billing ?: BillingClient.newBuilder(this).setListener(ouvinteCompra)
+      .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build()).build().also { billing = it }
+    if (b.isReady) { depois(); return }
+    b.startConnection(object : BillingClientStateListener {
+      override fun onBillingSetupFinished(r: BillingResult) { if (r.responseCode == BillingClient.BillingResponseCode.OK) depois() else avisarCompra(JSONObject().put("estado", "erro").put("motivo", "play-indisponivel")) }
+      override fun onBillingServiceDisconnected() {}
+    })
+  }
+  /** Já tinha comprado (ex.: trocou de celular): manda de novo para o servidor conferir. */
+  private fun restaurar() = conectar {
+    for (tipo in listOf(BillingClient.ProductType.SUBS, BillingClient.ProductType.INAPP)) {
+      billing?.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(tipo).build()) { _, lista ->
+        lista.filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }.forEach { c ->
+          avisarCompra(JSONObject().put("estado", "comprado").put("produto", c.products.firstOrNull() ?: "").put("token", c.purchaseToken))
+        }
+      }
+    }
+  }
 
   private val escolherArquivo = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { r ->
     val cb = arquivoCallback; arquivoCallback = null
@@ -76,7 +123,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
   override fun onSaveInstanceState(out: Bundle) { super.onSaveInstanceState(out); web.saveState(out) }
   override fun onInit(status: Int) { ttsPronto = status == TextToSpeech.SUCCESS }
-  override fun onDestroy() { tts?.shutdown(); super.onDestroy() }
+  override fun onDestroy() { tts?.shutdown(); billing?.endConnection(); super.onDestroy() }
   @Deprecated("Deprecated in Java")
   override fun onBackPressed() { if (web.canGoBack()) web.goBack() else web.evaluateJavascript("window.dispatchEvent(new Event('voltarAndroid'))", null) }
 
@@ -113,6 +160,40 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
       try { startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, t.take(60000)), "Compartilhar")) } catch (_: Exception) {}
     }
     @JavascriptInterface fun sair() = runOnUiThread { finish() }
+
+    /** Login com a conta Google do celular → idToken → window.__vozGoogle(token) (o app entra no Firebase). */
+    @JavascriptInterface fun entrarGoogle() = runOnUiThread {
+      lifecycleScope.launch {
+        try {
+          val op = GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false).setServerClientId(WEB_CLIENT_ID).setAutoSelectEnabled(false).build()
+          val r = CredentialManager.create(this@MainActivity).getCredential(this@MainActivity, GetCredentialRequest.Builder().addCredentialOption(op).build())
+          val tok = GoogleIdTokenCredential.createFrom(r.credential.data).idToken
+          js("window.__vozGoogle && window.__vozGoogle(" + JSONObject.quote(tok) + ")")
+        } catch (e: Exception) {
+          js("window.__vozGoogle && window.__vozGoogle(null, " + JSONObject.quote(e.javaClass.simpleName) + ")")
+        }
+      }
+    }
+    /** Abre o pagamento do Google Play (produto do app 1.0.24). tipo = "subs" ou "inapp". */
+    @JavascriptInterface fun comprar(produto: String, tipo: String) = runOnUiThread {
+      produtoPedido = produto
+      conectar {
+        val t = if (tipo == "inapp") BillingClient.ProductType.INAPP else BillingClient.ProductType.SUBS
+        val q = QueryProductDetailsParams.newBuilder().setProductList(listOf(QueryProductDetailsParams.Product.newBuilder().setProductId(produto).setProductType(t).build())).build()
+        billing?.queryProductDetailsAsync(q) { r, lista ->
+          val d = lista.firstOrNull()
+          if (r.responseCode != BillingClient.BillingResponseCode.OK || d == null) { avisarCompra(JSONObject().put("estado", "erro").put("motivo", "produto-nao-encontrado")); return@queryProductDetailsAsync }
+          val p = BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(d)
+          d.subscriptionOfferDetails?.firstOrNull()?.offerToken?.let { p.setOfferToken(it) }
+          runOnUiThread { billing?.launchBillingFlow(this@MainActivity, BillingFlowParams.newBuilder().setProductDetailsParamsList(listOf(p.build())).build()) }
+        }
+      }
+    }
+    /** Confirma a compra no Google (se o servidor ainda não confirmou). */
+    @JavascriptInterface fun confirmarCompra(token: String) = conectar {
+      billing?.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder().setPurchaseToken(token).build()) { }
+    }
+    @JavascriptInterface fun restaurarCompras() = restaurar()
 
     /** MIGRAÇÃO: lê (sem apagar nada) o que o Voz Amiga 1.0.24 guardou no celular: chaves "vozAmiga*" do AsyncStorage. */
     @JavascriptInterface fun lerAppAntigo(): String {

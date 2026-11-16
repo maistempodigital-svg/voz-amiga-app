@@ -49,3 +49,14 @@ ok('voz, volume e colunas', () => {
   assert.equal(r.voz, 'pt-br-x-abc-local'); assert.equal(r.volume, 80); assert.equal(r.colunas, 5);
 });
 console.log(`\n${n} grupos de testes da migração passaram.`);
+
+import { chaveEmail, lerControle } from '../app-de-teste/demo/conta';
+ok('painel: e-mail vira a mesma chave do servidor; escolhas do dono', () => {
+  assert.equal(chaveEmail(' Maria.Silva@Gmail.com '), 'maria,silva@gmail,com');
+  assert.deepEqual(lerControle({ tipo: 'bloqueado' }), { bloqueado: true });
+  assert.deepEqual(lerControle({ tipo: 'gratis' }), { soGratis: true });
+  assert.deepEqual(lerControle({ tipo: 'teste', inicio: 1, dias: 10 }), { testeDono: { inicio: 1, dias: 10 } });
+  assert.deepEqual(lerControle({ tipo: 'teste', inicio: 1, dias: 9999 }), {});
+  assert.deepEqual(lerControle(null), {});
+  console.log('✓ painel por e-mail');
+});

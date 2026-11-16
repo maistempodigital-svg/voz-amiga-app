@@ -36,4 +36,12 @@ android {
 dependencies {
   implementation("androidx.appcompat:appcompat:1.7.0")
   implementation("androidx.webkit:webkit:1.11.0")
+  // pagamento do Google Play (mesmos produtos do app 1.0.24)
+  implementation("com.android.billingclient:billing-ktx:7.1.1")
+  // login com a conta Google do celular (Credential Manager)
+  implementation("androidx.credentials:credentials:1.3.0")
+  implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+  implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+  implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
 }

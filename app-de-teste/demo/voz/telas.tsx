@@ -1,6 +1,9 @@
 // SIMULAÇÃO das telas de Ajustes do Voz Amiga (para o APK de teste).
 import React, { useState } from 'react';
 import { BlocoPlanos, EscolherFixas, PlanoVenda, usePremiumDemo } from '../premium';
+import { BlocoConta, useConta } from '../contaUI';
+import { comprar, temCompraNativa } from '../conta';
+import { lerJanelaSabado } from '../../src/rotina-amiga/v14/premium';
 import { tp } from '../../src/rotina-amiga/v14/premium';
 const p0Id = (id?: string) => id || '';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -517,11 +520,26 @@ export function Assinatura({ voltar, casa }: Nav) {
   const pm = usePremiumDemo();
   const { limites: limitesPlano } = useRotina();
   const pago = pm.pago;
-  // planos ATIVOS (no app real: appConfig/planSelection do Firebase + produtos do Google Play)
-  const planos: PlanoVenda[] = [
-    { id: 'voz_amiga_monthly', titulo: 'Plano Mensal', subtitulo: 'Pagamento mês a mês.' },
-    { id: 'voz_amiga_lifetime', titulo: 'Plano Vitalício', subtitulo: 'Pagamento único, acesso vitalício.' },
+  const conta = useConta();
+  // planos ATIVOS: os que o dono deixou ligados no Firebase (appConfig/planSelection); sem Firebase, Mensal e Vitalício
+  const doFb = Object.entries(conta.remoto.planos || {}).filter(([k, v]) => k !== 'free' && v?.enabled === true && typeof v.googleProductId === 'string')
+    .map(([, v]) => ({ id: v.googleProductId as string, titulo: v.title || 'Plano', subtitulo: v.subtitle || '', tipo: v.productType === 'inapp' ? 'inapp' as const : 'subs' as const }));
+  const planos: (PlanoVenda & { tipo: 'subs' | 'inapp' })[] = doFb.length ? doFb : [
+    { id: 'voz_amiga_monthly', titulo: 'Plano Mensal', subtitulo: 'Pagamento mês a mês.', tipo: 'subs' },
+    { id: 'voz_amiga_lifetime', titulo: 'Plano Vitalício', subtitulo: 'Pagamento único, acesso vitalício.', tipo: 'inapp' },
   ];
+  const [comprando, setComprando] = useState(false);
+  const fazerCompra = async (id: string) => {
+    if (!temCompraNativa()) { toast(`No app da loja abre o pagamento do Google Play (${id}).`); return; }
+    if (!conta.usuario) { conta.abrirEntrar('Entre na sua conta para assinar. Assim o plano fica guardado mesmo se trocar de celular.'); return; }
+    if (comprando) return;
+    setComprando(true);
+    try {
+      const r = await comprar(id, planos.find((x) => x.id === id)?.tipo || 'subs');
+      toast(r === 'ok' ? '👑 Pagamento confirmado! Tudo liberado.' : r === 'pendente' ? 'Pagamento em análise pelo Google. Assim que aprovar, libera sozinho.' : 'Pagamento cancelado.');
+    } catch { toast('O pagamento não foi concluído. Nada foi cobrado. Tente de novo.'); }
+    setComprando(false);
+  };
   const itens: [string, string, string][] = [['image', 'Fotos e áudios', 'cards personalizados'], ['folder', 'Categorias e pacotes', 'mais organização'], ['lock', 'Travar app', 'menos distrações'], ['shield', 'Sem anúncios', 'uso tranquilo']];
   return (
     <Fundo>
@@ -545,15 +563,17 @@ export function Assinatura({ voltar, casa }: Nav) {
               </View>
             ))}
           </View>
+          <BlocoConta />
           <BlocoPlanos idioma={s.defs.idioma} planos={planos} pago={pago} teste={pm.teste} podeTestar={pm.podeTestar} dias={pm.dias} iniciarTeste={pm.iniciar}
-            comprar={(id) => toast(`No app oficial abre o pagamento do Google Play (${id}).`)} />
+            comprar={fazerCompra} janela={lerJanelaSabado(conta.remoto.sabado)} />
+          {comprando ? <Text style={{ textAlign: 'center', marginTop: 6, color: '#475569' }}>Abrindo o pagamento do Google Play…</Text> : null}
           {!pm.premium ? <EscolherFixas limite={limitesPlano.pranchas} /> : null}
           <Text style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>No app oficial, a assinatura continua sendo feita pelo Google Play, exatamente como hoje.</Text>
-          <Pressable onPress={() => mudar((x) => ({ ...x, defs: { ...x.defs, assinanteTeste: !pago } }))} accessibilityRole="switch" accessibilityLabel="Simular Plano Completo" accessibilityState={{ checked: pago }}
+          {pm.simulado ? <Pressable onPress={() => mudar((x) => ({ ...x, defs: { ...x.defs, assinanteTeste: !pago } }))} accessibilityRole="switch" accessibilityLabel="Simular Plano Completo" accessibilityState={{ checked: pago }}
             style={{ marginTop: 12, flexDirection: 'row', alignItems: 'center', borderRadius: 14, borderWidth: 1.5, borderColor: '#FDE68A', backgroundColor: '#FFFBEB', padding: 12 }}>
             <Text style={{ flex: 1, fontSize: 13, fontWeight: '800', color: '#92400E' }}>🧪 Só no teste: simular {pago ? 'versão gratuita' : 'Plano Completo'}</Text>
             <View style={{ width: 46, height: 26, borderRadius: 13, backgroundColor: pago ? '#22C55E' : '#CBD5E1', justifyContent: 'center', paddingHorizontal: 3 }}><View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff', alignSelf: pago ? 'flex-end' : 'flex-start' }} /></View>
-          </Pressable>
+          </Pressable> : null}
           <View style={{ height: 12 }} />
           <BotaoCor titulo="Gerenciar no Google Play" icone="external-link" cor="#2563EB" onPress={() => abrirLink('https://play.google.com/store/account/subscriptions')} />
         </View>

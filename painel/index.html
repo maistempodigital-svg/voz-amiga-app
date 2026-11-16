@@ -66,6 +66,19 @@
     </section>
 
     <section>
+      <h2>Acessos por e-mail</h2>
+      <p class="dica">Dê ou tire acesso de uma pessoa pelo e-mail da conta dela no app. Vale na hora (no app antigo também, para o Vitalício).</p>
+      <div class="grade">
+        <label class="campo"><span>E-mail da pessoa</span><input type="text" id="acEmail" placeholder="nome@gmail.com" autocomplete="off"></label>
+        <label class="campo"><span>O que fazer</span><select id="acTipo"></select><small id="acAjuda"></small></label>
+        <label class="campo" id="acDiasCampo"><span>Dias de teste</span><input type="number" id="acDias" min="1" max="365" value="30"></label>
+        <label class="campo"><span>Observação (opcional)</span><input type="text" id="acNota" placeholder="ex.: parceria, sorteio"></label>
+      </div>
+      <p><button class="prim" id="salvarAcesso">Aplicar</button></p>
+      <table id="tabelaAcessos"><thead><tr><th>E-mail</th><th>Situação</th><th>Observação</th><th></th></tr></thead><tbody></tbody></table>
+    </section>
+
+    <section>
       <h2>Funções premium (👑)</h2>
       <p class="dica">“Plano Completo” = só para quem assina ou está no teste. “Desligada” = some para todos. Senha dos pais, emergência e cópia de segurança são sempre grátis.</p>
       <table id="tabelaRecursos"><thead><tr><th>Função</th><th>Plano</th></tr></thead><tbody></tbody></table>
@@ -155,8 +168,8 @@ const mudados = (onde) => [...$(onde).querySelectorAll('[data-k]')].filter((e) =
 
 async function carregar() {
   // lê só o que o painel usa (o resto do banco, como e-mails de clientes, continua fechado)
-  const [l, ps] = await Promise.all([get(ref(db, 'limitações')), get(ref(db, 'appConfig/planSelection'))]);
-  atual = { 'limitações': l.val() || {}, appConfig: { planSelection: ps.val() || {} } };
+  const [snapLim, snapPlanos] = await Promise.all([get(ref(db, 'limitações')), get(ref(db, 'appConfig/planSelection'))]);
+  atual = { 'limitações': snapLim.val() || {}, appConfig: { planSelection: snapPlanos.val() || {} } };
   const lim = atual['limitações'] || {};
   const rot = lim.rotina || {};
   $('gradeRotina').innerHTML = '';
@@ -249,6 +262,56 @@ $('salvarPlanos').onclick = async () => {
   try { await update(ref(db), upd); toast('Planos salvos!'); await carregar(); } catch (e) { toast('Não salvou: ' + e.message); }
 };
 
+
+// ------------------------------------------------------------------ ACESSOS POR E-MAIL
+// Para acrescentar uma opção nova no futuro, é só pôr mais uma linha aqui (e o app ler o "tipo").
+const TIPOS_ACESSO = [
+  { id: 'vitalicio', nome: '👑 Dar Vitalício (presente)', ajuda: 'Libera o Plano Completo para sempre. Funciona também no app antigo.' },
+  { id: 'teste', nome: '🎁 Teste premium por X dias', ajuda: 'Libera tudo pelos dias escolhidos. Depois volta ao grátis.' },
+  { id: 'gratis', nome: '🔓 Deixar limitado (grátis)', ajuda: 'Fica só com o plano grátis, mesmo que tenha acesso liberado à mão.' },
+  { id: 'bloqueado', nome: '⛔ Bloquear', ajuda: 'Tira todas as funções premium e o teste. A criança continua falando (nunca perde a voz).' },
+  { id: 'remover', nome: '↩️ Voltar ao normal', ajuda: 'Tira o que foi dado aqui. A pessoa volta a seguir o que pagou (Google Play / Kiwify).' },
+];
+const chaveEmail = (e) => e.trim().toLowerCase().replace(/[.#$/\[\]]/g, ',');
+const emailOk = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+$('acTipo').innerHTML = TIPOS_ACESSO.map((t) => `<option value="${t.id}">${t.nome}</option>`).join('');
+const ajudaTipo = () => { const t = TIPOS_ACESSO.find((x) => x.id === $('acTipo').value); $('acAjuda').textContent = t ? t.ajuda : ''; $('acDiasCampo').style.display = $('acTipo').value === 'teste' ? '' : 'none'; };
+$('acTipo').onchange = ajudaTipo; ajudaTipo();
+const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+async function carregarAcessos() {
+  const [mg, cu] = await Promise.all([get(ref(db, 'manualAccessGrants')), get(ref(db, 'controleUsuarios'))]);
+  const linhas = {};
+  for (const [k, v] of Object.entries(mg.val() || {})) { const email = (v && v.email) || k.replace(/,/g, '.'); if (v && v.active !== false) linhas[k] = { email, sit: '👑 Vitalício', nota: v.nota || '' }; }
+  for (const [k, v] of Object.entries(cu.val() || {})) {
+    if (!v || !v.tipo) continue;
+    const sit = v.tipo === 'bloqueado' ? '⛔ Bloqueado' : v.tipo === 'gratis' ? '🔓 Limitado (grátis)' : v.tipo === 'teste' ? `🎁 Teste até ${new Date((v.inicio || 0) + (v.dias || 0) * 86400000).toLocaleDateString('pt-BR')}` : v.tipo;
+    linhas[k] = { email: v.email || k.replace(/,/g, '.'), sit: linhas[k] ? linhas[k].sit + ' + ' + sit : sit, nota: v.nota || (linhas[k] && linhas[k].nota) || '' };
+  }
+  const tb = $('tabelaAcessos').querySelector('tbody');
+  tb.innerHTML = Object.entries(linhas).map(([k, l]) => `<tr><td>${esc(l.email)}</td><td>${esc(l.sit)}</td><td>${esc(l.nota)}</td><td><button class="sec" data-email="${esc(l.email)}">Mudar</button></td></tr>`).join('') || '<tr><td colspan="4">Ninguém ainda.</td></tr>';
+  tb.querySelectorAll('button[data-email]').forEach((b) => (b.onclick = () => { $('acEmail').value = b.dataset.email; $('acEmail').focus(); }));
+}
+
+$('salvarAcesso').onclick = async () => {
+  const email = $('acEmail').value.trim().toLowerCase();
+  if (!emailOk(email)) return toast('Confira o e-mail.');
+  const tipo = $('acTipo').value; const k = chaveEmail(email); const nota = $('acNota').value.trim().slice(0, 120);
+  const dias = Math.max(1, Math.min(365, Math.round(Number($('acDias').value) || 30)));
+  const upd = {};
+  if (tipo === 'vitalicio') { upd[`manualAccessGrants/${k}`] = { email, active: true, source: 'painel_vitalicio', nota, em: Date.now() }; upd[`controleUsuarios/${k}`] = null; }
+  if (tipo === 'teste') { upd[`controleUsuarios/${k}`] = { email, tipo: 'teste', inicio: Date.now(), dias, nota }; }
+  if (tipo === 'gratis' || tipo === 'bloqueado') { upd[`controleUsuarios/${k}`] = { email, tipo, nota, em: Date.now() }; upd[`manualAccessGrants/${k}/active`] = false; }
+  if (tipo === 'remover') { upd[`controleUsuarios/${k}`] = null; upd[`manualAccessGrants/${k}/active`] = false; }
+  const t = TIPOS_ACESSO.find((x) => x.id === tipo);
+  if (!confirmar(`${t.nome}\nE-mail: ${email}${tipo === 'teste' ? `\nDias: ${dias}` : ''}`)) return;
+  try {
+    // "active: false" só existe se a pessoa já estava na lista; senão não cria nada
+    if ((tipo === 'gratis' || tipo === 'bloqueado' || tipo === 'remover') && !(await get(ref(db, `manualAccessGrants/${k}`))).exists()) delete upd[`manualAccessGrants/${k}/active`];
+    await update(ref(db), upd); toast('Feito! Vale na próxima vez que o app abrir.'); $('acEmail').value = ''; $('acNota').value = ''; await carregarAcessos();
+  } catch (e) { toast('Não salvou: ' + e.message); }
+};
+
 $('btnEntrar').onclick = async () => {
   try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { $('quem').textContent = 'Não entrou: ' + e.message; }
 };
@@ -258,7 +321,7 @@ onAuthStateChanged(auth, async (u) => {
   $('quem').textContent = `Entrou como ${u.email}.`;
   $('btnEntrar').classList.add('oculto');
   $('tudo').classList.remove('oculto');
-  try { await carregar(); } catch (e) { $('quem').innerHTML = `<span class="erro">Não consegui ler o Firebase: ${e.message}</span>`; }
+  try { await carregar(); await carregarAcessos(); } catch (e) { $('quem').innerHTML = `<span class="erro">Não consegui ler o Firebase: ${e.message}</span>`; }
 });
 </script>
 </body>

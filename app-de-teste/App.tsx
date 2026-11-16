@@ -15,6 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CHAVE_ARMAZENAMENTO, lerLimitesFirebase } from './src/rotina-amiga';
 import { estadoDemo } from './demo/dados';
 import { AvisoFimTeste, usePremiumDemo } from './demo/premium';
+import { ContaProvider, useConta } from './demo/contaUI';
+import { limitesDoFirebase } from './src/rotina-amiga/logica/plano';
 import { avisoFimTeste } from './src/rotina-amiga/v14/premium';
 
 // No celular: começa com dados de exemplo (histórico) para dar para ver relatórios e conquistas.
@@ -36,7 +38,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <VozProvider>
-        <ComRotina />
+        <ContaProvider>
+          <ComRotina />
+        </ContaProvider>
       </VozProvider>
     </SafeAreaProvider>
   );
@@ -162,6 +166,13 @@ function ComRotina() {
   const inicial = React.useMemo(() => estadoDemo(CENARIO), []);
   // v14.8: teste premium grátis (30 dias, sem cartão). No app real o início fica no servidor (users/{uid}.testePremium).
   const pm = usePremiumDemo();
+  const conta = useConta();
+  // quem veio do app antigo: pede UMA vez para entrar de novo (assim o plano pago continua)
+  React.useEffect(() => {
+    if (!conta.pronto || conta.usuario || !s.defs.migradoV24 || s.defs.pediuEntrarV24) return;
+    conta.abrirEntrar('Bem-vindo à nova versão! 💙 Suas pranchas já estão aqui. Para manter o seu plano, entre com o mesmo e-mail que você usava.');
+    mudar((x) => ({ ...x, defs: { ...x.defs, pediuEntrarV24: true } }));
+  }, [conta.pronto, conta.usuario, s.defs.migradoV24]); // eslint-disable-line react-hooks/exhaustive-deps
   const teste = pm.teste, pagou = pm.pago, premium = pm.premium;
   const [avisoTeste, setAvisoTeste] = React.useState<number>();
   // aviso "vai travar" faltando 5, 3 e 1 dia (uma vez cada)
@@ -176,12 +187,12 @@ function ComRotina() {
   return (
     <RotinaAmigaProvider idioma={params.get('idioma') || s.defs.idioma} estadoInicial={TELA ? inicial : undefined} armazenamento={armazenamentoDemo}
       falar={(t) => falarTexto(t, s.defs)} salvarImagem={(u) => reduzirImagem(u)}
-      assinante={premium /* assinante OU teste premium ativo */} limitesFirebase={LIMITES_TESTE} testePremium={ofertaTeste}
+      assinante={premium /* assinante OU teste premium ativo */} limitesFirebase={LIMITES_TESTE ?? limitesDoFirebase(conta.remoto.rotina, conta.remoto.porData, s.defs.inicioUso ?? Date.now())} testePremium={ofertaTeste}
       abrirPlanos={() => irParaTour.planos()}
       abasVoz={s.abas.map((a) => ({ id: a.id, nome: a.nome }))}
       abrirAbaVoz={(id) => irParaTour.aba(id)}
       imprimirHtml={ponte.AndroidTTS ? undefined : imprimirNoNavegador}
-      hostV14={hostV14} recursosFirebase={RECURSOS_TESTE}
+      hostV14={hostV14} recursosFirebase={RECURSOS_TESTE ?? conta.remoto.recursos}
       tourIrPara={(t) => irParaTour.atual(t)} abrirLink={(u) => abrirLink(u)} compartilhar={(t) => { const p = ponteVoz() as { compartilhar?: (x: string) => void } | undefined; if (p?.compartilhar) p.compartilhar(t); else compartilharNaWeb(t); }}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <Raiz />
