@@ -1,11 +1,11 @@
 plugins { id("com.android.application"); id("org.jetbrains.kotlin.android") }
 android {
   namespace = "com.vozamiga.rotinateste"
-  compileSdk = 34
+  compileSdk = 36
   defaultConfig {
     // APK de TESTE: pacote diferente do app da loja (com.vozamiga), instala AO LADO dele
     applicationId = System.getenv("APP_ID") ?: "com.vozamiga.rotinateste"
-    minSdk = 24; targetSdk = 34
+    minSdk = 24; targetSdk = 36
     versionCode = (System.getenv("VERSAO_CODIGO") ?: "148").toInt()
     versionName = System.getenv("VERSAO_NOME") ?: "14.8-teste"
     manifestPlaceholders["nomeApp"] = System.getenv("NOME_APP") ?: "Voz Amiga TESTE"
