@@ -88,7 +88,13 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
       .addPathHandler("/arquivos/", WebViewAssetLoader.InternalStoragePathHandler(this, filesDir))
       .addPathHandler("/", WebViewAssetLoader.AssetsPathHandler(this)).build()
     web = WebView(this)
+    web.setBackgroundColor(android.graphics.Color.WHITE)
     setContentView(web)
+    // Android 15+: a tela vai até a borda; o app fica dentro das barras do celular (e sobe com o teclado)
+    androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(web) { v, ins ->
+      val b = ins.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars() or androidx.core.view.WindowInsetsCompat.Type.ime() or androidx.core.view.WindowInsetsCompat.Type.displayCutout())
+      v.setPadding(b.left, b.top, b.right, b.bottom); ins
+    }
     web.settings.apply {
       javaScriptEnabled = true; domStorageEnabled = true; databaseEnabled = true
       mediaPlaybackRequiresUserGesture = false

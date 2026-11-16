@@ -27,7 +27,7 @@ adb install -r -g "$APK" 2>&1 | tee -a "$OUT/steps.log"
 adb logcat -c
 log "launching $PKG"
 adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1
-sleep 25
+sleep 30
 shot launch
 if [ -f "$STEPS" ]; then
   while IFS= read -r line || [ -n "$line" ]; do
