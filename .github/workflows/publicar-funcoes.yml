@@ -1,0 +1,20 @@
+name: Publicar funcoes novas (teste premium e sabado)
+on: workflow_dispatch
+jobs:
+  funcoes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: cd servidor/functions && npm install --omit=dev
+      - name: Publicar so as 3 funcoes novas (as antigas nao sao tocadas)
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$SA" ]; then echo "::error::Falta o segredo"; exit 1; fi
+          echo "$SA" > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          npx -y firebase-tools@13 deploy --only functions:v148:iniciarTestePremium,functions:v148:adiarRenovacoesSabado,functions:v148:notificacaoPlay --project voz-amiga-651a5 --non-interactive --force 2>&1 | tee "$RUNNER_TEMP/log.txt" || true
+          rm -f "$RUNNER_TEMP/sa.json"
+          grep -q "Deploy complete" "$RUNNER_TEMP/log.txt"

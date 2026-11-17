@@ -1,14 +1,44 @@
 {
   "hosting": {
     "public": "painel",
-    "ignore": ["REGRAS-PAINEL.md", "**/.*"],
+    "ignore": [
+      "REGRAS-PAINEL.md",
+      "**/.*"
+    ],
     "headers": [
-      { "source": "**", "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "no-referrer" },
-        { "key": "Cache-Control", "value": "no-cache" }
-      ] }
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Robots-Tag",
+            "value": "noindex, nofollow"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "DENY"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "no-referrer"
+          },
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      }
     ]
-  }
+  },
+  "functions": [
+    {
+      "source": "servidor/functions",
+      "codebase": "v148",
+      "ignore": [
+        "node_modules",
+        "teste.js",
+        "janela-para-teste.js",
+        ".*"
+      ]
+    }
+  ]
 }
