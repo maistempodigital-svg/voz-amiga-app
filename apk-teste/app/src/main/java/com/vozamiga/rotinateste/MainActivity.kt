@@ -189,8 +189,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
       conectar {
         val t = if (tipo == "inapp") BillingClient.ProductType.INAPP else BillingClient.ProductType.SUBS
         val q = QueryProductDetailsParams.newBuilder().setProductList(listOf(QueryProductDetailsParams.Product.newBuilder().setProductId(produto).setProductType(t).build())).build()
-        billing?.queryProductDetailsAsync(q) { r, lista ->
-          val d = lista.firstOrNull()
+        billing?.queryProductDetailsAsync(q) { r, resultado ->
+          val d = resultado.productDetailsList.firstOrNull()
           if (r.responseCode != BillingClient.BillingResponseCode.OK || d == null) { avisarCompra(JSONObject().put("estado", "erro").put("motivo", "produto-nao-encontrado")); return@queryProductDetailsAsync }
           val p = BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(d)
           d.subscriptionOfferDetails?.firstOrNull()?.offerToken?.let { p.setOfferToken(it) }
