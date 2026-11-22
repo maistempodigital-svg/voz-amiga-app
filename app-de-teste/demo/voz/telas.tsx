@@ -18,7 +18,7 @@ import { sugerirBotaoIA } from '../../src/rotina-amiga/v14/ia';
 import { precisaLembrete, TEXTO_LEMBRETE } from '../../src/rotina-amiga/v14/pais';
 import { chaveDia } from '../../src/rotina-amiga/logica/tempo';
 import {
-  abrirLink, BANCO, BotaoCor, Cab, CartaoDef, Deslizar, escolherArquivo, Estado, falarTexto, Lista, listarVozes, novoId, PACOTES, PranchaVoz, ponte, reduzirImagem, tema, TEMAS, useGravador, useVoz, categoriaAuto, buscarPictoArasaac } from './base';
+  abrirLink, BANCO, BotaoCor, Cab, CartaoDef, Deslizar, escolherArquivo, Estado, falarTexto, Lista, listarVozes, novoId, PACOTES, PranchaVoz, ponte, reduzirImagem, tema, TEMAS, useGravador, useVoz, apagarDadosDoCelular, categoriaAuto, buscarPictoArasaac } from './base';
 
 export type TelaVoz =
   | { n: 'home' } | { n: 'ajustes' } | { n: 'criar'; id?: string; abaId?: string; foto?: boolean } | { n: 'abas' } | { n: 'pacotes' }
@@ -61,6 +61,7 @@ function Linha({ titulo, sub, icone, cor, claro, borda, onPress, vermelho }: { t
 export function AjustesVoz({ ir, casa }: Nav) {
   const { s, mudar, toast } = useVoz();
   const conta = useConta();
+  const [apagar, setApagar] = useState(0);
   const novos = useItensAjustesRotina(); // ROTINA AMIGA (o relatório unificado fica lá dentro)
   const { recurso, idioma, estado: estR, abrir } = useRotina();
   const hoje = chaveDia(new Date());
@@ -106,8 +107,22 @@ export function AjustesVoz({ ir, casa }: Nav) {
         <AlvoTour id="aj_definicoes"><Linha titulo="DEFINIÇÕES" icone="sliders" cor="#0F172A" claro="#FFFFFF" borda="#CBD5E1" onPress={() => ir({ n: 'definicoes' })} /></AlvoTour>
         <Linha titulo="SUPORTE (SEG-SEX 08H-16H)" icone="mail" cor="#059669" claro="#ECFDF5" borda="#34D399" onPress={() => abrirLink('mailto:grupoamigapp@gmail.com')} />
         <Linha titulo="CONHEÇA NOSSO INSTAGRAM!" icone="instagram" cor="#4F46E5" claro="#EEF2FF" borda="#818CF8" onPress={() => abrirLink('https://www.instagram.com/appvoz_amiga/')} />
+        <Linha titulo="APAGAR DADOS DESTE CELULAR" sub="pranchas, rotina e ajustes" icone="trash-2" cor="#B45309" claro="#FFFBEB" borda="#FCD34D" onPress={() => setApagar(1)} />
         <Linha titulo="SAIR DA CONTA" sub={conta.usuario?.email || undefined} icone="log-out" cor="#DC2626" claro="#FFF5F5" borda="#FECACA" vermelho onPress={() => setSair(true)} />
       </RolagemTour>
+      <Modal visible={apagar > 0} transparent animationType="fade" onRequestClose={() => setApagar(0)}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(15,23,42,0.5)', justifyContent: 'center', padding: 24 }}>
+          <View accessibilityLabel="apagar dados" style={{ backgroundColor: '#fff', borderRadius: 20, padding: 18 }}>
+            <Text style={{ fontSize: 17, fontWeight: '900', color: '#0F172A' }}>{apagar === 1 ? 'Apagar os dados deste celular?' : 'Tem certeza? Não dá para desfazer.'}</Text>
+            <Text style={{ fontSize: 13, color: '#475569', marginTop: 6 }}>Apaga deste celular as pranchas criadas, as abas, a rotina, as estrelas e os ajustes. O app volta como novo.{'\n\n'}Isto é diferente de "Sair da conta": a sua conta e o seu plano NÃO são apagados. Dica: antes, faça um backup em Ajustes.</Text>
+            <View style={{ flexDirection: 'row', marginTop: 14 }}>
+              <BotaoCor titulo="Cancelar" cor="#E2E8F0" texto="#334155" flex onPress={() => setApagar(0)} />
+              <View style={{ width: 8 }} />
+              <BotaoCor titulo={apagar === 1 ? 'Apagar' : 'Sim, apagar tudo'} cor="#DC2626" flex onPress={() => { if (apagar === 1) setApagar(2); else apagarDadosDoCelular(); }} />
+            </View>
+          </View>
+        </View>
+      </Modal>
       <Modal visible={sair} transparent animationType="fade" onRequestClose={() => setSair(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(15,23,42,0.5)', justifyContent: 'center', padding: 24 }}>
           <View style={{ backgroundColor: '#fff', borderRadius: 20, padding: 18 }}>

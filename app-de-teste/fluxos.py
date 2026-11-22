@@ -404,6 +404,7 @@ try:
     def g14(pg):
         # instalação nova: pede login primeiro (com Firebase) e, sem Firebase, começa sem "Tarefa de teste" e com o tour
         pg.goto(U + 'index.html'); pg.evaluate('localStorage.clear()'); pg.reload()
+        pg.get_by_label('escolher idioma').wait_for(timeout=20000); pg.get_by_role('button', name='Continuar').click()
         pg.get_by_text('Entrar na conta').wait_for(timeout=20000)
         assert pg.get_by_text('Agora não').count() == 0, 'login da abertura não pode ser pulado'
         pg.goto(U + 'index.html?semFirebase=1'); pg.evaluate('localStorage.clear()'); pg.reload()

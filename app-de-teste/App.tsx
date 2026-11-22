@@ -17,6 +17,7 @@ import { estadoDemo } from './demo/dados';
 import { estadoPadrao, modelosRotina } from './src/rotina-amiga/padroes';
 import { AvisoFimTeste, usePremiumDemo } from './demo/premium';
 import { ContaProvider, useConta } from './demo/contaUI';
+import { BoasVindas } from './demo/boasVindas';
 import { limitesDoFirebase } from './src/rotina-amiga/logica/plano';
 import { avisoFimTeste } from './src/rotina-amiga/v14/premium';
 
@@ -186,9 +187,13 @@ function ComRotina() {
     mudar((x) => ({ ...x, defs: { ...x.defs, avisosTeste: [...(x.defs.avisosTeste || []), d] } }));
   }, [teste.fase, teste.fase === 'ativo' ? teste.diasRestantes : 0]); // eslint-disable-line react-hooks/exhaustive-deps
   const ofertaTeste = { podeOferecer: pm.podeTestar, dias: pm.dias, iniciar: pm.iniciar };
+  // depois do login: telas de boas-vindas (como funciona + recomendações + convite do plano). Só uma vez.
+  const semFb = !!TELA || params.has('semFirebase');
+  const verBoasVindas = TELA === 'boasVindas' ? !s.defs.boasVindasVista : !semFb && !!conta.usuario && !conta.precisaIdioma && !s.defs.boasVindasVista; // ?tela=boasVindas só nos testes
+  const primeiraAbertura = !semFb && (conta.precisaIdioma || conta.precisaEntrar || !conta.pronto || verBoasVindas);
   return (
     <RotinaAmigaProvider idioma={params.get('idioma') || s.defs.idioma} estadoInicial={TELA ? inicial : undefined} armazenamento={armazenamentoDemo}
-      falar={(t) => falarTexto(t, s.defs)} pararVoz={pararFalaTexto} segurarTour={conta.precisaEntrar || !conta.pronto} salvarImagem={(u) => reduzirImagem(u)}
+      falar={(t) => falarTexto(t, s.defs)} pararVoz={pararFalaTexto} segurarTour={primeiraAbertura} salvarImagem={(u) => reduzirImagem(u)}
       assinante={premium /* assinante OU teste premium ativo */} limitesFirebase={LIMITES_TESTE ?? limitesDoFirebase(conta.remoto.rotina, conta.remoto.porData, s.defs.inicioUso ?? Date.now())} testePremium={ofertaTeste}
       abrirPlanos={() => irParaTour.planos()}
       abasVoz={s.abas.map((a) => ({ id: a.id, nome: a.nome }))}
@@ -200,9 +205,17 @@ function ComRotina() {
       <Raiz />
       <RotinaTelas />
       <Aviso />
+      {verBoasVindas ? <BoasVindasNaRotina idioma={s.defs.idioma} pago={pagou} podeTestar={pm.podeTestar} dias={pm.dias}
+        fim={() => mudar((x) => ({ ...x, defs: { ...x.defs, boasVindasVista: true } }))} verPlanos={() => irParaTour.planos()} testar={() => pm.iniciar()} /> : null}
       {avisoTeste !== undefined ? <AvisoFimTeste dias={avisoTeste} idioma={s.defs.idioma} fechar={() => setAvisoTeste(undefined)} irPlano={() => { setAvisoTeste(undefined); irParaTour.planos(); }} /> : null}
     </RotinaAmigaProvider>
   );
+}
+
+/** Boas-vindas dentro da rotina: se escolher "ver planos", o tour não puxa a pessoa de volta (fica para Ajustes › Tour). */
+function BoasVindasNaRotina(p: React.ComponentProps<typeof BoasVindas>) {
+  const { mudar } = useRotina();
+  return <BoasVindas {...p} verPlanos={() => { mudar((e) => ({ ...e, config: { ...e.config, tourVisto: true } })); p.verPlanos(); }} />;
 }
 
 const MAPA: Record<string, TelaRotina> = {

@@ -63,7 +63,8 @@ export interface PranchaVoz { id: string; texto: string; abaId: string; emoji?: 
 export interface DefsVoz { idioma: 'pt' | 'en' | 'es'; colunasAuto: boolean; colunas: number; sugestoes: boolean; tecladoAvancado: boolean; bloquearApp: boolean; voz: string; volume: number; /** só no app de teste */ assinanteTeste?: boolean;
   /** v14.8: teste premium (no app real fica no servidor, na conta da família). */ testeInicio?: number; testeDias?: number; avisosTeste?: number[];
   /** v14.8: pranchas que os pais escolheram para ficar no plano grátis */ pranchasFixas?: string[];
-  /** v14.8: quando a família começou a usar (0 = veio do app antigo 1.0.24) e quando migrou */ inicioUso?: number; migradoV24?: number; pediuEntrarV24?: boolean }
+  /** v14.8: quando a família começou a usar (0 = veio do app antigo 1.0.24) e quando migrou */ inicioUso?: number; migradoV24?: number; pediuEntrarV24?: boolean;
+  /** v2.0.2: 1ª abertura — escolheu o idioma e já viu as telas de boas-vindas */ idiomaEscolhido?: boolean; boasVindasVista?: boolean }
 export interface EstadoVoz { abas: AbaVoz[]; pranchas: PranchaVoz[]; defs: DefsVoz; modo: 'normal' | 'editar' | 'excluir'; editarAbas: boolean; seguinte: Record<string, Record<string, number>>;
   /** v14.2: dicas da primeira vez ("comece por aqui" e "segure 3 s") */
   dicas?: { criou?: boolean; toques?: Record<string, number> } }
@@ -175,9 +176,18 @@ interface Ctx {
   msg: string;
   /** v14: muda a cada alteração (backup automático) */
   rev: number;
+  /** já leu o que estava guardado no celular */
+  pronto: boolean;
 }
 const VozCtx = createContext<Ctx | null>(null);
 export const useVoz = () => useContext(VozCtx)!;
+/** Marca deixada pelo "Apagar dados" (para não migrar o app antigo de novo). */
+export const MARCA_APAGOU = 'vozAmiga:apagouDados';
+/** Apagar dados: tudo o que o app guardou NESTE celular (pranchas, rotina, ajustes). A conta e o plano continuam. */
+export function apagarDadosDoCelular() {
+  try { localStorage.clear(); localStorage.setItem(MARCA_APAGOU, '1'); } catch { /* */ }
+  if (typeof window !== 'undefined') window.location.reload();
+}
 
 // ------------------------------------------------------------ ponte com o Android (APK de teste)
 type Ponte = { AndroidTTS?: { speak?: (t: string, l: string) => void; speak2?: (t: string, l: string, v: string, vol: number) => void; vozes?: (l: string) => string; abrirConfigVoz?: () => void; abrirLink?: (u: string) => void; sair?: () => void; travar?: () => void; destravar?: () => void; parar?: () => void } };
@@ -239,7 +249,9 @@ export function VozProvider({ children }: { children: React.ReactNode }) {
     AsyncStorage.getItem(CHAVE).then(async (t) => {
       if (t) { try { setS(migrarVoz({ ...estadoVozPadrao(), ...JSON.parse(t) })); } catch { /* */ } setPronto(true); return; }
       // 1ª abertura: o celular tinha o Voz Amiga 1.0.24? Traz tudo (sem apagar o original).
-      const antigo = lerAntigo();
+      // "Apagar dados" nos Ajustes: não traz de novo as pranchas do app antigo
+      let apagou = false; try { apagou = localStorage.getItem(MARCA_APAGOU) === '1'; } catch { /* */ }
+      const antigo = apagou ? null : lerAntigo();
       if (antigo) {
         setMigrando(true);
         try {
@@ -272,7 +284,7 @@ export function VozProvider({ children }: { children: React.ReactNode }) {
       <Text style={{ fontSize: 14, color: '#475569', textAlign: 'center', marginTop: 8 }}>Só leva um instante. Nada do que vocês montaram será perdido.</Text>
     </View>
   );
-  return <VozCtx.Provider value={{ s, mudar, falar, tocar, toast, msg, rev }}>{children}</VozCtx.Provider>;
+  return <VozCtx.Provider value={{ s, mudar, falar, tocar, toast, msg, rev, pronto }}>{children}</VozCtx.Provider>;
 }
 
 // ------------------------------------------------------------ imagens/áudio (WebView)
