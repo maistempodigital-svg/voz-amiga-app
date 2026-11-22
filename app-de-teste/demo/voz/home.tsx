@@ -57,7 +57,7 @@ function Tile({ n, i, c, b, borda, ativo, onPress, segurar, aoTocarCurto, ms = 3
   const cor = ativo ? '#FFFFFF' : c;
   // letra do tamanho certo para a maior palavra caber inteira (nunca quebra "DESCRIÇÃO" no meio)
   const maiorPalavra = Math.max(...n.split(/\s+/).map((w) => w.length), 1);
-  const fs = Math.max(6.5, Math.min(10.5, (largura - 8) / (maiorPalavra * 0.66)));
+  const fs = Math.max(6, Math.min(10.5, (largura - 10) / (maiorPalavra * 0.78)));
   const miolo = (
     <>
       <Feather name={i as never} size={15} color={cor} />
@@ -94,7 +94,7 @@ function CartaoPrancha({ p, t, lado, raio, calma, estilo, destaque, vis, modo, a
       <Animated.View style={{ width: lado, height: lado, borderRadius: estilo === 'quadrado' ? 4 : raio, borderWidth: destaque ? 5 : calma ? 1.5 : borda ? 4 : 2.5, borderBottomWidth: destaque ? 5 : calma ? 1.5 : borda ? 4 : 5, borderColor: corBorda, backgroundColor: fundo, alignItems: 'center', justifyContent: 'center', margin: 4, overflow: 'hidden', transform: [{ scale: destaque && !calma ? 1.06 : esc }] }}>
         {calma ? <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, backgroundColor: `${t.borda}66` }} /> : null}
         {p.imagem ? <Image source={{ uri: p.imagem }} style={{ width: lado * 0.6, height: lado * 0.55, opacity: calma ? 0.9 : 1 }} resizeMode="contain" /> : <Text style={{ fontSize: lado * (calma ? 0.26 : vis.emojiGrande ? 0.34 : 0.28) }}>{p.emoji || '💬'}</Text>}
-        <Text numberOfLines={2} style={{ fontSize: Math.max(10, lado * 0.105), fontWeight: calma ? '700' : '900', marginTop: 4, color: calma ? '#475569' : '#1E293B', textAlign: 'center', paddingHorizontal: 4 }}>{vis.letraMaiuscula ? p.texto.toUpperCase() : p.texto}</Text>
+        <Text numberOfLines={2} style={{ fontSize: fsPrancha(p.texto, lado), fontWeight: calma ? '700' : '900', marginTop: 4, color: calma ? '#475569' : '#1E293B', textAlign: 'center', paddingHorizontal: 4 }}>{vis.letraMaiuscula ? p.texto.toUpperCase() : p.texto}</Text>
         {p.audio ? <View style={{ position: 'absolute', top: 5, left: 5 }}><Feather name="mic" size={12} color={t.borda} /></View> : null}
         {modo !== 'normal' ? <View style={{ position: 'absolute', top: 5, right: 5, width: 22, height: 22, borderRadius: 11, backgroundColor: modo === 'excluir' ? '#E11D48' : '#7E22CE', alignItems: 'center', justifyContent: 'center' }}><Feather name={modo === 'excluir' ? 'trash-2' : 'edit-2'} size={12} color="#fff" /></View> : null}
       </Animated.View>
@@ -368,6 +368,12 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
     </SafeAreaView>
   );
 }
+
+/** Letra do nome da prancha: do tamanho de sempre, mas diminui para a maior palavra caber inteira (nada de "ASSUSTAD/O"). */
+const fsPrancha = (texto: string, lado: number) => {
+  const maior = Math.max(...String(texto).split(/\s+/).map((w) => w.length), 1);
+  return Math.max(8, Math.min(Math.max(10, lado * 0.105), (lado - 14) / (maior * 0.74)));
+};
 
 /** Faixa da versão gratuita: convite para o Plano Completo (some para quem assina). */
 const ANUNCIO_PLANO = { titulo: '👑 Plano Completo', texto: 'Todas as funções liberadas. Segure 5 s para ver os planos.' };
