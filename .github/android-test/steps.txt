@@ -1,5 +1,10 @@
 wait 20
-shot inicio
-expect Entrar na conta
-expect Google
+shot idioma
+expect Português
+tap Continuar
+wait 5
 shot login
+expect Entrar com Google
+tap Entrar com Google
+wait 6
+shot google
