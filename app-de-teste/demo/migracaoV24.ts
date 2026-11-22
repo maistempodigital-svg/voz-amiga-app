@@ -131,3 +131,16 @@ export const temDadosV24 = (chaves: Record<string, string | null | undefined>) =
 /** Pranchas prontas que vieram do app antigo NÃO contam no limite do plano grátis (nunca somem da tela). */
 export const veioProntaV24 = (id: string) => id.startsWith('v24_default:');
 export const contarParaLimite = (pranchas: { id: string }[]) => pranchas.filter((p) => !veioProntaV24(p.id)).length;
+
+/** Instalação nova: as pranchas prontas de sempre (as mesmas do app 1.0.24), nas 4 abas do app novo.
+ *  Têm id "v24_default:…", então NÃO contam no limite do plano grátis. */
+export function pranchasProntas(idioma: Idioma): PranchaMig[] {
+  const mapa: [string, string][] = [['APRENDIZAGEM', 'pessoas'], ['SOCIALIZACAO', 'social'], ['COMUNICACAO', 'descricao'], ['EMOCOES', 'acoes']];
+  const out: PranchaMig[] = []; const vistos = new Set<string>();
+  for (const [cat, aba] of mapa) for (const [texto, emoji] of PADROES_V24[idioma][cat] || []) {
+    const id = `v24_${idPadraoV24(cat, texto)}`.replace(/[^\w:.%-]/g, '_').slice(0, 80);
+    if (vistos.has(id)) continue; vistos.add(id);
+    out.push({ id, texto, emoji, abaId: aba });
+  }
+  return out;
+}

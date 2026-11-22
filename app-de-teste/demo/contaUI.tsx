@@ -8,6 +8,7 @@ import {
 } from './conta';
 import { useVoz } from './voz/base';
 import { TelaIdioma } from './boasVindas';
+import { pranchasProntas } from './migracaoV24';
 
 const BUSCA = typeof window !== 'undefined' && window.location ? window.location.search : '';
 /** Nos testes automáticos (?tela=…) o app não conecta no Firebase. */
@@ -40,7 +41,7 @@ export function ContaProvider({ children }: { children: React.ReactNode }) {
   return (
     <ContaCtx.Provider value={{ usuario, plano, remoto, pronto, abrirEntrar: (m) => setEntrar(m || ''), precisaEntrar, precisaIdioma }}>
       {children}
-      {precisaIdioma ? <TelaIdioma atual={idioma} escolher={(l) => voz.mudar((x) => ({ ...x, defs: { ...x.defs, idioma: l, idiomaEscolhido: true } }))} />
+      {precisaIdioma ? <TelaIdioma atual={idioma} escolher={(l) => voz.mudar((x) => ({ ...x, pranchas: x.pranchas.length || x.defs.migradoV24 ? x.pranchas : pranchasProntas(l), defs: { ...x.defs, idioma: l, idiomaEscolhido: true } }))} />
         : precisaEntrar ? <TelaEntrar obrigatorio idioma={idioma} motivo={TX[idioma].bemVindo} fechar={() => undefined} />
         : entrar !== undefined ? <TelaEntrar idioma={idioma} motivo={entrar} fechar={() => setEntrar(undefined)} /> : null}
     </ContaCtx.Provider>

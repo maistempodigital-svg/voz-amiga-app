@@ -1,10 +1,6 @@
 wait 20
 shot idioma
-expect Português
 tap Continuar
 wait 5
 shot login
 expect Entrar com Google
-tap Entrar com Google
-wait 6
-shot google

@@ -118,7 +118,9 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     setContentView(moldura)
     androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(moldura) { v, ins ->
       val b = ins.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars() or androidx.core.view.WindowInsetsCompat.Type.ime() or androidx.core.view.WindowInsetsCompat.Type.displayCutout())
-      v.setPadding(b.left, b.top, b.right, b.bottom); ins
+      v.setPadding(b.left, b.top, b.right, b.bottom)
+      // a moldura já deu o espaço das barras: a página NÃO recebe de novo (senão sobra espaço em cima e embaixo)
+      androidx.core.view.WindowInsetsCompat.CONSUMED
     }
     web.settings.apply {
       javaScriptEnabled = true; domStorageEnabled = true; databaseEnabled = true
