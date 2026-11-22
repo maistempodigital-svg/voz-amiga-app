@@ -37,6 +37,7 @@ if [ -f "$STEPS" ]; then
     case "$cmd" in
       tap) xy="$(find_xy "$arg")"; if [ -n "$xy" ]; then adb shell input tap $xy; log "tap '$arg' at $xy"; sleep 3; else log "FAIL: element '$arg' not found"; shot "missing"; fi ;;
       hold) xy="$(find_xy "$arg")"; if [ -n "$xy" ]; then set -- $xy; adb shell input swipe $1 $2 $1 $2 3500; log "hold '$arg'"; sleep 3; else log "FAIL: element '$arg' not found"; shot "missing"; fi ;;
+      abrircom) adb shell am force-stop "$PKG"; adb shell am start -n "$PKG/com.vozamiga.rotinateste.MainActivity" --es q "$arg" >/dev/null 2>&1 </dev/null; log "abrir com ?$arg"; sleep 25 ;;
       tapxy) adb shell input tap $arg; log "tap $arg"; sleep 2 ;;
       back) adb shell input keyevent KEYCODE_BACK; log "back"; sleep 2 ;;
       scroll) adb shell input swipe 540 1600 540 600 300; log "scroll"; sleep 2 ;;

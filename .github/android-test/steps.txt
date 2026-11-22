@@ -4,3 +4,8 @@ tap Continuar
 wait 5
 shot login
 expect Entrar com Google
+abrircom semFirebase=1
+shot inicio
+tap Pular tour
+wait 3
+shot home

@@ -151,7 +151,10 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
       }
     }
     web.addJavascriptInterface(Ponte(), "AndroidTTS")
-    if (savedInstanceState == null) web.loadUrl("https://appassets.androidplatform.net/index.html") else web.restoreState(savedInstanceState)
+    // só no APK de TESTE (debug): o celular virtual pode abrir com ?semFirebase=1 para fotografar a tela inicial
+    val depura = (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+    val q = if (depura) intent?.getStringExtra("q")?.takeIf { it.matches(Regex("[A-Za-z0-9=&]{1,60}")) } else null
+    if (savedInstanceState == null) web.loadUrl("https://appassets.androidplatform.net/index.html" + (if (q != null) "?$q" else "")) else web.restoreState(savedInstanceState)
   }
 
   override fun onSaveInstanceState(out: Bundle) { super.onSaveInstanceState(out); web.saveState(out) }
