@@ -69,7 +69,7 @@ export const criarConta = (email: string, senha: string) => createUserWithEmailA
 export const esqueciSenha = (email: string) => sendPasswordResetEmail(auth(), email.trim());
 export const sair = () => signOut(auth());
 
-type PonteConta = { entrarGoogle?: () => void; comprar?: (produto: string, tipo: string) => void; confirmarCompra?: (token: string) => void };
+type PonteConta = { entrarGoogle?: () => void; comprar?: (produto: string, tipo: string) => void; confirmarCompra?: (token: string) => void; restaurarCompras?: () => void; precos?: (ids: string) => void };
 const ponte = (): PonteConta | undefined => (typeof window !== 'undefined' ? (window as unknown as { AndroidTTS?: PonteConta }).AndroidTTS : undefined);
 export const temGoogleNativo = () => !!ponte()?.entrarGoogle;
 export const temCompraNativa = () => !!ponte()?.comprar;
@@ -94,6 +94,7 @@ export function acompanharConta(mudou: (u: User | null, plano: PlanoServidor | u
     mudou(u, undefined);
     // pede ao servidor para recalcular o acesso (o app antigo faz o mesmo ao entrar)
     httpsCallable(getFunctions(app(), 'us-central1'), 'syncUserAccess')({}).catch(() => undefined);
+    restaurarComprasPlay();
     let doUsuario: PlanoServidor | undefined;
     let doPainel: Partial<PlanoServidor> = {};
     const avisar = () => mudou(u, doUsuario ? { ...doUsuario, ...doPainel } : Object.keys(doPainel).length ? { hasAccess: false, ...doPainel } : undefined);
@@ -150,4 +151,34 @@ export const comprar = (produto: string, tipo: 'subs' | 'inapp') => new Promise<
     } catch (e) { erro(e); }
   };
   try { p.comprar(produto, tipo); } catch (e) { erro(e); }
+});
+
+/**
+ * Restaurar compras: ao entrar na conta, o celular pergunta ao Google Play o que esta conta Google já comprou
+ * (vitalício antigo, assinatura ativa) e manda para o servidor conferir e liberar (verifyGooglePlayPurchase).
+ */
+export function restaurarComprasPlay() {
+  const p = ponte();
+  if (!p?.restaurarCompras || typeof window === 'undefined') return;
+  const vistos = new Set<string>();
+  (window as unknown as Record<string, unknown>).__vozRestaurar = async (txt: string) => {
+    let r: { produto?: string; token?: string; tipo?: string } = {};
+    try { r = JSON.parse(txt); } catch { return; }
+    if (!r.token || !r.produto || vistos.has(r.token) || !auth().currentUser) return;
+    vistos.add(r.token);
+    try {
+      await httpsCallable(getFunctions(app(), 'us-central1'), 'verifyGooglePlayPurchase')({ productId: r.produto, purchaseToken: r.token, productType: r.tipo === 'inapp' ? 'inapp' : 'subscription' });
+      try { p.confirmarCompra?.(r.token); } catch { /* */ }
+    } catch { /* o servidor tenta de novo na próxima abertura */ }
+  };
+  try { p.restaurarCompras(); } catch { /* */ }
+}
+
+/** Preços reais da Play Store, na moeda do cliente (ex.: { voz_amiga_monthly: "R$ 19,90" }). */
+export const lerPrecos = (ids: string[]) => new Promise<Record<string, string>>((ok) => {
+  const p = ponte();
+  if (!p?.precos || typeof window === 'undefined') { ok({}); return; }
+  const h = setTimeout(() => ok({}), 8000);
+  (window as unknown as Record<string, unknown>).__vozPrecos = (txt: string) => { clearTimeout(h); try { ok(JSON.parse(txt)); } catch { ok({}); } };
+  try { p.precos(JSON.stringify(ids)); } catch { clearTimeout(h); ok({}); }
 });

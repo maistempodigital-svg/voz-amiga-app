@@ -55,10 +55,13 @@ function Tile({ n, i, c, b, borda, ativo, onPress, segurar, aoTocarCurto, ms = 3
 }) {
   const estilo = { width: largura, height: ALT, borderRadius: 10, borderWidth: ativo ? 1.6 : 1.2, borderColor: borda || c, backgroundColor: ativo ? c : b };
   const cor = ativo ? '#FFFFFF' : c;
+  // letra do tamanho certo para a maior palavra caber inteira (nunca quebra "DESCRIÇÃO" no meio)
+  const maiorPalavra = Math.max(...n.split(/\s+/).map((w) => w.length), 1);
+  const fs = Math.max(6.5, Math.min(10.5, (largura - 8) / (maiorPalavra * 0.66)));
   const miolo = (
     <>
       <Feather name={i as never} size={15} color={cor} />
-      <Text numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.75} style={{ fontSize: 8.5, lineHeight: 10, fontWeight: '900', color: cor, marginTop: 4, textAlign: 'center', paddingHorizontal: 2 }}>{n}</Text>
+      <Text numberOfLines={2} style={{ fontSize: fs, lineHeight: Math.round(fs * 1.18), fontWeight: '900', color: cor, marginTop: 4, textAlign: 'center', paddingHorizontal: 2 }}>{n}</Text>
       {lapis ? <View style={{ position: 'absolute', top: 2, right: 2, width: 14, height: 14, borderRadius: 7, backgroundColor: '#7E22CE', alignItems: 'center', justifyContent: 'center' }}><Feather name="edit-2" size={8} color="#fff" /></View> : null}
     </>
   );
@@ -344,7 +347,7 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
       {/* NOVO (Rotina Amiga): área dos anúncios — próxima etapa da rotina; sem etapa, o anúncio */}
       {/* versão gratuita: anúncio (fictício no teste) que só abre segurando 5 s; assinante não vê */}
       {/* tela calma: sem anúncio piscando */}
-      <ProximoPasso anuncio={calma ? undefined : <AnuncioProtegido anuncio={ANUNCIO_TESTE} aoAbrir={() => toast('Abrindo o anúncio de exemplo…')} />} />
+      <ProximoPasso anuncio={calma ? undefined : <AnuncioProtegido anuncio={ANUNCIO_PLANO} aoAbrir={() => adulto(() => ir({ n: 'assinatura' } as TelaVoz), 'Planos')} />} />
 
       <TecladoAmigo visivel={teclado} fechar={() => setTeclado(false)} avancado={s.defs.tecladoAvancado} sugestoes={s.defs.sugestoes} vocab={vocab}
         aoFalar={(texto, ws) => { falar(texto); registrarFala(ws); lembrar(ws); }} />
@@ -366,5 +369,5 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
   );
 }
 
-/** Anúncio de exemplo (no app real vem do Firebase: anuncio/1 → imagem, link, openplan). */
-const ANUNCIO_TESTE = { titulo: 'Anúncio de exemplo', texto: 'Aqui aparece o anúncio da versão gratuita. Segure 5 s para abrir.' };
+/** Faixa da versão gratuita: convite para o Plano Completo (some para quem assina). */
+const ANUNCIO_PLANO = { titulo: '👑 Plano Completo', texto: 'Todas as funções liberadas. Segure 5 s para ver os planos.' };

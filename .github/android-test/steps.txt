@@ -1,6 +1,5 @@
-wait 15
+wait 20
 shot inicio
-expect CRIAR PRANCHA
-tap Agora
-wait 3
-shot depois
+expect Entrar na conta
+expect Google
+shot login

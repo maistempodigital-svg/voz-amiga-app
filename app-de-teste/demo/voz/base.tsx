@@ -180,7 +180,7 @@ const VozCtx = createContext<Ctx | null>(null);
 export const useVoz = () => useContext(VozCtx)!;
 
 // ------------------------------------------------------------ ponte com o Android (APK de teste)
-type Ponte = { AndroidTTS?: { speak?: (t: string, l: string) => void; speak2?: (t: string, l: string, v: string, vol: number) => void; vozes?: (l: string) => string; abrirConfigVoz?: () => void; abrirLink?: (u: string) => void; sair?: () => void; travar?: () => void; destravar?: () => void } };
+type Ponte = { AndroidTTS?: { speak?: (t: string, l: string) => void; speak2?: (t: string, l: string, v: string, vol: number) => void; vozes?: (l: string) => string; abrirConfigVoz?: () => void; abrirLink?: (u: string) => void; sair?: () => void; travar?: () => void; destravar?: () => void; parar?: () => void } };
 export const ponte = (): Ponte['AndroidTTS'] => (typeof window !== 'undefined' ? (window as unknown as Ponte).AndroidTTS : undefined);
 export const LOCALE = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' } as const;
 
@@ -201,6 +201,13 @@ export const listarVozes = (idioma: DefsVoz['idioma']): string[] => {
   } catch { /* */ }
   return [];
 };
+
+/** Para qualquer fala na hora (celular ou navegador). */
+export function pararFalaTexto() {
+  const p = ponte();
+  try { if (p?.parar) { p.parar(); return; } } catch { /* */ }
+  try { if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel(); } catch { /* */ }
+}
 
 export function falarTexto(texto: string, d: DefsVoz) {
   if (!texto) return;

@@ -11,8 +11,8 @@ const BUSCA = typeof window !== 'undefined' && window.location ? window.location
 /** Nos testes automáticos (?tela=…) o app não conecta no Firebase. */
 const SEM_FIREBASE = /[?&](tela|semFirebase)=/.test(BUSCA);
 
-interface Ctx { usuario: User | null; plano?: PlanoServidor; remoto: DadosRemotos; pronto: boolean; abrirEntrar: (motivo?: string) => void }
-const ContaCtx = createContext<Ctx>({ usuario: null, remoto: {}, pronto: true, abrirEntrar: () => undefined });
+interface Ctx { usuario: User | null; plano?: PlanoServidor; remoto: DadosRemotos; pronto: boolean; abrirEntrar: (motivo?: string) => void; precisaEntrar: boolean }
+const ContaCtx = createContext<Ctx>({ usuario: null, remoto: {}, pronto: true, abrirEntrar: () => undefined, precisaEntrar: false });
 export const useConta = () => useContext(ContaCtx);
 
 export function ContaProvider({ children }: { children: React.ReactNode }) {
@@ -30,16 +30,19 @@ export function ContaProvider({ children }: { children: React.ReactNode }) {
     });
     return () => { parar(); pararRemoto?.(); };
   }, []);
+  // Login obrigatório: sem conta, o app mostra a tela de entrar (o login fica salvo no celular, funciona sem internet depois)
+  const precisaEntrar = !SEM_FIREBASE && pronto && !usuario;
   return (
-    <ContaCtx.Provider value={{ usuario, plano, remoto, pronto, abrirEntrar: (m) => setEntrar(m || '') }}>
+    <ContaCtx.Provider value={{ usuario, plano, remoto, pronto, abrirEntrar: (m) => setEntrar(m || ''), precisaEntrar }}>
       {children}
-      {entrar !== undefined ? <TelaEntrar motivo={entrar} fechar={() => setEntrar(undefined)} /> : null}
+      {precisaEntrar ? <TelaEntrar obrigatorio motivo={'Bem-vindo ao Voz Amiga! 💙 Entre na sua conta para começar. Se você já usava o app, use o mesmo e-mail: suas pranchas e seu plano continuam.'} fechar={() => undefined} />
+        : entrar !== undefined ? <TelaEntrar motivo={entrar} fechar={() => setEntrar(undefined)} /> : null}
     </ContaCtx.Provider>
   );
 }
 
 /** Entrar na conta: e-mail/senha, criar conta, esqueci a senha e Google. */
-export function TelaEntrar({ motivo, fechar }: { motivo?: string; fechar: () => void }) {
+export function TelaEntrar({ motivo, fechar, obrigatorio }: { motivo?: string; fechar: () => void; obrigatorio?: boolean }) {
   const [modo, setModo] = useState<'entrar' | 'criar'>('entrar');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -54,9 +57,10 @@ export function TelaEntrar({ motivo, fechar }: { motivo?: string; fechar: () => 
   const campo = { marginTop: 8, borderWidth: 1.5, borderColor: '#CBD5E1', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, fontSize: 16, backgroundColor: '#fff' };
   return (
     <Modal transparent visible animationType="fade" onRequestClose={fechar}>
-      <View style={{ flex: 1, backgroundColor: 'rgba(15,23,42,0.55)', justifyContent: 'center', padding: 16 }}>
+      <View style={{ flex: 1, backgroundColor: obrigatorio ? '#EFF6FF' : 'rgba(15,23,42,0.55)', justifyContent: 'center', padding: 16 }}>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
           <View accessibilityLabel="entrar na conta" style={{ backgroundColor: '#fff', borderRadius: 22, padding: 18, maxWidth: 440, width: '100%', alignSelf: 'center' }}>
+            {obrigatorio ? <Text style={{ fontSize: 46, textAlign: 'center' }}>💙</Text> : null}
             <Text style={{ fontSize: 20, fontWeight: '900', color: '#0F172A' }}>{modo === 'entrar' ? '🔐 Entrar na conta' : '✨ Criar conta'}</Text>
             {motivo ? <Text style={{ marginTop: 6, fontSize: 14, color: '#475569' }}>{motivo}</Text> : null}
             {temGoogleNativo() ? (
@@ -78,7 +82,7 @@ export function TelaEntrar({ motivo, fechar }: { motivo?: string; fechar: () => 
             <Pressable onPress={() => { setModo(modo === 'entrar' ? 'criar' : 'entrar'); setMsg(''); }} style={{ marginTop: 12, alignItems: 'center' }}>
               <Text style={{ color: '#334155', fontWeight: '800' }}>{modo === 'entrar' ? 'Não tem conta? Criar conta' : 'Já tem conta? Entrar'}</Text>
             </Pressable>
-            <Pressable onPress={fechar} style={{ marginTop: 12, alignItems: 'center' }}><Text style={{ color: '#64748B', fontWeight: '700' }}>Agora não</Text></Pressable>
+            {obrigatorio ? null : <Pressable onPress={fechar} style={{ marginTop: 12, alignItems: 'center' }}><Text style={{ color: '#64748B', fontWeight: '700' }}>Agora não</Text></Pressable>}
           </View>
         </ScrollView>
       </View>

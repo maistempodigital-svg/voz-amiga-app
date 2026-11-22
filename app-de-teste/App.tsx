@@ -6,7 +6,7 @@ import { Platform, StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 import { RotinaAmigaProvider, RotinaTelas, TelaRotina, useRotina } from './src/rotina-amiga';
-import { abrirLink, Aviso, falarTexto, listarVozes, LOCALE, novoId, ponte as ponteVoz, reduzirImagem, sanearVoz, TelaBloqueio, useVoz, VozProvider } from './demo/voz/base';
+import { abrirLink, Aviso, falarTexto, pararFalaTexto, listarVozes, LOCALE, novoId, ponte as ponteVoz, reduzirImagem, sanearVoz, TelaBloqueio, useVoz, VozProvider } from './demo/voz/base';
 import type { HostV14 } from './src/rotina-amiga/v14/estadoV14';
 import { VozHome } from './demo/voz/home';
 import { hostIA, hostSegredo } from './demo/ia';
@@ -14,6 +14,7 @@ import { AjustesVoz, Assinatura, CriarPrancha, Curso, Definicoes, GerirAbas, Pac
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CHAVE_ARMAZENAMENTO, lerLimitesFirebase } from './src/rotina-amiga';
 import { estadoDemo } from './demo/dados';
+import { estadoPadrao, modelosRotina } from './src/rotina-amiga/padroes';
 import { AvisoFimTeste, usePremiumDemo } from './demo/premium';
 import { ContaProvider, useConta } from './demo/contaUI';
 import { limitesDoFirebase } from './src/rotina-amiga/logica/plano';
@@ -21,7 +22,14 @@ import { avisoFimTeste } from './src/rotina-amiga/v14/premium';
 
 // No celular: começa com dados de exemplo (histórico) para dar para ver relatórios e conquistas.
 const armazenamentoDemo = {
-  ler: async () => (await AsyncStorage.getItem(CHAVE_ARMAZENAMENTO)) ?? JSON.stringify(estadoDemo('apk')),
+  // família nova: 1 turno (Manhã) vazio para os pais montarem; o tour de boas-vindas começa sozinho
+  ler: async () => {
+    const v = await AsyncStorage.getItem(CHAVE_ARMAZENAMENTO);
+    if (!v) return JSON.stringify({ ...estadoPadrao('pt'), abas: [modelosRotina('pt')[0]], tarefas: [] });
+    // a versão 2.0.0 começava com uma "Tarefa de teste": tira de quem já instalou
+    try { const e = JSON.parse(v); if (Array.isArray(e?.tarefas) && e.tarefas.some((t: { id?: string }) => t?.id === 'teste1')) { e.tarefas = e.tarefas.filter((t: { id?: string }) => t?.id !== 'teste1'); if (e.tarefaAtiva?.tarefaId === 'teste1') delete e.tarefaAtiva; return JSON.stringify(e); } } catch { /* */ }
+    return v;
+  },
   gravar: (v: string) => AsyncStorage.setItem(CHAVE_ARMAZENAMENTO, v),
 };
 
@@ -167,12 +175,6 @@ function ComRotina() {
   // v14.8: teste premium grátis (30 dias, sem cartão). No app real o início fica no servidor (users/{uid}.testePremium).
   const pm = usePremiumDemo();
   const conta = useConta();
-  // quem veio do app antigo: pede UMA vez para entrar de novo (assim o plano pago continua)
-  React.useEffect(() => {
-    if (!conta.pronto || conta.usuario || !s.defs.migradoV24 || s.defs.pediuEntrarV24) return;
-    conta.abrirEntrar('Bem-vindo à nova versão! 💙 Suas pranchas já estão aqui. Para manter o seu plano, entre com o mesmo e-mail que você usava.');
-    mudar((x) => ({ ...x, defs: { ...x.defs, pediuEntrarV24: true } }));
-  }, [conta.pronto, conta.usuario, s.defs.migradoV24]); // eslint-disable-line react-hooks/exhaustive-deps
   const teste = pm.teste, pagou = pm.pago, premium = pm.premium;
   const [avisoTeste, setAvisoTeste] = React.useState<number>();
   // aviso "vai travar" faltando 5, 3 e 1 dia (uma vez cada)
@@ -186,7 +188,7 @@ function ComRotina() {
   const ofertaTeste = { podeOferecer: pm.podeTestar, dias: pm.dias, iniciar: pm.iniciar };
   return (
     <RotinaAmigaProvider idioma={params.get('idioma') || s.defs.idioma} estadoInicial={TELA ? inicial : undefined} armazenamento={armazenamentoDemo}
-      falar={(t) => falarTexto(t, s.defs)} salvarImagem={(u) => reduzirImagem(u)}
+      falar={(t) => falarTexto(t, s.defs)} pararVoz={pararFalaTexto} segurarTour={conta.precisaEntrar || !conta.pronto} salvarImagem={(u) => reduzirImagem(u)}
       assinante={premium /* assinante OU teste premium ativo */} limitesFirebase={LIMITES_TESTE ?? limitesDoFirebase(conta.remoto.rotina, conta.remoto.porData, s.defs.inicioUso ?? Date.now())} testePremium={ofertaTeste}
       abrirPlanos={() => irParaTour.planos()}
       abasVoz={s.abas.map((a) => ({ id: a.id, nome: a.nome }))}

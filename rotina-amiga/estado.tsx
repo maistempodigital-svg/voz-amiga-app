@@ -134,6 +134,10 @@ export const useRotina = () => {
 
 export interface PropsProvider {
   children?: React.ReactNode;
+  /** Para a voz na hora (fechar turno/tela, cancelar tarefa). */
+  pararVoz?: () => void;
+  /** Enquanto true, o tour de boas-vindas espera (ex.: tela de login aberta). */
+  segurarTour?: boolean;
   /** Idioma atual do Voz Amiga ('pt', 'en', 'es' ou 'pt-BR' etc.). */
   idioma?: string;
   /** Use a função de fala do Voz Amiga (mesma voz e volume escolhidos nas Definições). */
@@ -179,7 +183,7 @@ export interface PropsProvider {
 /** v14.8: oferta do teste premium (o host decide se ainda pode oferecer). */
 export interface TesteOferta { podeOferecer: boolean; dias: number; iniciar: () => void }
 
-export function RotinaAmigaProvider({ children, idioma: idiomaVoz, falar: falarVoz, armazenamento = armazenamentoPadrao, aoRegistrarEvento, salvarImagem, estadoInicial, abrirLink, compartilhar, tourIrPara, assinante = false, limitesFirebase, abrirPlanos, testePremium, abasVoz = [], abrirAbaVoz, imprimirHtml, recursosFirebase, hostV14, linkCursoNoTour = true }: PropsProvider) {
+export function RotinaAmigaProvider({ children, idioma: idiomaVoz, falar: falarVoz, armazenamento = armazenamentoPadrao, aoRegistrarEvento, salvarImagem, estadoInicial, abrirLink, compartilhar, tourIrPara, assinante = false, limitesFirebase, abrirPlanos, testePremium, abasVoz = [], abrirAbaVoz, imprimirHtml, recursosFirebase, hostV14, linkCursoNoTour = true, pararVoz, segurarTour = false }: PropsProvider) {
   const idioma = normalizarIdioma(idiomaVoz);
   const t = useMemo(() => criarT(idioma), [idioma]);
   const [estado, setEstado] = useState<EstadoRotina>(() => estadoInicial || estadoPadrao(idioma));
@@ -386,7 +390,7 @@ export function RotinaAmigaProvider({ children, idioma: idiomaVoz, falar: falarV
     terminar: () => { if (podeTerminar(ref.current, Date.now())) concluir(true); },
     liberarComEstrela: () => concluir(true, 'adulto'),
     pularTarefa: () => concluir(false, 'adulto'),
-    cancelarTarefa: () => mudar((s) => A.cancelarTarefa(s, Date.now())),
+    cancelarTarefa: () => { try { if (pararVoz) pararVoz(); else Speech.stop(); } catch { /* */ } mudar((s) => A.cancelarTarefa(s, Date.now())); },
     pedirAdulto,
     pilha,
     abrir: (tela) => setPilha((p) => [...p, tela]),
@@ -410,11 +414,14 @@ export function RotinaAmigaProvider({ children, idioma: idiomaVoz, falar: falarV
     frasesProntas: [{ nome: 'frasesProntas' }],
     conquistas: [{ nome: 'v14', tela: 'conquistas' }],
   };
-  const pararFala = () => { try { if (falarVoz) falarVoz(' ', LOCALE_VOZ[idioma]); else Speech.stop(); } catch { /* */ } };
+  const pararFala = () => { try { if (pararVoz) pararVoz(); else if (falarVoz) falarVoz(' ', LOCALE_VOZ[idioma]); else Speech.stop(); } catch { /* */ } };
+  // fechou uma tela da rotina (turno, prêmios, etc.): a voz para na hora
+  const qtdPilha = useRef(pilha.length);
+  useEffect(() => { if (pilha.length < qtdPilha.current) pararFala(); qtdPilha.current = pilha.length; }, [pilha.length]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Ctx.Provider value={valor}>
       <TourProvider irPara={tourIrPara} abrirModulo={(tl) => setPilha(TELA_TOUR[tl])} fecharModulo={() => setPilha([])} idioma={idioma} falar={falar} pararFala={pararFala}
-        jaVisto={!pronto || !!estado.config.tourVisto} marcarVisto={() => mudar((s) => A.mudarConfig(s, { tourVisto: true }))}
+        jaVisto={!pronto || segurarTour || !!estado.config.tourVisto} marcarVisto={() => mudar((s) => A.mudarConfig(s, { tourVisto: true }))}
         falarMascote={parteV14.falarMascote} calmo={parteV14.recurso('telaCalma')}
         abrirCurso={linkCursoNoTour && parteV14.recurso('curso') ? () => setPilha([{ nome: 'v14', tela: 'curso' }]) : undefined}>
         {children}

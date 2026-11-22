@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         avisarCompra(o)
       }
       BillingClient.BillingResponseCode.USER_CANCELED -> avisarCompra(JSONObject().put("estado", "cancelado"))
-      BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> restaurar()
+      BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> restaurar(true)
       else -> avisarCompra(JSONObject().put("estado", "erro").put("motivo", "codigo-" + r.responseCode))
     }
   }
@@ -59,12 +59,34 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
       override fun onBillingServiceDisconnected() {}
     })
   }
-  /** Já tinha comprado (ex.: trocou de celular): manda de novo para o servidor conferir. */
-  private fun restaurar() = conectar {
+  /** Já tinha comprado (vitalício antigo, trocou de celular): manda de novo para o servidor conferir.
+   *  viaCompra = true: responde para a compra em andamento; false: responde em window.__vozRestaurar. */
+  private fun restaurar(viaCompra: Boolean = false) = conectar {
     for (tipo in listOf(BillingClient.ProductType.SUBS, BillingClient.ProductType.INAPP)) {
       billing?.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(tipo).build()) { _, lista ->
         lista.filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }.forEach { c ->
-          avisarCompra(JSONObject().put("estado", "comprado").put("produto", c.products.firstOrNull() ?: "").put("token", c.purchaseToken))
+          val o = JSONObject().put("estado", "comprado").put("produto", c.products.firstOrNull() ?: "").put("token", c.purchaseToken)
+            .put("tipo", if (tipo == BillingClient.ProductType.INAPP) "inapp" else "subs")
+          if (viaCompra) avisarCompra(o) else js("window.__vozRestaurar && window.__vozRestaurar(" + JSONObject.quote(o.toString()) + ")")
+        }
+      }
+    }
+  }
+  /** Preços reais da Play (na moeda do cliente) → window.__vozPrecos({id: "R$ 19,90"}). */
+  private fun buscarPrecos(ids: List<String>) = conectar {
+    val res = JSONObject()
+    var faltam = 2
+    for (tipo in listOf(BillingClient.ProductType.SUBS, BillingClient.ProductType.INAPP)) {
+      val q = QueryProductDetailsParams.newBuilder().setProductList(ids.map { QueryProductDetailsParams.Product.newBuilder().setProductId(it).setProductType(tipo).build() }).build()
+      billing?.queryProductDetailsAsync(q) { _, r ->
+        synchronized(res) {
+          for (d in r.productDetailsList) {
+            val p = d.oneTimePurchaseOfferDetails?.formattedPrice
+              ?: d.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList?.lastOrNull()?.formattedPrice
+            if (p != null) res.put(d.productId, p)
+          }
+          faltam--
+          if (faltam == 0) js("window.__vozPrecos && window.__vozPrecos(" + JSONObject.quote(res.toString()) + ")")
         }
       }
     }
@@ -132,6 +154,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
   override fun onSaveInstanceState(out: Bundle) { super.onSaveInstanceState(out); web.saveState(out) }
   override fun onInit(status: Int) { ttsPronto = status == TextToSpeech.SUCCESS }
+  override fun onPause() { try { tts?.stop() } catch (_: Exception) {}; super.onPause() }
   override fun onDestroy() { tts?.shutdown(); billing?.endConnection(); super.onDestroy() }
   @Deprecated("Deprecated in Java")
   override fun onBackPressed() { if (web.canGoBack()) web.goBack() else web.evaluateJavascript("window.dispatchEvent(new Event('voltarAndroid'))", null) }
@@ -156,6 +179,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
       }
     }
     @JavascriptInterface fun speak(t: String, lang: String) = falar(t, lang, null, 1f)
+    @JavascriptInterface fun parar() { try { tts?.stop() } catch (_: Exception) {} }
     @JavascriptInterface fun speak2(t: String, lang: String, voz: String, vol: Double) = falar(t, lang, voz, vol.toFloat())
     @JavascriptInterface fun vozes(lang: String): String {
       val l = lang.take(2).lowercase()
@@ -202,7 +226,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     @JavascriptInterface fun confirmarCompra(token: String) = conectar {
       billing?.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder().setPurchaseToken(token).build()) { }
     }
-    @JavascriptInterface fun restaurarCompras() = restaurar()
+    @JavascriptInterface fun restaurarCompras() = restaurar(false)
+    @JavascriptInterface fun precos(ids: String) { try { val a = org.json.JSONArray(ids); buscarPrecos((0 until a.length()).map { a.getString(it) }) } catch (_: Exception) {} }
     /** Travar app (fixar a tela): a criança não sai do Voz Amiga. Os pais destravam pelos ajustes. */
     @JavascriptInterface fun travar() = runOnUiThread { try { startLockTask() } catch (_: Exception) {} }
     @JavascriptInterface fun destravar() = runOnUiThread { try { stopLockTask() } catch (_: Exception) {} }

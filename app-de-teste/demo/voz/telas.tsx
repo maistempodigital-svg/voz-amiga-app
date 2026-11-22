@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { BlocoPlanos, EscolherFixas, PlanoVenda, usePremiumDemo } from '../premium';
 import { BlocoConta, useConta } from '../contaUI';
-import { comprar, temCompraNativa } from '../conta';
+import { comprar, lerPrecos, restaurarComprasPlay, sair as sairDaConta, temCompraNativa } from '../conta';
 import { lerJanelaSabado } from '../../src/rotina-amiga/v14/premium';
 import { tp } from '../../src/rotina-amiga/v14/premium';
 const p0Id = (id?: string) => id || '';
@@ -60,6 +60,7 @@ function Linha({ titulo, sub, icone, cor, claro, borda, onPress, vermelho }: { t
 
 export function AjustesVoz({ ir, casa }: Nav) {
   const { s, mudar, toast } = useVoz();
+  const conta = useConta();
   const novos = useItensAjustesRotina(); // ROTINA AMIGA (o relatório unificado fica lá dentro)
   const { recurso, idioma, estado: estR, abrir } = useRotina();
   const hoje = chaveDia(new Date());
@@ -105,20 +106,17 @@ export function AjustesVoz({ ir, casa }: Nav) {
         <AlvoTour id="aj_definicoes"><Linha titulo="DEFINIÇÕES" icone="sliders" cor="#0F172A" claro="#FFFFFF" borda="#CBD5E1" onPress={() => ir({ n: 'definicoes' })} /></AlvoTour>
         <Linha titulo="SUPORTE (SEG-SEX 08H-16H)" icone="mail" cor="#059669" claro="#ECFDF5" borda="#34D399" onPress={() => abrirLink('mailto:grupoamigapp@gmail.com')} />
         <Linha titulo="CONHEÇA NOSSO INSTAGRAM!" icone="instagram" cor="#4F46E5" claro="#EEF2FF" borda="#818CF8" onPress={() => abrirLink('https://www.instagram.com/appvoz_amiga/')} />
-        <Linha titulo="SAIR DA CONTA" sub="conta de teste" icone="log-out" cor="#DC2626" claro="#FFF5F5" borda="#FECACA" vermelho onPress={() => setSair(true)} />
+        <Linha titulo="SAIR DA CONTA" sub={conta.usuario?.email || undefined} icone="log-out" cor="#DC2626" claro="#FFF5F5" borda="#FECACA" vermelho onPress={() => setSair(true)} />
       </RolagemTour>
       <Modal visible={sair} transparent animationType="fade" onRequestClose={() => setSair(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(15,23,42,0.5)', justifyContent: 'center', padding: 24 }}>
           <View style={{ backgroundColor: '#fff', borderRadius: 20, padding: 18 }}>
             <Text style={{ fontSize: 17, fontWeight: '900', color: '#0F172A' }}>Sair da conta?</Text>
-            <Text style={{ fontSize: 13, color: '#475569', marginTop: 6 }}>No app oficial, isto encerra o login (Firebase, sem mudanças). Neste teste não há conta: você pode apagar os dados de teste e começar de novo.</Text>
+            <Text style={{ fontSize: 13, color: '#475569', marginTop: 6 }}>Você vai sair da conta {conta.usuario?.email || ''}. As pranchas continuam guardadas neste celular. Para usar de novo, é só entrar com o mesmo e-mail.</Text>
             <View style={{ flexDirection: 'row', marginTop: 14 }}>
               <BotaoCor titulo="Cancelar" cor="#E2E8F0" texto="#334155" flex onPress={() => setSair(false)} />
               <View style={{ width: 8 }} />
-              <BotaoCor titulo="Apagar dados" cor="#DC2626" flex onPress={async () => {
-                try { localStorage.clear(); } catch { /* */ }
-                if (typeof window !== 'undefined') window.location.reload();
-              }} />
+              <BotaoCor titulo="Sair" cor="#DC2626" flex onPress={() => { setSair(false); sairDaConta().catch(() => undefined); }} />
             </View>
           </View>
         </View>
@@ -524,10 +522,15 @@ export function Assinatura({ voltar, casa }: Nav) {
   // planos ATIVOS: os que o dono deixou ligados no Firebase (appConfig/planSelection); sem Firebase, Mensal e Vitalício
   const doFb = Object.entries(conta.remoto.planos || {}).filter(([k, v]) => k !== 'free' && v?.enabled === true && typeof v.googleProductId === 'string')
     .map(([, v]) => ({ id: v.googleProductId as string, titulo: v.title || 'Plano', subtitulo: v.subtitle || '', tipo: v.productType === 'inapp' ? 'inapp' as const : 'subs' as const }));
-  const planos: (PlanoVenda & { tipo: 'subs' | 'inapp' })[] = doFb.length ? doFb : [
+  const planosBase: (PlanoVenda & { tipo: 'subs' | 'inapp' })[] = doFb.length ? doFb : [
     { id: 'voz_amiga_monthly', titulo: 'Plano Mensal', subtitulo: 'Pagamento mês a mês.', tipo: 'subs' },
     { id: 'voz_amiga_lifetime', titulo: 'Plano Vitalício', subtitulo: 'Pagamento único, acesso vitalício.', tipo: 'inapp' },
   ];
+  // preço real da Play Store (na moeda de cada país)
+  const [precos, setPrecos] = useState<Record<string, string>>({});
+  const idsPlanos = planosBase.map((p) => p.id).join(',');
+  React.useEffect(() => { let vivo = true; lerPrecos(idsPlanos.split(',')).then((r) => { if (vivo) setPrecos(r); }); return () => { vivo = false; }; }, [idsPlanos]);
+  const planos = planosBase.map((p) => ({ ...p, preco: precos[p.id] || p.preco }));
   const [comprando, setComprando] = useState(false);
   const fazerCompra = async (id: string) => {
     if (!temCompraNativa()) { toast(`No app da loja abre o pagamento do Google Play (${id}).`); return; }
@@ -568,13 +571,13 @@ export function Assinatura({ voltar, casa }: Nav) {
             comprar={fazerCompra} janela={lerJanelaSabado(conta.remoto.sabado)} />
           {comprando ? <Text style={{ textAlign: 'center', marginTop: 6, color: '#475569' }}>Abrindo o pagamento do Google Play…</Text> : null}
           {!pm.premium ? <EscolherFixas limite={limitesPlano.pranchas} /> : null}
-          <Text style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>No app oficial, a assinatura continua sendo feita pelo Google Play, exatamente como hoje.</Text>
           {pm.simulado ? <Pressable onPress={() => mudar((x) => ({ ...x, defs: { ...x.defs, assinanteTeste: !pago } }))} accessibilityRole="switch" accessibilityLabel="Simular Plano Completo" accessibilityState={{ checked: pago }}
             style={{ marginTop: 12, flexDirection: 'row', alignItems: 'center', borderRadius: 14, borderWidth: 1.5, borderColor: '#FDE68A', backgroundColor: '#FFFBEB', padding: 12 }}>
             <Text style={{ flex: 1, fontSize: 13, fontWeight: '800', color: '#92400E' }}>🧪 Só no teste: simular {pago ? 'versão gratuita' : 'Plano Completo'}</Text>
             <View style={{ width: 46, height: 26, borderRadius: 13, backgroundColor: pago ? '#22C55E' : '#CBD5E1', justifyContent: 'center', paddingHorizontal: 3 }}><View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff', alignSelf: pago ? 'flex-end' : 'flex-start' }} /></View>
           </Pressable> : null}
           <View style={{ height: 12 }} />
+          {temCompraNativa() && conta.usuario ? <><BotaoCor titulo="Já comprei: restaurar compras" icone="refresh-cw" cor="#16A34A" onPress={() => { restaurarComprasPlay(); toast('Conferindo suas compras no Google Play…'); }} /><View style={{ height: 8 }} /></> : null}
           <BotaoCor titulo="Gerenciar no Google Play" icone="external-link" cor="#2563EB" onPress={() => abrirLink('https://play.google.com/store/account/subscriptions')} />
         </View>
       </ScrollView>
