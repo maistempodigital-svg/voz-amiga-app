@@ -183,7 +183,7 @@ try:
         with pg.expect_download() as d: pg.get_by_label('Enviar cópia (Drive, WhatsApp…)').click()
         texto = open(d.value.path(), encoding='utf-8').read()
         ctx2 = b.new_context(viewport={'width': 411, 'height': 914}); p2 = ctx2.new_page()
-        p2.goto(U + 'index.html'); p2.evaluate('localStorage.clear()'); p2.reload(); p2.get_by_label('Pular tour').click()
+        p2.goto(U + 'index.html?semFirebase=1'); p2.evaluate('localStorage.clear()'); p2.reload(); p2.get_by_label('Pular tour').click()
         assert p2.get_by_label('ÁGUA', exact=True).count() == 0
         segurar(p2, p2.get_by_label('AJUSTES', exact=True), 3300); conta(p2); p2.get_by_label('DEFINIÇÕES').click(); p2.get_by_label('assunto Proteger as pranchas').click(); p2.get_by_label('ajustes Cópia de segurança').click()
         with p2.expect_file_chooser() as fc: p2.get_by_label('Restaurar de um arquivo').click()
@@ -285,7 +285,7 @@ try:
             pg.get_by_label('ÁGUA', exact=True).wait_for()
             bx = pg.get_by_label('ÁGUA', exact=True).bounding_box()
             fundo = pg.get_by_label('ÁGUA', exact=True).evaluate("e => getComputedStyle(e.firstElementChild || e).backgroundColor")
-            return bx['width'], fundo, pg.get_by_text('Anúncio de exemplo').count()
+            return bx['width'], fundo, pg.get_by_text('👑 Plano Completo').count()
         pg.goto(U + '?tela=home'); w0, f0, ad0 = medir()
         assert ad0 == 1
         mais_funcoes(pg); chave(pg, 'telaCalma'); pg.get_by_text('Tela calma: LIGADO', exact=False).wait_for(); ir_home_via_fechar(pg)
