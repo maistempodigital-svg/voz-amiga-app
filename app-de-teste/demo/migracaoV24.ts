@@ -132,15 +132,16 @@ export const temDadosV24 = (chaves: Record<string, string | null | undefined>) =
 export const veioProntaV24 = (id: string) => id.startsWith('v24_default:');
 export const contarParaLimite = (pranchas: { id: string }[]) => pranchas.filter((p) => !veioProntaV24(p.id)).length;
 
-/** Instalação nova: as pranchas prontas de sempre (as mesmas do app 1.0.24), nas 4 abas do app novo.
- *  Têm id "v24_default:…", então NÃO contam no limite do plano grátis. */
+/** Instalação nova: começa com POUCO — só 3 pranchas de sugestão ("Eu", "Quero", "Água"), para a criança aprender aos poucos.
+ *  Têm id "v24_default:…", então não contam no limite do plano grátis. */
 export function pranchasProntas(idioma: Idioma): PranchaMig[] {
-  const mapa: [string, string][] = [['APRENDIZAGEM', 'pessoas'], ['SOCIALIZACAO', 'social'], ['COMUNICACAO', 'descricao'], ['EMOCOES', 'acoes']];
-  const out: PranchaMig[] = []; const vistos = new Set<string>();
-  for (const [cat, aba] of mapa) for (const [texto, emoji] of PADROES_V24[idioma][cat] || []) {
-    const id = `v24_${idPadraoV24(cat, texto)}`.replace(/[^\w:.%-]/g, '_').slice(0, 80);
-    if (vistos.has(id)) continue; vistos.add(id);
-    out.push({ id, texto, emoji, abaId: aba });
+  const escolha: [string, number, string][] = [['COMUNICACAO', 0, 'pessoas'], ['COMUNICACAO', 2, 'acoes'], ['ALIMENTOS', 0, 'descricao']];
+  const out: PranchaMig[] = [];
+  for (const [cat, n, aba] of escolha) {
+    const par = (PADROES_V24[idioma][cat] || [])[n];
+    if (!par) continue;
+    const [texto, emoji] = par;
+    out.push({ id: `v24_${idPadraoV24(cat, texto)}`.replace(/[^\w:.%-]/g, '_').slice(0, 80), texto, emoji, abaId: aba });
   }
   return out;
 }

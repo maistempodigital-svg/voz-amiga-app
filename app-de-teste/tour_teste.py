@@ -6,6 +6,7 @@ base = os.path.dirname(os.path.abspath(__file__))
 srv = subprocess.Popen([sys.executable, '-m', 'http.server', '8769', '-d', os.path.join(base, 'dist')], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 time.sleep(1)
 src = open(os.path.join(base, 'src/rotina-amiga/tourPassos.ts')).read()
+src = src.split('export const PASSOS_TOUR_COMPLETO')[0]  # só o tour curto (v2.0.3)
 blocos = re.split(r"\n  \{ id: '", src)[1:]
 passos = []
 for bl in blocos:
@@ -31,7 +32,7 @@ try:
         for lang in ('pt', 'en', 'es'):
             ctx = b.new_context(viewport={'width': 411, 'height': 914}, device_scale_factor=900/411); pg = ctx.new_page()
             erros = []; pg.on('pageerror', lambda e: erros.append(str(e)))
-            url = 'http://localhost:8769/index.html' + ('' if lang == 'pt' else f'?idioma={lang}')
+            url = 'http://localhost:8769/index.html?semFirebase=1' + ('' if lang == 'pt' else f'&idioma={lang}')
             pg.goto(url); pg.evaluate('localStorage.clear()'); pg.reload()
             for i, (pid, alvo, demo, tit) in enumerate(passos):
                 try:
@@ -59,7 +60,7 @@ try:
         pg.get_by_label('Próximo passo').click(); pg.get_by_text(passos[1][3]['pt'], exact=True).first.wait_for()
         pg.get_by_label('Voltar passo').click(); pg.get_by_text(passos[0][3]['pt'], exact=True).wait_for()
         pg.get_by_label('Pular parte').click(); pg.wait_for_timeout(1500)
-        prim1 = next(t for (pid, a, d, t) in passos if pid.startswith('aj_'))
+        prim1 = passos[-1][3]  # tour curto: pular a parte da tela inicial vai para o final
         if not pg.get_by_text(prim1['pt'], exact=True).count(): falhas.append('Pular parte não foi para a parte 2')
         pg.get_by_label('Pular tour').click(); pg.wait_for_timeout(1000)
         if pg.get_by_text(prim1['pt'], exact=True).count(): falhas.append('Pular tour não fechou')

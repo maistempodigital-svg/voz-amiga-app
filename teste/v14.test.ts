@@ -16,7 +16,7 @@ import { PACOTES_ROTINA, itensPacote, pacoteDaTarefa } from '../rotina-amiga/v14
 import { completarFraseIA, sugerirBotaoIA, pranchaPorTemaIA, podeBaixarIA, OPCOES_IA } from '../rotina-amiga/v14/ia';
 import { LICOES, PARTES_CURSO } from '../rotina-amiga/v14/curso';
 import { evolucao } from '../rotina-amiga/v14/relatorioV14';
-import { PASSOS_TOUR } from '../rotina-amiga/tourPassos';
+import { PASSOS_TOUR_COMPLETO as PASSOS_TOUR } from '../rotina-amiga/tourPassos';
 import { conquistasDoMes, progressoDoMes, POOL_CONQUISTAS } from '../rotina-amiga/v14/conquistasMes';
 import { oQueOAppPercebeu } from '../rotina-amiga/v14/percebeu';
 import { ETAPAS_RAPIDAS, montarRapida, TAREFA_DO_ITEM } from '../rotina-amiga/v14/criacaoRapida';

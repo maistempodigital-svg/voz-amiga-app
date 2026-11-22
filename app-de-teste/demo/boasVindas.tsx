@@ -1,6 +1,6 @@
 // PRIMEIRA ABERTURA (v2.0.2): 1) idioma → 2) login → 3) telas "como funciona" + primeiras recomendações
 // → 4) no fim, o convite: Plano Completo / teste grátis / seguir no grátis (quem já pagou pula) → 5) tour do mascote.
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
 type L = 'pt' | 'en' | 'es';
@@ -36,25 +36,31 @@ export function TelaIdioma({ atual, escolher }: { atual: L; escolher: (l: L) => 
 
 const PASSOS: Record<L, { e: string; t: string; d: string }[]> = {
   pt: [
-    { e: '👆', t: 'Toque e o app fala', d: 'Cada prancha tem um desenho e uma palavra. A criança toca e o Voz Amiga fala em voz alta.' },
-    { e: '💬', t: 'Monte frases', d: 'Toque em várias pranchas para montar uma frase, por exemplo "eu quero água", e depois toque em FALAR.' },
-    { e: '☀️', t: 'Rotina do dia', d: 'Crie a rotina da manhã, da tarde ou da noite com tarefas. A criança vê o que vem agora e ganha estrelas ao terminar.' },
-    { e: '🔒', t: 'Área dos pais', d: 'Os botões AJUSTES, CRIAR PRANCHA e TRAVAR APP abrem segurando 3 segundos. Assim a criança não muda nada sem querer.' },
-    { e: '🌱', t: 'Primeiras recomendações', d: 'Comece com poucas pranchas que a criança já usa no dia a dia. Use o app junto com ela, mostrando como funciona, e espere a resposta com calma. Vá acrescentando aos poucos.' },
+    { e: '💬', t: 'O que é CAA', d: 'Comunicação Alternativa (CAA) dá à criança outro jeito de se expressar: com imagens e voz. Ela não atrapalha a fala. Ao contrário, ajuda a fala a aparecer.' },
+    { e: '👆', t: 'Como o Voz Amiga funciona', d: 'A criança toca na prancha e o app fala. Juntando pranchas, ela monta frases como "eu quero água".' },
+    { e: '🌱', t: 'Comece com pouco', d: 'Comece com 3 ou 4 pranchas do dia a dia: água, comer, banheiro, mamãe. Quando ela usar bem, acrescente mais. Muitas pranchas de uma vez confundem.' },
+    { e: '📖', t: 'É como aprender a ler', d: 'Não acontece da noite para o dia. Pode levar semanas. Tenha paciência: mostre como usar, fale junto e comemore cada tentativa.' },
+    { e: '☀️', t: 'Rotina sempre no mesmo horário', d: 'Monte a rotina da manhã, da tarde ou da noite. O app lembra a próxima tarefa na hora certa, e a criança sabe o que vem depois. Isso traz calma.' },
+    { e: '🎁', t: 'Prêmios e recompensas', d: 'Cada tarefa feita vira estrela. Vocês escolhem os prêmios: um passeio, um desenho, um brinquedo. Recompense o esforço, não só o acerto.' },
+    { e: '💙', t: 'Dicas para os pais', d: 'Deixe o celular sempre por perto. Use o app vocês também, para a criança copiar. Espere a resposta com calma, sem pressa.' },
   ],
   en: [
-    { e: '👆', t: 'Tap and the app speaks', d: 'Each board has a picture and a word. The child taps it and Voz Amiga says it out loud.' },
-    { e: '💬', t: 'Build sentences', d: 'Tap several boards to build a sentence, like "I want water", then tap SPEAK.' },
-    { e: '☀️', t: 'Daily routine', d: 'Create a morning, afternoon or night routine with tasks. The child sees what comes next and earns stars.' },
-    { e: '🔒', t: 'Parents area', d: 'SETTINGS, CREATE BOARD and LOCK APP open when held for 3 seconds, so the child does not change anything by accident.' },
-    { e: '🌱', t: 'First tips', d: 'Start with a few boards the child already uses every day. Use the app together, show how it works and wait calmly for the answer. Add more little by little.' },
+    { e: '💬', t: 'What is AAC', d: 'Augmentative and Alternative Communication (AAC) gives the child another way to express themselves, with pictures and voice. It does not hold speech back. It helps speech come.' },
+    { e: '👆', t: 'How Voz Amiga works', d: 'The child taps a board and the app speaks. Putting boards together, they build sentences like "I want water".' },
+    { e: '🌱', t: 'Start small', d: 'Start with 3 or 4 everyday boards: water, eat, bathroom, mom. When the child uses them well, add more. Too many boards at once is confusing.' },
+    { e: '📖', t: 'It is like learning to read', d: 'It does not happen overnight. It can take weeks. Be patient: show how to use it, speak along and celebrate every try.' },
+    { e: '☀️', t: 'Same routine, same time', d: 'Build a morning, afternoon or night routine. The app reminds the next task on time, so the child knows what comes next. That brings calm.' },
+    { e: '🎁', t: 'Prizes and rewards', d: 'Every task done earns a star. You choose the prizes: a walk, a cartoon, a toy. Reward the effort, not only the result.' },
+    { e: '💙', t: 'Tips for parents', d: 'Keep the phone always nearby. Use the app yourselves so the child can copy you. Wait calmly for the answer, with no rush.' },
   ],
   es: [
-    { e: '👆', t: 'Toca y la app habla', d: 'Cada tablero tiene un dibujo y una palabra. El niño lo toca y Voz Amiga lo dice en voz alta.' },
-    { e: '💬', t: 'Forma frases', d: 'Toca varios tableros para formar una frase, como "yo quiero agua", y luego toca HABLAR.' },
-    { e: '☀️', t: 'Rutina del día', d: 'Crea la rutina de la mañana, la tarde o la noche con tareas. El niño ve lo que sigue y gana estrellas.' },
-    { e: '🔒', t: 'Área de los padres', d: 'AJUSTES, CREAR TABLERO y BLOQUEAR se abren manteniendo 3 segundos, así el niño no cambia nada sin querer.' },
-    { e: '🌱', t: 'Primeras recomendaciones', d: 'Empieza con pocos tableros que el niño ya usa a diario. Usa la app junto con él, muestra cómo funciona y espera la respuesta con calma. Añade más poco a poco.' },
+    { e: '💬', t: 'Qué es la CAA', d: 'La Comunicación Aumentativa y Alternativa (CAA) le da al niño otra forma de expresarse: con imágenes y voz. No frena el habla. Al contrario, ayuda a que aparezca.' },
+    { e: '👆', t: 'Cómo funciona Voz Amiga', d: 'El niño toca un tablero y la app habla. Juntando tableros forma frases como "yo quiero agua".' },
+    { e: '🌱', t: 'Empieza con poco', d: 'Empieza con 3 o 4 tableros del día a día: agua, comer, baño, mamá. Cuando los use bien, añade más. Muchos tableros a la vez confunden.' },
+    { e: '📖', t: 'Es como aprender a leer', d: 'No pasa de un día para otro. Puede llevar semanas. Ten paciencia: muestra cómo usarla, habla junto y celebra cada intento.' },
+    { e: '☀️', t: 'Rutina siempre a la misma hora', d: 'Arma la rutina de la mañana, la tarde o la noche. La app recuerda la próxima tarea a su hora y el niño sabe qué viene después. Eso trae calma.' },
+    { e: '🎁', t: 'Premios y recompensas', d: 'Cada tarea hecha es una estrella. Ustedes eligen los premios: un paseo, un dibujo, un juguete. Premia el esfuerzo, no solo el acierto.' },
+    { e: '💙', t: 'Consejos para los padres', d: 'Deja el celular siempre cerca. Usen la app ustedes también, para que el niño copie. Espera la respuesta con calma, sin prisa.' },
   ],
 };
 const UI = {
@@ -70,14 +76,16 @@ export function BoasVindas({ idioma, pago, podeTestar, dias, fim, verPlanos, tes
   const passos = PASSOS[idioma]; const u = UI[idioma];
   const total = passos.length + (pago ? 0 : 1);
   const [i, setI] = useState(0);
-  const ultimoInfo = i === passos.length - 1;
+  const x0 = useRef(0);
   const proximo = () => { if (i + 1 >= total) fim(); else setI(i + 1); };
   const bt = (cor: string) => ({ backgroundColor: cor, borderRadius: 14, paddingVertical: 13, alignItems: 'center' as const, marginTop: 10 });
   return (
     <Modal visible animationType="none" onRequestClose={() => (i > 0 ? setI(i - 1) : undefined)}>
       <View accessibilityLabel="boas-vindas" style={{ flex: 1, backgroundColor: '#EFF6FF' }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 20 }}>
-          <View style={{ backgroundColor: '#fff', borderRadius: 24, padding: 22, maxWidth: 460, width: '100%', alignSelf: 'center' }}>
+          <View onTouchStart={(e) => { x0.current = e.nativeEvent.pageX; }}
+            onTouchEnd={(e) => { const d = e.nativeEvent.pageX - x0.current; if (i < passos.length && d < -60) proximo(); else if (d > 60 && i > 0) setI(i - 1); }}
+            style={{ backgroundColor: '#fff', borderRadius: 24, padding: 22, maxWidth: 460, width: '100%', alignSelf: 'center' }}>
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 14 }}>
               {Array.from({ length: total }).map((_, k) => <View key={k} style={{ width: k === i ? 22 : 8, height: 8, borderRadius: 4, marginHorizontal: 3, backgroundColor: k === i ? '#2563EB' : '#CBD5E1' }} />)}
             </View>
@@ -91,7 +99,6 @@ export function BoasVindas({ idioma, pago, podeTestar, dias, fim, verPlanos, tes
                 </Pressable>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 }}>
                   <Pressable onPress={() => setI(Math.max(0, i - 1))} disabled={i === 0} hitSlop={8}><Text style={{ color: i === 0 ? '#CBD5E1' : '#475569', fontWeight: '800' }}>← {u.volt}</Text></Pressable>
-                  {!ultimoInfo ? <Pressable onPress={() => setI(passos.length - (pago ? 1 : 0))} hitSlop={8} accessibilityLabel={u.pular}><Text style={{ color: '#475569', fontWeight: '800' }}>{u.pular}</Text></Pressable> : null}
                 </View>
               </>
             ) : (

@@ -19,7 +19,56 @@ const ADULTO = { pt: 'Adulto: segure 3 s + continha', en: 'Adult: hold 3 s + qui
 const SEG5 = { pt: 'Segure 5 segundos', en: 'Hold 5 seconds', es: 'Mantén 5 segundos' };
 const TOQUE = { pt: 'Toque', en: 'Tap', es: 'Toca' };
 
+// v2.0.3: tour CURTO — um botão de cada vez, frase curta (o tour antigo e completo continua em PASSOS_TOUR_COMPLETO).
 export const PASSOS_TOUR: PassoTour[] = [
+  { id: 'oi', tela: 'home', parte: 0,
+    pt: { t: '👋 Oi! Vou te mostrar o app', d: 'Um botão de cada vez. É rapidinho.' },
+    en: { t: '👋 Hi! Let me show you the app', d: 'One button at a time. It is quick.' },
+    es: { t: '👋 ¡Hola! Te muestro la app', d: 'Un botón a la vez. Es rapidito.' } },
+  { id: 'pranchas', alvo: 'pranchas', tela: 'home', parte: 0,
+    pt: { t: '🟩 Pranchas', d: 'A criança toca e o app fala.' },
+    en: { t: '🟩 Boards', d: 'The child taps and the app speaks.' },
+    es: { t: '🟩 Tableros', d: 'El niño toca y la app habla.' } },
+  { id: 'abas', alvo: 'abas', tela: 'home', parte: 0,
+    pt: { t: '🗂️ Abas', d: 'Separam as pranchas por assunto.' },
+    en: { t: '🗂️ Tabs', d: 'They group boards by topic.' },
+    es: { t: '🗂️ Pestañas', d: 'Agrupan los tableros por tema.' } },
+  { id: 'frases', alvo: 'frases', tela: 'home', parte: 0,
+    pt: { t: '💬 Frases prontas', d: 'Toque e fala a frase inteira.' },
+    en: { t: '💬 Ready phrases', d: 'Tap to say the whole sentence.' },
+    es: { t: '💬 Frases listas', d: 'Toca y dice la frase entera.' } },
+  { id: 'criarPrancha', alvo: 'criarPrancha', tela: 'home', parte: 0,
+    pt: { t: '➕ Criar prancha', d: 'Comece com poucas. Segure 3 s para abrir.' },
+    en: { t: '➕ Create board', d: 'Start with a few. Hold 3 s to open.' },
+    es: { t: '➕ Crear tablero', d: 'Empieza con pocos. Mantén 3 s para abrir.' } },
+  { id: 'rotina', alvo: 'rotina', tela: 'home', parte: 0,
+    pt: { t: '☀️ Rotina', d: 'A próxima tarefa do dia, no horário certo.' },
+    en: { t: '☀️ Routine', d: 'The next task of the day, on time.' },
+    es: { t: '☀️ Rutina', d: 'La próxima tarea del día, a su hora.' } },
+  { id: 'premios', alvo: 'premios', tela: 'home', parte: 0,
+    pt: { t: '🎁 Prêmios', d: 'Cada tarefa feita vira estrela e prêmio.' },
+    en: { t: '🎁 Prizes', d: 'Each task done earns stars and prizes.' },
+    es: { t: '🎁 Premios', d: 'Cada tarea hecha da estrellas y premios.' } },
+  { id: 'teclado', alvo: 'teclado', tela: 'home', parte: 0,
+    pt: { t: '⌨️ Teclado', d: 'Para escrever e o app falar.' },
+    en: { t: '⌨️ Keyboard', d: 'Type and the app speaks.' },
+    es: { t: '⌨️ Teclado', d: 'Escribe y la app habla.' } },
+  { id: 'travar', alvo: 'travar', tela: 'home', parte: 0,
+    pt: { t: '🔒 Travar app', d: 'A criança não sai do app sem querer.' },
+    en: { t: '🔒 Lock app', d: 'The child cannot leave by accident.' },
+    es: { t: '🔒 Bloquear', d: 'El niño no sale de la app sin querer.' } },
+  { id: 'ajustes', alvo: 'ajustes', tela: 'home', parte: 0,
+    pt: { t: '⚙️ Ajustes', d: 'Área dos pais. Segure 3 s.' },
+    en: { t: '⚙️ Settings', d: 'Parents area. Hold 3 s.' },
+    es: { t: '⚙️ Ajustes', d: 'Área de los padres. Mantén 3 s.' } },
+  { id: 'fim', tela: 'home', parte: 7,
+    pt: { t: '🎉 Pronto!', d: 'Rever o tour: Ajustes, Tour do aplicativo.' },
+    en: { t: '🎉 Done!', d: 'Replay it: Settings, App tour.' },
+    es: { t: '🎉 ¡Listo!', d: 'Repetir: Ajustes, Recorrido de la app.' } },
+];
+
+/** Tour completo antigo (todas as telas, com demonstrações). */
+export const PASSOS_TOUR_COMPLETO: PassoTour[] = [
   // ---------------- 0) TELA INICIAL
   { id: 'oi', tela: 'home', parte: 0,
     pt: { t: '👋 Bem-vindo ao Voz Amiga!', d: 'Vou mostrar cada botão do aplicativo e o que ele faz. Eu vou lendo em voz alta e mostrando uma demonstração. Você pode pular uma parte ou rever tudo depois em Ajustes, Tour do aplicativo.' },

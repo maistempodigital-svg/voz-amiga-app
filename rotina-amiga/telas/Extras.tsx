@@ -6,7 +6,7 @@ import * as A from '../logica/acoes';
 import { modelosRotina } from '../padroes';
 import { paletaDaAba } from '../paleta';
 import { AJUDOU, GATILHOS, rotuloLista, SENTIMENTOS, tx } from '../textos2';
-import { PARTES, PASSOS_TOUR } from '../tourPassos';
+import { PARTES, PASSOS_TOUR_COMPLETO as PASSOS_TOUR } from '../tourPassos';
 import type { PassoTour } from '../tourPassos';
 import { MiniDemo } from '../tourDemo';
 import { AlvoTour, useTour } from '../tour';
