@@ -154,10 +154,10 @@ try:
         segurar(pg, pill.first, 3300); conta(pg); pg.get_by_text('Rotina atual').wait_for()
     caso('rotina-segurar-3s-abre-config', f18)
     def f19(pg):
-        pg.goto(U + '?tela=home&hora=2026-10-19T10:00:00'); ad = pg.get_by_label('Anúncio: Anúncio de exemplo')
+        pg.goto(U + '?tela=home&hora=2026-10-19T10:00:00'); ad = pg.get_by_label('Anúncio: 👑 Plano Completo')
         segurar(pg, ad, 3000); pg.wait_for_timeout(300)
-        assert pg.get_by_text('Abrindo o anúncio de exemplo…').count() == 0, '3 s não pode abrir o anúncio'
-        segurar(pg, ad, 5300); pg.get_by_text('Abrindo o anúncio de exemplo…').wait_for()
+        assert pg.get_by_text('Resolva para entrar').count() == 0, '3 s não pode abrir o anúncio'
+        segurar(pg, ad, 5300); pg.get_by_text('Resolva para entrar').wait_for()
     caso('anuncio-segurando', f19)
     def f20(pg):
         pg.goto(U + '?tela=home'); pg.get_by_label('TECLADO').click()
@@ -184,7 +184,7 @@ try:
     caso('gratis-limita-tarefa-e-abre-planos', f30)
     def f31(pg):
         pg.goto(U + '?tela=home&plano=completo&hora=2026-10-19T10:00:00'); pg.get_by_label('EU', exact=True).wait_for(); pg.wait_for_timeout(800)
-        assert pg.get_by_label('Anúncio: Anúncio de exemplo').count() == 0, 'assinante não vê anúncio'
+        assert pg.get_by_label('Anúncio: 👑 Plano Completo').count() == 0, 'assinante não vê anúncio'
     caso('assinante-sem-anuncio', f31)
     def f32(pg):
         pg.goto(U + '?tela=ajustes&cenario=zero'); pg.get_by_role('button', name='Criar a primeira rotina').click()
@@ -402,15 +402,15 @@ try:
         pg.get_by_label('RELATÓRIO GERAL').click(); pg.get_by_text('Relatório geral').first.wait_for()
     caso('relatorio-geral-nos-ajustes-do-voz', g13)
     def g14(pg):
+        # instalação nova: pede login primeiro (com Firebase) e, sem Firebase, começa sem "Tarefa de teste" e com o tour
         pg.goto(U + 'index.html'); pg.evaluate('localStorage.clear()'); pg.reload()
+        pg.get_by_text('Entrar na conta').wait_for(timeout=20000)
+        assert pg.get_by_text('Agora não').count() == 0, 'login da abertura não pode ser pulado'
+        pg.goto(U + 'index.html?semFirebase=1'); pg.evaluate('localStorage.clear()'); pg.reload()
         pg.get_by_label('Pular tour').click(); pg.wait_for_timeout(600)
-        pg.get_by_text('TAREFA DE TESTE').wait_for()
-        pg.get_by_role('button', name='Começar').click(); pg.wait_for_timeout(5600)
-        pg.get_by_role('button', name='Terminei').click()  # sem pop-up de "Rotina completa"
-        pg.wait_for_timeout(1200)
-        assert pg.get_by_text('TAREFA DE TESTE').count() == 0, 'cartão tinha que sair'
-        pg.get_by_label('Anúncio').wait_for()
-    caso('apk-zero-uma-tarefa-sai-ao-terminar', g14)
+        assert pg.get_by_text('TAREFA DE TESTE').count() == 0, 'não pode vir tarefa de teste'
+        pg.get_by_label('Anúncio: 👑 Plano Completo').wait_for()
+    caso('instalacao-nova-login-e-sem-tarefa-de-teste', g14)
     def f14(pg):
         pg.goto(U + '?tela=home&hora=2026-10-19T10:00:00&cenario=x'); pg.wait_for_timeout(1500)
     caso('sem-erros-js', f14)
