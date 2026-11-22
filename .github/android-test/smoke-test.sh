@@ -30,7 +30,7 @@ adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1
 sleep 30
 shot launch
 if [ -f "$STEPS" ]; then
-  while IFS= read -r line || [ -n "$line" ]; do
+  while IFS= read -r line <&3 || [ -n "$line" ]; do
     line="${line%%#*}"; line="$(echo "$line" | sed 's/[[:space:]]*$//')"
     [ -z "$line" ] && continue
     cmd="${line%% *}"; arg=""; [ "$cmd" != "$line" ] && arg="${line#* }"
@@ -45,7 +45,7 @@ if [ -f "$STEPS" ]; then
       expect) if [ -n "$(find_xy "$arg")" ]; then log "OK: found '$arg'"; else log "FAIL: expected '$arg'"; shot "expect-fail"; fi ;;
     esac
     if crashed; then log "CRASH after step: $line"; break; fi
-  done < "$STEPS"
+  done 3< "$STEPS"
 fi
 shot final
 adb logcat -d -b crash > "$OUT/crash.txt"
