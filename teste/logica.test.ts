@@ -323,7 +323,10 @@ ok('sugestões inteligentes: aprende com a criança + modelo + pranchas, 3 líng
 ok('plano: gratuito x completo e limites vindos do Firebase', () => {
   assert.deepEqual(limitesEfetivos(false), LIMITES_GRATIS);
   assert.deepEqual(limitesEfetivos(true, { rotinas: 1 }), LIMITES_COMPLETO, 'assinante ignora limites do gratuito');
-  assert.equal(LIMITES_GRATIS.rotinas, 1); assert.equal(LIMITES_GRATIS.tarefasPorRotina, 5); assert.equal(LIMITES_GRATIS.premios, 3);
+  assert.equal(LIMITES_GRATIS.rotinas, 1); assert.equal(LIMITES_GRATIS.tarefasPorRotina, 5); assert.equal(LIMITES_GRATIS.premios, 1);
+  assert.equal(LIMITES_GRATIS.criacaoRapida, false); assert.equal(LIMITES_GRATIS.travarApp, false); assert.deepEqual(LIMITES_GRATIS.pacotesGratis, ['BEBIDAS']);
+  assert.equal(LIMITES_COMPLETO.criacaoRapida, true); assert.equal(LIMITES_COMPLETO.travarApp, true);
+  assert.equal(lerLimitesFirebase({ travarApp: 'true' }).travarApp, true);
   assert.equal(LIMITES_GRATIS.anuncios, true); assert.equal(LIMITES_COMPLETO.anuncios, false);
   const fb = lerLimitesFirebase({ rotinas: '2', premios: 10, temporizador: 'true', relatorioCompleto: false, lixo: 1 });
   assert.deepEqual(fb, { rotinas: 2, premios: 10, temporizador: true, relatorioCompleto: false });

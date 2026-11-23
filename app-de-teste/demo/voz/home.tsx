@@ -328,7 +328,7 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
             </View>
           ) : null}
           {/* UM bloco só de sugestões, botões fixos na tela: frases prontas + o que o app entende (até palavras sem prancha) */}
-          {s.defs.sugestoes && !sos && nivel === 3 ? <BarraSugestoesFrase frase={frase} vocab={vocab} emojis={emojisPorTexto}
+          {s.defs.sugestoes && !sos && nivel === 3 ? <BarraSugestoesFrase frase={frase} vocab={vocab} emojis={emojisPorTexto} palavraBase={auto > 0 && frase.length === auto + 1 ? frase[auto] : undefined}
             aoComecar={() => { descartarFrase(); setAuto(0); inicioFrase.current = Date.now(); }}
             aoPalavra={(w) => { sugUsadas.current++; adicionarPalavra(w); }}
             aoFalarFrase={() => { /* v14.2: a sugestão só monta a frase; fala no FALAR */ }} /> : null}

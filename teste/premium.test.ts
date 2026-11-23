@@ -9,8 +9,8 @@ const DIA = 86400000;
 // 2026-11-20 é sexta-feira. Horários em UTC; São Paulo = UTC-3.
 const sp = (iso: string) => Date.parse(iso + '-03:00');
 
-ok('plano grátis do Adriano: 15 pranchas, 1 turno com 5 tarefas, só emoji, sem voz gravada, teste 30 dias', () => {
-  assert.equal(LIMITES_GRATIS.pranchas, 15); assert.equal(LIMITES_GRATIS.rotinas, 1); assert.equal(LIMITES_GRATIS.tarefasPorRotina, 5);
+ok('plano grátis do Adriano: 10 pranchas, 1 turno com 5 tarefas, só emoji, sem voz gravada, teste 30 dias', () => {
+  assert.equal(LIMITES_GRATIS.pranchas, 10); assert.equal(LIMITES_GRATIS.premios, 1); assert.equal(LIMITES_GRATIS.rotinas, 1); assert.equal(LIMITES_GRATIS.tarefasPorRotina, 5);
   assert.equal(LIMITES_GRATIS.fotos, false); assert.equal(LIMITES_GRATIS.vozGravada, 0); assert.equal(LIMITES_GRATIS.testePremiumDias, 30);
   assert.equal(lerLimitesFirebase({ fotos: 'true' }).fotos, true);
   assert.equal(lerLimitesFirebase({ testePremiumDias: 9999 }).testePremiumDias, 365);

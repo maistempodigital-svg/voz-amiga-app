@@ -1,3 +1,4 @@
+import re
 # Testes de uso (cliques reais) das funções da v14 — celular normal, celular barato (tela pequena) e tablet, 3 idiomas, sem internet.
 import subprocess, sys, time, os, re, json
 from playwright.sync_api import sync_playwright, expect
@@ -249,7 +250,7 @@ try:
         assert len(set(ys)) == 1, f'3 pacotes um ao lado do outro: {ys}'
         assert pg.evaluate('document.scrollingElement.scrollWidth <= window.innerWidth + 1'), 'sem rolagem para o lado'
         pg.get_by_label('pacote Médico', exact=True).click(); pg.get_by_label('pacote escolhido').wait_for(); pg.get_by_label('Transferir Pacote').click(); pg.get_by_text('Pacote "Médico" transferido!').wait_for()
-    caso('pacotes-de-rotina', pacote_rotina)
+    caso('pacotes-de-rotina', pacote_rotina, premium=True)
 
     def sem_foto(pg):
         pg.goto(V); pg.get_by_label('DEFINIÇÕES').first.wait_for()
@@ -258,7 +259,7 @@ try:
         pg.get_by_label('CRIAR PRANCHA', exact=True).click(); pg.get_by_label('CRIAÇÃO RÁPIDA').click(); pg.get_by_label('COMEÇAR ›').wait_for()
         assert pg.get_by_label('CRIAR COM FOTO').count() == 0, 'criar com foto foi tirado'
         assert pg.get_by_text('Frases prontas', exact=False).count() == 0 and pg.get_by_text('FRASES PRONTAS').count() == 0, 'frases prontas tiradas dos ajustes'
-    caso('sem-criar-com-foto-e-frases-prontas', sem_foto)
+    caso('sem-criar-com-foto-e-frases-prontas', sem_foto, premium=True)
 
     # ---------------------------------------------------------------- IA (sugere, pais aprovam)
     def ia(pg):
@@ -422,17 +423,20 @@ try:
         pg.get_by_label('pergunta tarde').wait_for(); pg.get_by_label('opção Tablet', exact=True).click(); pg.get_by_label('opção Bola', exact=True).click()
         pg.get_by_label('PRÓXIMA ›').click(); pg.get_by_label('opção Banho', exact=True).click(); pg.get_by_label('opção Dormir', exact=True).click()
         pg.get_by_label('PRÓXIMA ›').click(); pg.get_by_label('opção Mamãe', exact=True).click(); pg.get_by_label('opção Papai', exact=True).click()
-        # limite do plano gratuito: 10
+        # Plano Completo: sem o limite de 10 do grátis
         pg.get_by_label('opção Cachorro', exact=True).click(); pg.wait_for_timeout(200)
-        assert pg.locator('[aria-label^="opção "][aria-checked="true"]').count() == 2, 'chegou nos 10: o cachorro não entra'
-        pg.get_by_label('opção Gato', exact=True).click(); assert pg.get_by_label('opção Gato', exact=True).get_attribute('aria-checked') == 'false', 'passou do limite do plano'
+        assert pg.get_by_label('opção Cachorro', exact=True).get_attribute('aria-checked') == 'true', 'no pago o cachorro entra'
         pg.get_by_label('VER E CRIAR ›').click(); pg.get_by_label('revisar criação rápida').wait_for()
-        assert '10 de 10' in pg.get_by_label('limite do plano').inner_text()
-        pg.get_by_label('✅ CRIAR 10 BOTÕES').click(); pg.get_by_text('botões criados', exact=False).first.wait_for()
+        pg.get_by_label(re.compile(r'CRIAR \d+ BOTÕES')).click(); pg.get_by_text('botões criados', exact=False).first.wait_for()
         pg.get_by_label('Ver na tela da criança').click(); pg.get_by_label('PEDIR', exact=True).click(); pg.get_by_label('BANHEIRO', exact=True).wait_for()
         pg.get_by_label('NOITE', exact=True).click(); pg.get_by_label('DORMIR', exact=True).wait_for()
-    caso('criacao-rapida-tocando', rapida)
-    caso('criacao-rapida-tocando', rapida, 'barato')
+    caso('criacao-rapida-tocando', rapida, premium=True)
+    caso('criacao-rapida-tocando', rapida, 'barato', premium=True)
+    def rapida_gratis(pg):
+        pg.goto(U + '?tela=voz:criar'); pg.get_by_label(re.compile('CRIAÇÃO RÁPIDA')).first.click(); pg.wait_for_timeout(400)
+        assert pg.get_by_label('COMEÇAR ›').count() == 0, 'grátis não abre a criação rápida'
+        pg.get_by_text(re.compile('Criação rápida .*Plano Completo')).first.wait_for()
+    caso('criacao-rapida-e-do-plano-pago', rapida_gratis)
 
     def pacote_fixo(pg):
         pg.goto(V); pg.get_by_label('BAIXAR PACOTES').click(); pg.get_by_label('grade de pacotes').wait_for()
@@ -441,6 +445,33 @@ try:
         assert bx and bx['y'] + bx['height'] <= vh + 1 and bx['y'] > vh * 0.4, f'painel não está fixo embaixo: {bx}'
         pg.get_by_label('créditos ARASAAC').first.scroll_into_view_if_needed(); assert 'Sergio Palao' in pg.get_by_label('créditos ARASAAC').first.inner_text()
     caso('pacotes-painel-fixo-e-creditos', pacote_fixo)
+
+    # ---- v2.0.7: regras do grátis e entrada nova ----
+    def so_bebidas(pg):
+        pg.goto(V); pg.get_by_label('BAIXAR PACOTES').click(); pg.get_by_label('grade de pacotes').wait_for()
+        nomes = pg.locator('[aria-label^="pacote "]').all_inner_texts()
+        livres = [n for n in nomes if '👑' not in n]
+        assert len(livres) == 1 and 'BEBIDA' in livres[0].upper(), f'no grátis só Bebidas: {livres}'
+    caso('gratis-so-pacote-bebidas', so_bebidas)
+    def sug_agua(pg):
+        pg.goto(U + '?tela=home'); pg.get_by_label('ÁGUA', exact=True).first.wait_for(); pg.wait_for_timeout(500)
+        if pg.get_by_label('Limpar frase').count(): pg.get_by_label('Limpar frase').click(); pg.wait_for_timeout(300)
+        pg.get_by_label('ÁGUA', exact=True).first.click(); pg.wait_for_timeout(400)
+        pg.get_by_label(re.compile(r'^frase mais água$', re.I)).first.wait_for()
+        pg.get_by_label(re.compile(r'^frase eu não quero água$', re.I)).first.wait_for()
+    caso('sugestao-agua-vira-frases', sug_agua)
+    def entrada(pg):
+        pg.goto(U + '?tela=boasVindas'); pg.get_by_label('boas-vindas').wait_for()
+        for _ in range(5): pg.get_by_label('Próximo', exact=True).click(); pg.wait_for_timeout(250)
+        assert pg.get_by_text('muitas famílias', exact=False).count() == 0
+        pg.get_by_label('Próximo', exact=True).click(); pg.wait_for_timeout(250)  # comparação → planos
+        pg.get_by_label('Continuar no plano gratuito', exact=True).wait_for()
+        bx = pg.get_by_label('Continuar no plano gratuito', exact=True).bounding_box(); vh = pg.viewport_size['height']
+        assert bx and bx['y'] + bx['height'] <= vh + 1, f'botão do grátis fora da tela: {bx}'
+        pg.get_by_label('Continuar no plano gratuito', exact=True).click(); pg.wait_for_timeout(400)
+        assert pg.get_by_label('boas-vindas').count() == 0
+    caso('entrada-5-dicas-planos-e-gratis', entrada)
+    caso('entrada-5-dicas-planos-e-gratis', entrada, 'barato')
     b.close()
 finally:
     srv.terminate()

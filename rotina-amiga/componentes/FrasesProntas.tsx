@@ -46,10 +46,12 @@ export function PalavrasColoridas({ palavras, tamanho = px(26), vazio, sugeridas
  *    (frases prontas dos pais + o que o app aprendeu). Sugere mesmo palavras que ainda não têm prancha.
  * Palavra: entra na frase. Frase: é montada palavra por palavra e falada no fim.
  */
-export function BarraSugestoesFrase({ frase, vocab, aoComecar, aoPalavra, aoFalarFrase, intervaloMs = 300, max = 6, emojis }: {
+export function BarraSugestoesFrase({ frase, vocab, aoComecar, aoPalavra, aoFalarFrase, intervaloMs = 300, max = 6, emojis, palavraBase }: {
   frase: string[]; vocab: string[]; aoComecar?: () => void; aoPalavra: (w: string) => void; aoFalarFrase: (palavras: string[]) => void; intervaloMs?: number; max?: number;
   /** desenho de cada palavra (texto da prancha em minúsculas → emoji), para a frase sugerida mostrar o desenho */
   emojis?: Record<string, string>;
+  /** a palavra que a criança tocou quando o app já completou a frase sozinho ("ÁGUA" → "EU QUERO ÁGUA") */
+  palavraBase?: string;
 }) {
   const { sugerirFrase, idioma } = useRotina();
   const { ligado, frases: prontas } = useFrasesProntas();
@@ -71,8 +73,10 @@ export function BarraSugestoesFrase({ frase, vocab, aoComecar, aoPalavra, aoFala
   const frasesSug: string[][] = [];
   // v2.0.6: a criança tocou UMA palavra (ex.: ÁGUA) → frases em volta dela ("EU QUERO ÁGUA", "EU NÃO QUERO ÁGUA", "MAIS ÁGUA"...)
   // + frases prontas que têm essa palavra em qualquer lugar. Sem limite: a fileira desliza para o lado.
-  const emVolta = frase.length === 1 ? frasesEmVolta(frase[0], idioma) : [];
-  const comPalavra = ligado && frase.length === 1 ? prontas.map((f) => f.palavras).filter((ws) => ws.length > 1 && ws.some((w) => k([w]) === prefixo)) : [];
+  const base = frase.length === 1 ? frase[0] : palavraBase;
+  const emVolta = base ? frasesEmVolta(base, idioma) : [];
+  const kb = base ? k([base]) : '';
+  const comPalavra = ligado && base ? prontas.map((f) => f.palavras).filter((ws) => ws.length > 1 && ws.some((w) => k([w]) === kb)) : [];
   for (const ws of [...emVolta, ...daLista, ...comPalavra, ...sug.frases]) { const c = k(ws); if (!vistos.has(c) && c !== prefixo) { vistos.add(c); frasesSug.push(ws); } }
   // tela inicial fácil: sem frase => só as frases prontas como botões; com frase => poucas palavras + poucas frases (sem rolar, sem janela)
   const palavras = frase.length ? sug.palavras.slice(0, 4) : [];

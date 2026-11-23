@@ -430,9 +430,8 @@ export function Pacotes({ voltar, casa }: Nav) {
   const { s, mudar, toast } = useVoz();
   const { recurso, idioma, limites, assinante: premium, pedirPlano, pode } = useRotina();
   const { width: W, height: H } = useWindowDimensions();
-  // v14.8: no grátis só os pacotes sem 👑 (Firebase limitações/rotina/pacotesGratis) e só emojis; os pacotes de rotina são grátis
-  const ehRotina = (id: string) => PACOTES_ROTINA.some((r) => r.id === id);
-  const gratis = (id: string) => premium || ehRotina(id) || pacoteGratis(limites, id);
+  // v2.0.7: no grátis só os pacotes da lista do painel (limitações/rotina/pacotesGratis, hoje só BEBIDAS) e só emojis
+  const gratis = (id: string) => premium || pacoteGratis(limites, id);
   const desenhosOk = premium || pode('foto');
   // v14.3: os pacotes em GRADE em cima; o que tem o pacote escolhido fica FIXO embaixo (não some ao rolar)
   const lista: { id: string; r: string; itens: string[][]; tema?: string }[] = [

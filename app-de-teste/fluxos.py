@@ -144,9 +144,14 @@ try:
         segurar(pg, pg.get_by_label('AJUSTES', exact=True), 3300); conta(pg); pg.get_by_text('Ajustes e Opções').wait_for()
     caso('ajustes-segurando', f16)
     def f17(pg):
-        pg.goto(U + '?tela=home'); segurar(pg, pg.get_by_label('TRAVAR APP'), 3300); conta(pg); pg.get_by_label('DESTRAVAR').wait_for()
+        pg.goto(U + '?tela=home&plano=completo'); segurar(pg, pg.get_by_label('TRAVAR APP'), 3300); conta(pg); pg.get_by_label('DESTRAVAR').wait_for()
         segurar(pg, pg.get_by_label('DESTRAVAR'), 3300); conta(pg); pg.get_by_label('TRAVAR APP').wait_for()
     caso('travar-e-destravar', f17)
+    def f17b(pg):
+        pg.goto(U + '?tela=home'); segurar(pg, pg.get_by_label('TRAVAR APP'), 3300); pg.wait_for_timeout(500)
+        assert pg.get_by_label('DESTRAVAR').count() == 0, 'grátis não pode travar'
+        pg.get_by_text(re.compile('Travar o app .*Plano Completo')).first.wait_for()
+    caso('travar-app-e-do-plano-pago', f17b)
     def f18(pg):
         pg.goto(U + '?tela=home'); pill = pg.get_by_label(re.compile('ESCOLA|Escola'))
         segurar(pg, pill.first, 1600); pg.wait_for_timeout(300)
