@@ -1,0 +1,14 @@
+[smoke] installing app.apk
+Performing Streamed Install
+Success
+[smoke] launching com.vozamiga.rotinateste
+[smoke] screenshot 01-launch
+[smoke] screenshot 02-idioma
+[smoke] tap 'Continuar' at 160 481
+[smoke] screenshot 03-login
+[smoke] OK: found 'Entrar com Google'
+[smoke] abrir com ?semFirebase=1
+[smoke] screenshot 04-inicio
+[smoke] tap 'Pular tour' at 47 306
+[smoke] screenshot 05-home
+[smoke] screenshot 06-final

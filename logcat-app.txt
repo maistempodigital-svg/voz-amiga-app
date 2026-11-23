@@ -1,0 +1,300 @@
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{9b963e3 com.android.dialer/10101} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{4f0e1e0 com.android.gallery3d/10109} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{2a29c99 com.android.wifi.resources/10137} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{2497b5e com.android.theme.font.notoserifsource/10029} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{5945b3f com.android.internal.display.cutout.emulation.waterfall/10034} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{5b23c0c com.android.inputmethod.latin/10107} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{8776955 com.android.internal.systemui.navbar.transparent/10000} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{9adef6a org.chromium.webview_shell/10103} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{3fd6c5b com.android.systemui.emulation.pixel_3a_xl/10041} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{34d0cf8 com.android.systemui.emulation.pixel_6_pro/10033} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{19245d1 com.android.systemui.emulation.pixel_7_pro/10026} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{d339836 com.android.systemui.emulation.pixel_8_pro/10018} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{71c7337 com.android.dreams.phototable/10113} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{5c200a4 com.android.providers.partnerbookmarks/10084} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{2a46e0d com.android.wallpaper.livepicker/10077} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{49901c2 com.android.cellbroadcastreceiver.module/10126} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{1bb0bd3 com.android.phone.auto_generated_rro_vendor__/10056} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{2708310 com.android.apps.tag/10075} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{36de09 com.android.imsserviceentitlement/10100} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{2f9780e com.android.appsearch.apk/10136} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{fa0922f com.android.internal.emulation.pixel_2_xl/10042} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{342c03c com.android.internal.emulation.pixel_3_xl/10037} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{46651c5 com.android.internal.emulation.pixel_4_xl/10012} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{fd9071a com.android.internal.emulation.pixel_fold/10048} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{7ae224b com.android.bookmarkprovider/10081} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{499a428 com.android.systemui.emulation.pixel_3a/10022} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{45f4541 com.android.systemui.emulation.pixel_4a/10030} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{4f07ae6 com.android.systemui.emulation.pixel_6a/10006} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{3ba9827 com.android.systemui.emulation.pixel_7a/10052} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{5f8dad4 com.android.systemui.emulation.pixel_8a/10038} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{241bba0 com.android.cts.ctsshim/10135} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{199f47d com.android.wallpaper/10117} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{cb95f72 com.android.connectivity.resources.goldfish.overlay/10059} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{a2e8fc3 com.android.music/10105} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{972d040 com.android.hotspot2.osulogin/10139} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{2d65b79 com.android.companiondevicemanager.auto_generated_characteristics_rro/10009} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{dba00be com.android.internal.systemui.navbar.gestural/10036} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{560651f com.android.deskclock/10111} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{dd4b06c com.android.bluetoothmidiservice/10087} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{d83635 com.android.captiveportallogin/10090} BLOCKED
+11-23 04:20:24.528 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{e916aca android.auto_generated_rro_vendor__/10058} BLOCKED
+11-23 04:20:24.544 D/nativeloader( 2149): Load /product/app/webview/webview.apk!/lib/x86_64/libwebviewchromium.so using ns product-clns-8 from class loader (caller=/product/app/webview/webview.apk): ok
+11-23 04:20:24.544 D/nativeloader( 2149): Load /system/lib64/libwebviewchromium_plat_support.so using ns product-clns-8 from class loader (caller=/product/app/webview/webview.apk): ok
+11-23 04:20:24.548 I/chromium( 2149): [1123/042024.547685:INFO:variations_seed_loader.cc(66)] Failed to open file for reading.: No such file or directory (2)
+11-23 04:20:24.548 I/cr_VariationsUtils( 2149): Failed reading seed file "/data/user/0/com.vozamiga.rotinateste/app_webview/variations_seed_new"
+11-23 04:20:24.548 I/chromium( 2149): [1123/042024.548686:INFO:variations_seed_loader.cc(66)] Failed to open file for reading.: No such file or directory (2)
+11-23 04:20:24.548 I/cr_VariationsUtils( 2149): Failed reading seed file "/data/user/0/com.vozamiga.rotinateste/app_webview/variations_seed"
+11-23 04:20:24.561 I/ActivityManager(  546): Start proc 2180:com.android.webview:webview_service/u0a112 for service {com.android.webview/org.chromium.android_webview.services.VariationsSeedServer}
+11-23 04:20:24.588 I/ActivityManager(  546): Start proc 2196:com.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai9000 for  {com.vozamiga.rotinateste/org.chromium.content.app.SandboxedProcessService0:0}
+11-23 04:20:24.594 E/chromium( 2149): [ERROR:simple_file_enumerator.cc(21)] opendir /data/user/0/com.vozamiga.rotinateste/cache/WebView/Default/HTTP Cache/Code Cache/wasm: No such file or directory (2)
+11-23 04:20:24.594 E/chromium( 2149): [ERROR:simple_index_file.cc(614)] Could not reconstruct index from disk
+11-23 04:20:24.616 D/ConnectivityService(  546): requestNetwork for uid/pid:10148/2149 activeRequest: null callbackRequest: 62 [NetworkRequest [ REQUEST id=63, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false
+11-23 04:20:24.622 D/WifiNetworkFactory(  546): got request NetworkRequest [ REQUEST id=63, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ]
+11-23 04:20:24.622 D/UntrustedWifiNetworkFactory(  546): got request NetworkRequest [ REQUEST id=63, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ]
+11-23 04:20:24.623 D/OemPaidWifiNetworkFactory(  546): got request NetworkRequest [ REQUEST id=63, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ]
+11-23 04:20:24.623 D/MultiInternetWifiNetworkFactory(  546): got request NetworkRequest [ REQUEST id=63, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ]
+11-23 04:20:24.646 I/cr_WebViewApkApp( 2196): Launched version=124.0.6367.219 minSdkVersion=1 isBundle=false processName=com.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
+11-23 04:20:24.702 W/chromium( 2196): [WARNING:runtime_features.cc(694)] SharedStorage for M118+ cannot be enabled in this configuration. Use --enable-features=SharedStorageAPI,SharedStorageAPIM118 in addition.
+11-23 04:20:24.704 I/ActivityManager(  546): Start proc 2233:com.android.webview:webview_apk/u0a112 for service {com.android.webview/org.chromium.android_webview.nonembedded.AwComponentUpdateService}
+11-23 04:20:24.773 D/CoreBackPreview(  546): Window{8120284 u0 com.vozamiga.rotinateste/com.vozamiga.rotinateste.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@846a3a1, mPriority=0, mIsAnimationCallback=false}
+11-23 04:20:24.803 D/nativeloader( 2233): Load /product/app/webview/webview.apk!/lib/x86_64/libwebviewchromium.so using ns product-clns-7 from class loader (caller=/product/app/webview/webview.apk): ok
+11-23 04:20:24.849 W/chromium( 2149): [WARNING:display_webview.cc(32)] WebView overlays are enabled!
+11-23 04:20:24.982 W/cr_AWNetworkFetcherTask( 2233): 	at org.chromium.android_webview.nonembedded.NetworkFetcherTask.download(chromium-SystemWebView.apk-default-636771907:56)
+11-23 04:20:25.001 W/ziparchive(  546): Unable to open '/data/app/~~4q8TMITohA7wRP4wqWuGKg==/com.vozamiga.rotinateste-LhyqNp8h4vMFGClu4nP4Xg==/base.dm': No such file or directory
+11-23 04:20:25.001 I/ActivityTaskManager(  546): Displayed com.vozamiga.rotinateste/.MainActivity for user 0: +961ms
+11-23 04:20:25.034 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{a068c75 com.android.camera2/10108} BLOCKED
+11-23 04:20:25.034 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{fc57d57 com.android.calendar/10110} BLOCKED
+11-23 04:20:25.035 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{eb023dc com.android.rkpdapp/10125} BLOCKED
+11-23 04:20:25.035 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{5b23c0c com.android.inputmethod.latin/10107} BLOCKED
+11-23 04:20:25.035 I/AppsFilter(  546): interaction: PackageSetting{13b977f com.vozamiga.rotinateste/10148} -> PackageSetting{49901c2 com.android.cellbroadcastreceiver.module/10126} BLOCKED
+11-23 04:20:25.037 D/CoreBackPreview(  546): Window{d6ce28e u0 Splash Screen com.vozamiga.rotinateste EXITING}: Setting back callback null
+11-23 04:20:25.042 W/InputManager-JNI(  546): Input channel object 'd6ce28e Splash Screen com.vozamiga.rotinateste (client)' was disposed without first being removed with the input manager!
+11-23 04:20:25.161 I/ImeTracker(  546): com.vozamiga.rotinateste:ea52a77c: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+11-23 04:20:25.161 I/ImeTracker(  546): com.vozamiga.rotinateste:ea52a77c: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-23 04:20:25.447 I/chromium( 2196): [INFO:document_style_environment_variables.cc(104)] E2E_Used SafeAreaInsetBottom
+11-23 04:20:25.451 E/WebViewAssetLoader( 2149): 	at com.vozamiga.rotinateste.MainActivity$onCreate$3.shouldInterceptRequest(MainActivity.kt:132)
+11-23 04:20:25.451 E/WebViewAssetLoader( 2149): 	at WV.J5.a(chromium-SystemWebView.apk-default-636771907:86)
+11-23 04:20:25.451 E/WebViewAssetLoader( 2149): 	at org.chromium.android_webview.AwContentsBackgroundThreadClient.shouldInterceptRequestFromNative(chromium-SystemWebView.apk-default-636771907:15)
+11-23 04:20:30.586 D/ProfileInstaller( 2149): Installing profile for com.vozamiga.rotinateste
+11-23 04:20:50.015 W/droid.launcher3( 1288): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~4q8TMITohA7wRP4wqWuGKg==/com.vozamiga.rotinateste-LhyqNp8h4vMFGClu4nP4Xg==/base.apk' with 1 weak references
+11-23 04:20:54.386 D/AndroidRuntime( 2375): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-23 04:20:54.391 I/AndroidRuntime( 2375): Using default boot image
+11-23 04:20:54.391 I/AndroidRuntime( 2375): Leaving lock profiling enabled
+11-23 04:20:54.433 D/nativeloader( 2375): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-23 04:20:54.459 D/AndroidRuntime( 2375): Calling main entry com.android.commands.uiautomator.Launcher
+11-23 04:20:55.494 I/chromium( 2196): [INFO:document_style_environment_variables.cc(104)] E2E_Used SafeAreaInsetBottom
+11-23 04:20:55.501 D/AndroidRuntime( 2375): Shutting down VM
+11-23 04:21:16.633 D/AndroidRuntime( 2403): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-23 04:21:16.641 I/AndroidRuntime( 2403): Using default boot image
+11-23 04:21:16.641 I/AndroidRuntime( 2403): Leaving lock profiling enabled
+11-23 04:21:16.689 D/nativeloader( 2403): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-23 04:21:16.711 D/AndroidRuntime( 2403): Calling main entry com.android.commands.uiautomator.Launcher
+11-23 04:21:17.773 D/AndroidRuntime( 2403): Shutting down VM
+11-23 04:21:18.723 D/AndroidRuntime( 2423): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-23 04:21:18.725 I/AndroidRuntime( 2423): Using default boot image
+11-23 04:21:18.725 I/AndroidRuntime( 2423): Leaving lock profiling enabled
+11-23 04:21:18.767 D/nativeloader( 2423): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-23 04:21:18.792 D/AndroidRuntime( 2423): Calling main entry com.android.commands.uiautomator.Launcher
+11-23 04:21:19.828 D/AndroidRuntime( 2423): Shutting down VM
+11-23 04:21:28.932 D/AndroidRuntime( 2463): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-23 04:21:28.934 I/AndroidRuntime( 2463): Using default boot image
+11-23 04:21:28.934 I/AndroidRuntime( 2463): Leaving lock profiling enabled
+11-23 04:21:28.979 D/nativeloader( 2463): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-23 04:21:29.000 D/AndroidRuntime( 2463): Calling main entry com.android.commands.uiautomator.Launcher
+11-23 04:21:30.035 D/AndroidRuntime( 2463): Shutting down VM
+11-23 04:21:30.946 D/AndroidRuntime( 2483): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-23 04:21:30.949 I/AndroidRuntime( 2483): Using default boot image
+11-23 04:21:30.949 I/AndroidRuntime( 2483): Leaving lock profiling enabled
+11-23 04:21:30.992 D/nativeloader( 2483): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-23 04:21:31.011 D/AndroidRuntime( 2483): Calling main entry com.android.commands.uiautomator.Launcher
+11-23 04:21:32.042 D/AndroidRuntime( 2483): Shutting down VM
+11-23 04:21:32.934 I/ActivityManager(  546): Force stopping com.vozamiga.rotinateste appid=10148 user=0: from pid 2507
+11-23 04:21:32.935 I/ActivityManager(  546): Killing 2149:com.vozamiga.rotinateste/u0a148 (adj 0): stop com.vozamiga.rotinateste due to from pid 2507
+11-23 04:21:32.936 W/ActivityTaskManager(  546): Force removing ActivityRecord{16c0860 u0 com.vozamiga.rotinateste/.MainActivity t8 f}}: app died, no saved state
+11-23 04:21:32.936 I/AndroidRuntime( 2196): VM exiting with result code 0, cleanup skipped.
+11-23 04:21:32.937 V/WindowManagerShell(  874): Transition requested (#7): android.os.BinderProxy@e2f7b11 TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=false baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.vozamiga.rotinateste/.MainActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{com.vozamiga.rotinateste/com.vozamiga.rotinateste.MainActivity} numActivities=0 lastActiveTime=26274 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@1dcc476} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= falseisLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false topActivityEligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false cameraCompatTaskInfo=CameraCompatTaskInfo { cameraCompatControlState=hidden freeformCameraCompatMode=inactive}}}, pipTask = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 7 }
+11-23 04:21:32.944 I/ActivityManager(  546): Killing 2196:com.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a148i0 (adj 0): isolated not needed
+11-23 04:21:32.966 D/CarrierSvcBindHelper( 1037): onHandleForceStop: [com.vozamiga.rotinateste]
+11-23 04:21:32.968 I/AppWidgetServiceImpl(  546): Updating package stopped masked state for uid 10148 package com.vozamiga.rotinateste isStopped true
+11-23 04:21:32.971 W/ActivityTaskManager(  546): Unable to send transaction to client proc com.vozamiga.rotinateste: no app thread
+11-23 04:21:32.979 I/ActivityTaskManager(  546): Add Task{fcd0119 #8 type=standard A=10148:com.vozamiga.rotinateste} to hidden list because adding Task{3612277 #9 type=standard A=10148:com.vozamiga.rotinateste}
+11-23 04:21:32.980 I/ActivityTaskManager(  546): START u0 {flg=0x10000000 cmp=com.vozamiga.rotinateste/.MainActivity (has extras)} with LAUNCH_MULTIPLE from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+11-23 04:21:32.982 W/ActivityManager(  546): ProcessRecord{faa6ebc 0:com.vozamiga.rotinateste/u0a148} is attached to a previous process 2149
+11-23 04:21:32.983 I/TopTaskTracker( 1288): onTaskMovedToFront: (moved taskInfo to front) taskId=9, baseIntent=Intent { flg=0x10000000 cmp=com.vozamiga.rotinateste/.MainActivity }
+11-23 04:21:32.985 W/ActivityManager(  546): ProcessRecord{faa6ebc 0:com.vozamiga.rotinateste/u0a148} is attached to a previous process 2149
+11-23 04:21:32.986 W/ActivityManager(  546): ProcessRecord{faa6ebc 0:com.vozamiga.rotinateste/u0a148} is attached to a previous process 2149
+11-23 04:21:32.986 V/ActivityManager(  546): Got obituary of 2149:com.vozamiga.rotinateste
+11-23 04:21:32.986 I/WindowManager(  546): WIN DEATH: Window{8120284 u0 com.vozamiga.rotinateste/com.vozamiga.rotinateste.MainActivity}
+11-23 04:21:32.987 W/InputManager-JNI(  546): Input channel object '8120284 com.vozamiga.rotinateste/com.vozamiga.rotinateste.MainActivity (client)' was disposed without first being removed with the input manager!
+11-23 04:21:32.988 W/ActivityTaskManager(  546): Unable to send transaction to client proc com.vozamiga.rotinateste: no app thread
+11-23 04:21:32.993 I/ImeTracker(  546): com.vozamiga.rotinateste:1b695a25: onRequestHide at ORIGIN_SERVER reason HIDE_REMOVE_CLIENT fromUser false
+11-23 04:21:32.993 I/ImeTracker(  546): com.vozamiga.rotinateste:1b695a25: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-23 04:21:32.993 D/ConnectivityService(  546): releasing NetworkRequest [ REQUEST id=63, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ] (release request)
+11-23 04:21:32.994 I/AppWidgetServiceImpl(  546): Updating package stopped masked state for uid 10148 package com.vozamiga.rotinateste isStopped false
+11-23 04:21:32.995 D/CoreBackPreview(  546): Window{7584550 u0 Splash Screen com.vozamiga.rotinateste}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@d4aef26, mPriority=0, mIsAnimationCallback=false}
+11-23 04:21:32.999 I/ActivityManager(  546): Start proc 2522:com.vozamiga.rotinateste/u0a148 for next-top-activity {com.vozamiga.rotinateste/com.vozamiga.rotinateste.MainActivity}
+11-23 04:21:33.056 W/ziparchive( 2522): Unable to open '/data/app/~~4q8TMITohA7wRP4wqWuGKg==/com.vozamiga.rotinateste-LhyqNp8h4vMFGClu4nP4Xg==/base.dm': No such file or directory
+11-23 04:21:33.056 W/ziparchive( 2522): Unable to open '/data/app/~~4q8TMITohA7wRP4wqWuGKg==/com.vozamiga.rotinateste-LhyqNp8h4vMFGClu4nP4Xg==/base.dm': No such file or directory
+11-23 04:21:33.109 D/nativeloader( 2522): Configuring clns-7 for other apk /data/app/~~4q8TMITohA7wRP4wqWuGKg==/com.vozamiga.rotinateste-LhyqNp8h4vMFGClu4nP4Xg==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~4q8TMITohA7wRP4wqWuGKg==/com.vozamiga.rotinateste-LhyqNp8h4vMFGClu4nP4Xg==/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.vozamiga.rotinateste
+11-23 04:21:33.130 V/WindowManager(  546): Sent Transition (#7) createdAt=11-23 04:21:32.936 via request=TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=false baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.vozamiga.rotinateste/.MainActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{com.vozamiga.rotinateste/com.vozamiga.rotinateste.MainActivity} numActivities=0 lastActiveTime=26274 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{6c3736d Task{fcd0119 #8 type=standard A=10148:com.vozamiga.rotinateste}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= falseisLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false topActivityEligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false cameraCompatTaskInfo=CameraCompatTaskInfo { cameraCompatControlState=hidden freeformCameraCompatMode=inactive}}}, pipTask = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 7 }
+11-23 04:21:33.130 V/WindowManager(  546):         {WCT{RemoteToken{7f84f75 Task{3612277 #9 type=standard A=10148:com.vozamiga.rotinateste}}} m=OPEN f=MOVE_TO_TOP leash=Surface(name=Task=9)/@0x5480c5f sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0 taskParent=-1},
+11-23 04:21:33.130 V/WindowManager(  546):         {WCT{RemoteToken{6c3736d Task{fcd0119 #8 type=standard A=10148:com.vozamiga.rotinateste}}} m=CLOSE f=NONE leash=Surface(name=Task=8)/@0x808e197 sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0 taskParent=-1},
+11-23 04:21:33.144 W/WindowManager(  546): Exception thrown during dispatchAppVisibility Window{8120284 u0 com.vozamiga.rotinateste/com.vozamiga.rotinateste.MainActivity EXITING}
+11-23 04:21:33.174 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{9c2634c com.android.cts.priv.ctsshim/10134} BLOCKED
+11-23 04:21:33.174 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{acd9f95 com.android.uwb.resources/10130} BLOCKED
+11-23 04:21:33.174 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{26a88aa com.android.internal.display.cutout.emulation.corner/10014} BLOCKED
+11-23 04:21:33.174 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{a7c2c9b com.android.internal.display.cutout.emulation.double/10017} BLOCKED
+11-23 04:21:33.174 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{7586838 com.android.healthconnect.controller/10127} BLOCKED
+11-23 04:21:33.174 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{3b5a011 com.android.health.connect.backuprestore/10128} BLOCKED
+11-23 04:21:33.174 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{9408576 com.android.virtualmachine.res/10131} BLOCKED
+11-23 04:21:33.174 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{866f777 com.android.carrierconfig.auto_generated_rro_vendor__/10057} BLOCKED
+11-23 04:21:33.174 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{47cfe4 com.android.systemui.emulation.pixel_3_xl/10016} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{e432c4d com.android.systemui.emulation.pixel_4_xl/10046} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{aa78302 com.android.systemui.emulation.pixel_fold/10032} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{8c99413 com.android.providers.telephony.auto_generated_characteristics_rro/10027} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{2a40650 com.android.htmlviewer/10082} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{ba34049 com.android.quicksearchbox/10104} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{38ecd4e com.android.networkstack.tethering.emulator/10054} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{eaf5e6f com.android.internal.emulation.pixel_3a_xl/10035} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{84b377c com.android.internal.emulation.pixel_6_pro/10004} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{8d69805 com.android.internal.emulation.pixel_7_pro/10050} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{e8e705a com.android.internal.emulation.pixel_8_pro/10049} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{87d728b com.android.internal.emulation.pixel_3a/10001} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{8d24f68 com.android.internal.emulation.pixel_4a/10053} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{82daf81 com.android.internal.emulation.pixel_6a/10011} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{5b33826 com.android.internal.emulation.pixel_7a/10024} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{bceac67 com.android.internal.emulation.pixel_8a/10028} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{e30fa14 com.android.safetycenter.resources/10132} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{684c2bd com.android.simappdialog/10088} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{50ab0b2 com.android.connectivity.resources/10129} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{30fa803 com.android.internal.display.cutout.emulation.hole/10002} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{82da380 com.android.internal.display.cutout.emulation.tall/10007} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{83fcdb9 com.android.modulemetadata/10106} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{9ef25fe com.android.internal.systemui.navbar.threebutton/10045} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{8dac15f com.android.wifi.dialog/10138} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{a8977ac com.android.contacts/10102} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{a068c75 com.android.camera2/10108} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{b13a40a com.android.internal.ranchu.commonoverlay/10040} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{d14147b com.android.launcher3/10121} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{1ec6298 com.android.systemui.auto_generated_rro_vendor__/10055} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{1407af1 com.android.internal.systemui.navbar.twobutton/10008} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{54ff6d6 com.android.settings.intelligence/10099} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{fc57d57 com.android.calendar/10110} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{b911044 com.android.systemui.emulation.pixel_3/10025} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{850d52d com.android.systemui.emulation.pixel_4/10005} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{92caa62 com.android.systemui.emulation.pixel_5/10043} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{dba97f3 com.android.systemui.emulation.pixel_6/10047} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{bb0ecb0 com.android.systemui.emulation.pixel_7/10023} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{2929729 com.android.systemui.emulation.pixel_8/10010} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{52f0aae com.android.printspooler/10083} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{adcc04f com.android.dreams.basic/10086} BLOCKED
+11-23 04:21:33.175 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{eb023dc com.android.rkpdapp/10125} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{4147ce5 com.android.internal.emulation.pixel_3/10051} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{8e523ba com.android.internal.emulation.pixel_4/10013} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{64f126b com.android.internal.emulation.pixel_5/10044} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{109a1c8 com.android.internal.emulation.pixel_6/10003} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{9150261 com.android.internal.emulation.pixel_7/10020} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{cb1c186 com.android.internal.emulation.pixel_8/10019} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{44a6a47 android.auto_generated_characteristics_rro/10021} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{9fb1274 com.android.musicfx/10060} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{93e639d com.android.phone.auto_generated_characteristics_rro/10015} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{a587012 com.android.printservice.recommendation/10095} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{9b963e3 com.android.dialer/10101} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{4f0e1e0 com.android.gallery3d/10109} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{2a29c99 com.android.wifi.resources/10137} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{2497b5e com.android.theme.font.notoserifsource/10029} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{5945b3f com.android.internal.display.cutout.emulation.waterfall/10034} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{5b23c0c com.android.inputmethod.latin/10107} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{8776955 com.android.internal.systemui.navbar.transparent/10000} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{9adef6a org.chromium.webview_shell/10103} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{3fd6c5b com.android.systemui.emulation.pixel_3a_xl/10041} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{34d0cf8 com.android.systemui.emulation.pixel_6_pro/10033} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{19245d1 com.android.systemui.emulation.pixel_7_pro/10026} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{d339836 com.android.systemui.emulation.pixel_8_pro/10018} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{71c7337 com.android.dreams.phototable/10113} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{5c200a4 com.android.providers.partnerbookmarks/10084} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{2a46e0d com.android.wallpaper.livepicker/10077} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{49901c2 com.android.cellbroadcastreceiver.module/10126} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{1bb0bd3 com.android.phone.auto_generated_rro_vendor__/10056} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{2708310 com.android.apps.tag/10075} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{36de09 com.android.imsserviceentitlement/10100} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{2f9780e com.android.appsearch.apk/10136} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{fa0922f com.android.internal.emulation.pixel_2_xl/10042} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{342c03c com.android.internal.emulation.pixel_3_xl/10037} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{46651c5 com.android.internal.emulation.pixel_4_xl/10012} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{fd9071a com.android.internal.emulation.pixel_fold/10048} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{7ae224b com.android.bookmarkprovider/10081} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{499a428 com.android.systemui.emulation.pixel_3a/10022} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{45f4541 com.android.systemui.emulation.pixel_4a/10030} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{4f07ae6 com.android.systemui.emulation.pixel_6a/10006} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{3ba9827 com.android.systemui.emulation.pixel_7a/10052} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{5f8dad4 com.android.systemui.emulation.pixel_8a/10038} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{241bba0 com.android.cts.ctsshim/10135} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{199f47d com.android.wallpaper/10117} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{cb95f72 com.android.connectivity.resources.goldfish.overlay/10059} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{a2e8fc3 com.android.music/10105} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{972d040 com.android.hotspot2.osulogin/10139} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{2d65b79 com.android.companiondevicemanager.auto_generated_characteristics_rro/10009} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{dba00be com.android.internal.systemui.navbar.gestural/10036} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{560651f com.android.deskclock/10111} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{dd4b06c com.android.bluetoothmidiservice/10087} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{d83635 com.android.captiveportallogin/10090} BLOCKED
+11-23 04:21:33.176 I/AppsFilter(  546): interaction: PackageSetting{e4eeaba com.vozamiga.rotinateste/10148} -> PackageSetting{e916aca android.auto_generated_rro_vendor__/10058} BLOCKED
+11-23 04:21:33.195 D/nativeloader( 2522): Load /product/app/webview/webview.apk!/lib/x86_64/libwebviewchromium.so using ns product-clns-8 from class loader (caller=/product/app/webview/webview.apk): ok
+11-23 04:21:33.196 D/nativeloader( 2522): Load /system/lib64/libwebviewchromium_plat_support.so using ns product-clns-8 from class loader (caller=/product/app/webview/webview.apk): ok
+11-23 04:21:33.198 E/chromium( 2522): [1123/042133.198773:ERROR:variations_seed_loader.cc(37)] Seed missing signature.
+11-23 04:21:33.199 I/cr_VariationsUtils( 2522): Failed reading seed file "/data/user/0/com.vozamiga.rotinateste/app_webview/variations_seed_new"
+11-23 04:21:33.199 I/chromium( 2522): [1123/042133.199085:INFO:variations_seed_loader.cc(66)] Failed to open file for reading.: No such file or directory (2)
+11-23 04:21:33.199 I/cr_VariationsUtils( 2522): Failed reading seed file "/data/user/0/com.vozamiga.rotinateste/app_webview/variations_seed"
+11-23 04:21:33.221 I/ActivityManager(  546): Start proc 2548:com.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0i1 for  {com.vozamiga.rotinateste/org.chromium.content.app.SandboxedProcessService0:0}
+11-23 04:21:33.234 I/cr_WebViewApkApp( 2548): Launched version=124.0.6367.219 minSdkVersion=1 isBundle=false processName=com.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
+11-23 04:21:33.241 E/chromium( 2522): [ERROR:simple_version_upgrade.cc(152)] Failed to write a new fake index.
+11-23 04:21:33.242 E/chromium( 2522): [ERROR:simple_version_upgrade.cc(152)] Failed to write a new fake index.
+11-23 04:21:33.243 E/chromium( 2522): [ERROR:simple_file_enumerator.cc(21)] opendir /data/user/0/com.vozamiga.rotinateste/cache/WebView/Default/HTTP Cache/Code Cache/wasm: No such file or directory (2)
+11-23 04:21:33.243 E/chromium( 2522): [ERROR:simple_index_file.cc(614)] Could not reconstruct index from disk
+11-23 04:21:33.247 W/ProcessStats(  546): Tracking association SourceState{4227841 com.vozamiga.rotinateste/10148 BTop #548} whose proc state 2 is better than process ProcessState{6f5f6ed com.android.webview:webview_service/10112 pkg=com.android.webview} proc state 14 (0 skipped)
+11-23 04:21:33.253 D/ConnectivityService(  546): requestNetwork for uid/pid:10148/2522 activeRequest: null callbackRequest: 67 [NetworkRequest [ REQUEST id=68, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false
+11-23 04:21:33.256 D/WifiNetworkFactory(  546): got request NetworkRequest [ REQUEST id=68, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ]
+11-23 04:21:33.256 D/UntrustedWifiNetworkFactory(  546): got request NetworkRequest [ REQUEST id=68, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ]
+11-23 04:21:33.256 D/OemPaidWifiNetworkFactory(  546): got request NetworkRequest [ REQUEST id=68, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ]
+11-23 04:21:33.256 D/MultiInternetWifiNetworkFactory(  546): got request NetworkRequest [ REQUEST id=68, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.vozamiga.rotinateste UnderlyingNetworks: Null] ]
+11-23 04:21:33.362 W/chromium( 2548): [WARNING:runtime_features.cc(694)] SharedStorage for M118+ cannot be enabled in this configuration. Use --enable-features=SharedStorageAPI,SharedStorageAPIM118 in addition.
+11-23 04:21:33.390 D/CoreBackPreview(  546): Window{1118870 u0 com.vozamiga.rotinateste/com.vozamiga.rotinateste.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@626a107, mPriority=0, mIsAnimationCallback=false}
+11-23 04:21:33.451 W/chromium( 2522): [WARNING:display_webview.cc(32)] WebView overlays are enabled!
+11-23 04:21:33.570 W/ziparchive(  546): Unable to open '/data/app/~~4q8TMITohA7wRP4wqWuGKg==/com.vozamiga.rotinateste-LhyqNp8h4vMFGClu4nP4Xg==/base.dm': No such file or directory
+11-23 04:21:33.571 I/ActivityTaskManager(  546): Displayed com.vozamiga.rotinateste/.MainActivity for user 0: +595ms
+11-23 04:21:33.593 D/CoreBackPreview(  546): Window{7584550 u0 Splash Screen com.vozamiga.rotinateste EXITING}: Setting back callback null
+11-23 04:21:33.593 W/InputManager-JNI(  546): Input channel object '7584550 Splash Screen com.vozamiga.rotinateste (client)' was disposed without first being removed with the input manager!
+11-23 04:21:33.598 I/ImeTracker(  546): com.vozamiga.rotinateste:5ef1996d: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+11-23 04:21:33.598 I/ImeTracker(  546): com.vozamiga.rotinateste:5ef1996d: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-23 04:21:33.766 I/chromium( 2548): [INFO:document_style_environment_variables.cc(104)] E2E_Used SafeAreaInsetBottom
+11-23 04:21:33.768 E/WebViewAssetLoader( 2522): 	at com.vozamiga.rotinateste.MainActivity$onCreate$3.shouldInterceptRequest(MainActivity.kt:132)
+11-23 04:21:33.768 E/WebViewAssetLoader( 2522): 	at WV.J5.a(chromium-SystemWebView.apk-default-636771907:86)
+11-23 04:21:33.768 E/WebViewAssetLoader( 2522): 	at org.chromium.android_webview.AwContentsBackgroundThreadClient.shouldInterceptRequestFromNative(chromium-SystemWebView.apk-default-636771907:15)
+11-23 04:21:38.897 D/ProfileInstaller( 2522): Installing profile for com.vozamiga.rotinateste
+11-23 04:21:58.185 D/AndroidRuntime( 2613): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-23 04:21:58.191 I/AndroidRuntime( 2613): Using default boot image
+11-23 04:21:58.191 I/AndroidRuntime( 2613): Leaving lock profiling enabled
+11-23 04:21:58.241 D/nativeloader( 2613): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-23 04:21:58.265 D/AndroidRuntime( 2613): Calling main entry com.android.commands.uiautomator.Launcher
+11-23 04:21:59.315 I/chromium( 2548): [INFO:document_style_environment_variables.cc(104)] E2E_Used SafeAreaInsetBottom
+11-23 04:21:59.326 D/AndroidRuntime( 2613): Shutting down VM
+11-23 04:22:00.305 D/AndroidRuntime( 2633): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-23 04:22:00.308 I/AndroidRuntime( 2633): Using default boot image
+11-23 04:22:00.308 I/AndroidRuntime( 2633): Leaving lock profiling enabled
+11-23 04:22:00.359 D/nativeloader( 2633): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-23 04:22:00.381 D/AndroidRuntime( 2633): Calling main entry com.android.commands.uiautomator.Launcher
+11-23 04:22:01.613 D/AndroidRuntime( 2633): Shutting down VM
+11-23 04:22:08.766 D/AndroidRuntime( 2669): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-23 04:22:08.768 I/AndroidRuntime( 2669): Using default boot image
+11-23 04:22:08.768 I/AndroidRuntime( 2669): Leaving lock profiling enabled
+11-23 04:22:08.813 D/nativeloader( 2669): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-23 04:22:08.834 D/AndroidRuntime( 2669): Calling main entry com.android.commands.uiautomator.Launcher
+11-23 04:22:09.874 D/AndroidRuntime( 2669): Shutting down VM
+11-23 04:22:10.894 D/AndroidRuntime( 2693): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-23 04:22:10.897 I/AndroidRuntime( 2693): Using default boot image
+11-23 04:22:10.897 I/AndroidRuntime( 2693): Leaving lock profiling enabled
+11-23 04:22:10.941 D/nativeloader( 2693): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-23 04:22:10.964 D/AndroidRuntime( 2693): Calling main entry com.android.commands.uiautomator.Launcher
+11-23 04:22:12.042 D/AndroidRuntime( 2693): Shutting down VM
