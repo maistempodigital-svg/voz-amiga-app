@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Pegar o APK
         run: git fetch origin apk-saida --depth 1 && git show origin/apk-saida:VozAmiga-TESTE-v14.8.apk > app.apk && ls -la app.apk
       - name: KVM
