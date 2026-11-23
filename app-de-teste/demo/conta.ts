@@ -185,10 +185,13 @@ export const comprar = (produto: string, tipo: 'subs' | 'inapp') => new Promise<
     let r: { estado?: string; produto?: string; token?: string; motivo?: string } = {};
     try { r = JSON.parse(txt); } catch { /* */ }
     // v2.0.7: compra que estava "pendente" (boleto/Pix) e o Google aprovou depois, com o app aberto: libera na hora
-    if (acabou) {
+    // (ou a aprovação de uma compra ANTIGA chegou no meio de uma compra nova: confere a antiga sem mexer na nova)
+    const outra = !!r.produto && r.produto !== produto;
+    if (acabou || (outra && r.estado === 'comprado')) {
       if (r.estado === 'comprado' && r.token && auth().currentUser) {
         try {
-          await httpsCallable(getFunctions(app(), 'us-central1'), 'verifyGooglePlayPurchase')({ productId: r.produto || produto, purchaseToken: r.token, productType: tipo === 'inapp' ? 'inapp' : 'subscription' });
+          const tipoDela = outra ? (/lifetime|vitalicio/i.test(r.produto || '') ? 'inapp' : 'subscription') : tipo === 'inapp' ? 'inapp' : 'subscription';
+          await httpsCallable(getFunctions(app(), 'us-central1'), 'verifyGooglePlayPurchase')({ productId: r.produto || produto, purchaseToken: r.token, productType: tipoDela });
           try { p.confirmarCompra?.(r.token); } catch { /* o servidor também confirma */ }
         } catch { /* tenta de novo ao abrir o app (restaurar) */ }
       }

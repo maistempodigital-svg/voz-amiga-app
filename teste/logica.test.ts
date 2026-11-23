@@ -589,7 +589,8 @@ console.log(`\n${n} grupos de testes passaram.`);
 
 ok('v2.0.7: grátis = 1 prêmio por vez; trocado sai da loja e libera outro; pago vê todos', () => {
   const T = Date.parse('2026-11-23T12:00:00Z');
-  let s = { ...estadoPadrao('pt'), estrelas: 50, config: { ...estadoPadrao('pt').config, premioModo: 'livre' as never } };
+  assert.equal(estadoPadrao('pt').recompensas.length, 1, 'instalação nova começa com 1 prêmio');
+  let s = { ...estadoPadrao('pt', true), estrelas: 50, config: { ...estadoPadrao('pt').config, premioModo: 'livre' as never } };
   const n = s.recompensas.length;
   assert.ok(n >= 2, 'o padrão tem vários prêmios');
   assert.equal(A.premiosNaLoja(s, 1).length, 1, 'grátis mostra só 1');

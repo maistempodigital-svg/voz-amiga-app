@@ -45,7 +45,7 @@ function LojaLista({ seletor }: { seletor: React.ReactNode }) {
   const [confirmar, setConfirmar] = useState<Recompensa>();
   // regra dos pais "intervalo entre prêmios": a loja espera um pouco até o próximo
   const faltaMs = A.faltaProximoPremio(estado, agora);
-  const podeAlgum = !faltaMs && estado.recompensas.some((r) => r.custo <= estado.estrelas);
+  const podeAlgum = !faltaMs && A.premiosNaLoja(estado, limites.premios).some((r) => r.custo <= estado.estrelas);
   const comprar = (r: Recompensa) => {
     const res = A.comprar(estado, r.id, Date.now());
     if (!res.ok) return;

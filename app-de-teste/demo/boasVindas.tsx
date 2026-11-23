@@ -118,7 +118,7 @@ const Item = ({ ic, t, cor }: { ic: string; t: string; cor: string }) => (
  * "Continuar no plano gratuito". `acabou` = aparece porque o teste de 30 dias terminou.
  */
 export function TelaPlanos({ idioma, podeTestar, dias, testar, continuarGratis, aviso, janela = JANELA_PADRAO, acabou }: {
-  idioma: L; podeTestar: boolean; dias: number; testar: () => void; continuarGratis: () => void; aviso: (t: string) => void; janela?: JanelaSabado; acabou?: boolean;
+  idioma: L; podeTestar: boolean; dias: number; testar: () => unknown; continuarGratis: () => void; aviso: (t: string) => void; janela?: JanelaSabado; acabou?: boolean;
 }) {
   const u = UI[idioma];
   const { planos, fazerCompra, comprando } = usePlanosVenda(aviso, idioma);
@@ -154,7 +154,7 @@ export function TelaPlanos({ idioma, podeTestar, dias, testar, continuarGratis, 
           );
         })}
         {podeTestar ? (
-          <Pressable onPress={() => { testar(); continuarGratis(); }} accessibilityRole="button" accessibilityLabel="testar grátis"
+          <Pressable onPress={() => { Promise.resolve(testar()).then((ok) => { if (ok !== false) continuarGratis(); }); }} accessibilityRole="button" accessibilityLabel="testar grátis"
             style={{ marginTop: 14, borderRadius: 18, borderWidth: 2, borderStyle: 'dashed', borderColor: C.verde, backgroundColor: C.verdeClaro, padding: 12, alignItems: 'center' }}>
             <Text style={{ color: C.verde, fontSize: 16, fontWeight: '900' }}>{u.testar(dias)}</Text>
             <Text style={{ color: C.texto, fontSize: 12.5, marginTop: 3, textAlign: 'center' }}>{u.testarD}</Text>
@@ -175,7 +175,7 @@ export function TelaPlanos({ idioma, podeTestar, dias, testar, continuarGratis, 
 
 /** Entrada depois do login: 5 dicas → o que vem em cada plano → planos (quem já pagou pula). */
 export function BoasVindas({ idioma, pago, podeTestar, dias, fim, testar, aviso, janela }: {
-  idioma: L; pago: boolean; podeTestar: boolean; dias: number; fim: () => void; testar: () => void; aviso: (t: string) => void; janela?: JanelaSabado;
+  idioma: L; pago: boolean; podeTestar: boolean; dias: number; fim: () => void; testar: () => unknown; aviso: (t: string) => void; janela?: JanelaSabado;
   /** compatibilidade: abrir a tela de planos do app (não usado mais na entrada) */ verPlanos?: () => void;
 }) {
   const passos = PASSOS_DICAS[idioma] || PASSOS_DICAS.pt; const u = UI[idioma];

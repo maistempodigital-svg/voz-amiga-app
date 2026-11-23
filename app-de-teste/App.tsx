@@ -139,7 +139,7 @@ function ComRotina() {
       const v = sanearVoz(d); if (!v) return false;
       // do backup vêm só as pranchas, abas e 8 ajustes; o resto (início de uso, idioma escolhido, dicas vistas, teste premium) fica como está
       const doBackup = (({ idioma, colunasAuto, colunas, sugestoes, tecladoAvancado, bloquearApp, voz, volume }) => ({ idioma, colunasAuto, colunas, sugestoes, tecladoAvancado, bloquearApp, voz, volume }))(v.defs);
-      mudar((x) => ({ ...x, abas: v.abas, pranchas: v.pranchas, modo: 'normal', editarAbas: false, defs: { ...x.defs, ...doBackup } }));
+      mudar((x) => ({ ...x, abas: v.abas, pranchas: v.pranchas, seguinte: v.seguinte || x.seguinte, modo: 'normal', editarAbas: false, defs: { ...x.defs, ...doBackup, pranchasFixas: (x.defs.pranchasFixas || []).filter((id) => v.pranchas.some((p) => p.id === id)) } }));
       return true;
     },
     compartilharArquivo: (nome, conteudo) => compartilharArquivoWeb(nome, conteudo, toast),

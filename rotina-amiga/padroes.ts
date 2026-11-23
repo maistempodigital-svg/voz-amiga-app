@@ -128,7 +128,8 @@ export const estadoPadrao = (l: Idioma, comExemplos = false): EstadoRotina => ({
   versao: VERSAO_ESTADO,
   abas: comExemplos ? abasPadrao(l) : [],
   tarefas: comExemplos ? tarefasPadrao(l) : [],
-  recompensas: recompensasPadrao(l),
+  // v2.0.7: instalação nova começa com 1 prêmio (no grátis é 1 por vez; no pago os pais põem mais)
+  recompensas: comExemplos ? recompensasPadrao(l) : recompensasPadrao(l).slice(0, 1),
   metas: metasPadrao(l),
   config: configPadrao(),
   estrelas: 0,

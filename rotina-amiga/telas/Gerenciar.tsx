@@ -113,9 +113,17 @@ export function GerenciarAbas() {
 }
 
 // ------------------------------------------------------------------ LOJA (pais)
+const SELOS = {
+  pt: { loja: '🏪 Na loja agora', fila: '⏸️ Esperando (no grátis é 1 por vez)', trocado: '✅ Já trocado (pode apagar)' },
+  en: { loja: '🏪 In the shop now', fila: '⏸️ Waiting (free plan: 1 at a time)', trocado: '✅ Already redeemed (you can delete it)' },
+  es: { loja: '🏪 En la tienda ahora', fila: '⏸️ Esperando (gratis: 1 a la vez)', trocado: '✅ Ya canjeado (puedes borrarlo)' },
+};
 
 export function GerenciarLoja() {
-  const { estado, t, voltar, mudar, abrir, exigir } = useRotina();
+  const { estado, t, voltar, mudar, abrir, exigir, limites, idioma } = useRotina();
+  // v2.0.7: no grátis mostra qual prêmio está na loja agora, quais esperam e quais já foram trocados
+  const naLoja = new Set(A.premiosNaLoja(estado, limites.premios).map((r) => r.id));
+  const selo = (r: { id: string; trocadoEm?: number }) => limites.premios >= 99 ? '' : r.trocadoEm ? SELOS[idioma].trocado : naLoja.has(r.id) ? SELOS[idioma].loja : SELOS[idioma].fila;
   return (
     <View style={{ flex: 1, backgroundColor: C.bgBlue }}>
       <Cabecalho kicker={t('options')} titulo={t('manageShop')} sub={t('shopSub')} corKicker="#9333EA" onVoltar={voltar} />
@@ -127,6 +135,7 @@ export function GerenciarLoja() {
             </View>
             <View style={{ flex: 1, marginLeft: px(26) }}>
               <Text style={{ fontSize: px(28), fontWeight: '900', color: C.ink, textTransform: 'uppercase' }} numberOfLines={2}>{r.titulo}</Text>
+              {selo(r) ? <Text accessibilityLabel={`situação ${r.titulo}`} style={{ marginTop: px(6), fontSize: px(21), fontWeight: '800', color: r.trocadoEm ? '#64748B' : naLoja.has(r.id) ? '#15803D' : '#B45309' }}>{selo(r)}</Text> : null}
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: px(10) }}>
                 <Icone f="mci" n="star-four-points" size={px(26)} color={C.starDark} />
                 <Text style={{ marginLeft: px(8), fontSize: px(24), fontWeight: '900', color: C.starDark }}>{r.custo}</Text>
