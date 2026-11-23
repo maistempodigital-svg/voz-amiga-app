@@ -34,7 +34,7 @@ android {
   kotlinOptions { jvmTarget = "17" }
 }
 dependencies {
-  implementation("androidx.appcompat:appcompat:1.7.0")
+  implementation("androidx.appcompat:appcompat:1.8.0")
   implementation("androidx.webkit:webkit:1.11.0")
   // pagamento do Google Play (mesmos produtos do app 1.0.24)
   implementation("com.android.billingclient:billing-ktx:8.0.0")
