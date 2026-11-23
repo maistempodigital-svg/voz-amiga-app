@@ -12,6 +12,13 @@ const P = new URLSearchParams(BUSCA);
 /** Dias do teste. No app real: Firebase limitações/rotina/testePremiumDias (hoje 30). No teste: ?testeDias=… */
 export const DIAS_TESTE = (() => { const n = Number(P.get('testeDias')); return Number.isFinite(n) && n >= 0 && P.get('testeDias') ? Math.min(365, Math.round(n)) : 30; })();
 
+const TX_TESTE = {
+  pt: { confirme: 'Confirme seu e-mail (veja a caixa de entrada) para liberar o teste grátis.', falhou: 'Não consegui liberar o teste agora. Confira a internet e tente de novo.' },
+  en: { confirme: 'Confirm your email (check your inbox) to unlock the free trial.', falhou: 'Could not start the trial now. Check your internet and try again.' },
+  es: { confirme: 'Confirma tu correo (mira tu bandeja de entrada) para activar la prueba gratis.', falhou: 'No pude activar la prueba ahora. Revisa tu internet e inténtalo de nuevo.' },
+};
+const idiomaTeste = (): 'pt' | 'en' | 'es' => { try { const l = (navigator.language || 'pt').slice(0, 2); return l === 'en' || l === 'es' ? l : 'pt'; } catch { return 'pt'; } };
+
 /** Estado do plano no app de teste (no app real: Google Play + Firestore users/{uid}). */
 export function usePremiumDemo() {
   const { s, mudar, toast } = useVoz();
@@ -34,9 +41,17 @@ export function usePremiumDemo() {
     teste, pago, premium: !travado && temPremium(pago, teste), dias, simulado: !temCompraNativa(),
     podeTestar: !pago && !travado && podeOferecerTeste({ inicio }, dias),
     iniciar: async () => {
+      // SEGURANÇA: no app da loja o teste SÓ começa pelo servidor (uma vez por conta, e-mail confirmado).
+      // Se o servidor falhar, nada é liberado no celular; a pessoa tenta de novo.
       const r = conta.usuario ? await iniciarTesteServidor() : undefined;
-      mudar((x) => (x.defs.testeInicio ? x : { ...x, defs: { ...x.defs, testeInicio: r?.inicio ?? Date.now(), testeDias: r?.dias ?? dias, avisosTeste: [] } }));
-      toast(`🎁 Teste premium liberado por ${r?.dias ?? dias} dias!`);
+      const ok = r && 'inicio' in r ? r : undefined;
+      if (!ok && temCompraNativa()) {
+        toast(r && 'erro' in r && r.erro === 'confirme-email' ? TX_TESTE[idiomaTeste()].confirme : TX_TESTE[idiomaTeste()].falhou);
+        return false;
+      }
+      mudar((x) => (x.defs.testeInicio ? x : { ...x, defs: { ...x.defs, testeInicio: ok?.inicio ?? Date.now(), testeDias: ok?.dias ?? dias, avisosTeste: [] } }));
+      toast(`🎁 Teste premium liberado por ${ok?.dias ?? dias} dias!`);
+      return true;
     },
   };
 }

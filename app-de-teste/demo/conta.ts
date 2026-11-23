@@ -156,8 +156,13 @@ export function acompanharRemoto(mudou: (d: DadosRemotos) => void): () => void {
 }
 
 /** Teste premium no servidor (função iniciarTestePremium). Sem a função publicada, devolve undefined (o app guarda no celular). */
-export async function iniciarTesteServidor(): Promise<{ inicio: number; dias: number } | undefined> {
-  try { const r = await httpsCallable(getFunctions(app(), 'us-central1'), 'iniciarTestePremium')({}); return r.data as { inicio: number; dias: number }; } catch { return undefined; }
+export async function iniciarTesteServidor(): Promise<{ inicio: number; dias: number } | { erro: 'confirme-email' | 'falhou' }> {
+  try {
+    const r = await httpsCallable(getFunctions(app(), 'us-central1'), 'iniciarTestePremium')({});
+    const d = r.data as { inicio?: unknown; dias?: unknown };
+    if (typeof d?.inicio !== 'number' || typeof d?.dias !== 'number') return { erro: 'falhou' };
+    return { inicio: d.inicio, dias: d.dias };
+  } catch (e) { return { erro: String((e as { message?: string })?.message || '').includes('confirme-email') ? 'confirme-email' : 'falhou' }; }
 }
 
 /**

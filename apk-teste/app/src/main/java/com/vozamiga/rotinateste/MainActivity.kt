@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     web.settings.apply {
       javaScriptEnabled = true; domStorageEnabled = true; databaseEnabled = true
       mediaPlaybackRequiresUserGesture = false
-      allowFileAccess = false; allowContentAccess = true
+      allowFileAccess = false; allowContentAccess = true // precisa para a foto escolhida na galeria (content://)
       setSupportZoom(false); textZoom = 100
     }
     web.webViewClient = object : WebViewClient() {

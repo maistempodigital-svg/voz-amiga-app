@@ -43,6 +43,8 @@ exports._teste = { lerJanela, travado, adiarPara }; // usado nos testes
 // ------------------------------------------------------------------ 1) teste premium no servidor
 exports.iniciarTestePremium = onCall({ region: 'us-central1' }, async (req) => {
   if (!req.auth) throw new HttpsError('unauthenticated', 'Entre na conta primeiro.');
+  // SEGURANÇA: só conta com e-mail confirmado (Google já vem confirmado). Evita teste infinito com e-mails descartáveis.
+  if (req.auth.token.email_verified !== true) throw new HttpsError('failed-precondition', 'confirme-email');
   const diasCfg = (await admin.database().ref('limitações/rotina/testePremiumDias').get()).val();
   const dias = Number.isInteger(diasCfg) && diasCfg >= 0 && diasCfg <= 365 ? diasCfg : 30;
   if (dias === 0) throw new HttpsError('failed-precondition', 'O teste premium está desligado.');
