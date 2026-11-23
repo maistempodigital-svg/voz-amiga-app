@@ -6,12 +6,13 @@
 // • Limites: Realtime Database limitações/* e appConfig/planSelection (só leitura).
 import { initializeApp, getApps } from 'firebase/app';
 import {
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail,
-  GoogleAuthProvider, signInWithCredential, signOut, User,
+  getAuth, initializeAuth, indexedDBLocalPersistence, browserLocalPersistence, onIdTokenChanged, Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail,
+  GoogleAuthProvider, signInWithCredential, signOut, User, sendEmailVerification, reload,
 } from 'firebase/auth';
 import { getFirestore, doc, onSnapshot } from 'firebase/firestore';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { imagemSegura, linkSeguro } from '../src/rotina-amiga/logica/plano';
 
 // Configuração web do projeto (é pública: está dentro de todo app; quem protege são as regras do Firebase)
 export const FIREBASE_CONFIG = {
@@ -26,7 +27,14 @@ export const FIREBASE_CONFIG = {
 export const PRODUTOS = { monthly: 'voz_amiga_monthly', semiannual: 'voz_amiga_semiannual', annual: 'voz_amiga_annual', lifetime: 'voz_amiga_lifetime' } as const;
 
 const app = () => getApps()[0] || initializeApp(FIREBASE_CONFIG);
-export const auth = () => getAuth(app());
+// SEGURANÇA: initializeAuth SEM o "popupRedirectResolver" — o app só usa signInWithCredential, então nenhuma
+// página/iframe de fora (apis.google.com, __/auth/iframe) é carregada dentro do app (onde existe a ponte AndroidTTS).
+let _auth: Auth | undefined;
+export const auth = () => {
+  if (_auth) return _auth;
+  try { _auth = initializeAuth(app(), { persistence: [indexedDBLocalPersistence, browserLocalPersistence] }); } catch { _auth = getAuth(app()); }
+  return _auth;
+};
 
 export interface PlanoServidor {
   /** acesso pago (Mensal, Vitalício, Kiwify, liberado à mão) */
@@ -39,6 +47,8 @@ export interface PlanoServidor {
   soGratis?: boolean;
   /** teste dado pelo dono no painel */
   testeDono?: { inicio: number; dias: number };
+  /** conta de e-mail e senha ainda sem confirmar o e-mail: o plano pago só libera depois de confirmar */
+  precisaConfirmarEmail?: boolean;
 }
 /** Chave do e-mail no Firebase (igual ao servidor do app 1.0.24). */
 export const chaveEmail = (e: string) => e.trim().toLowerCase().replace(/[.#$/[\]]/g, ',');
@@ -85,10 +95,21 @@ export const entrarGoogle = () => new Promise<User>((ok, erro) => {
   try { p.entrarGoogle(); } catch (e) { erro(e); }
 });
 
+const avisouVerificacao = new Set<string>();
+/** Reenvia o e-mail de confirmação. */
+export const reenviarConfirmacao = () => { const u = auth().currentUser; return u ? sendEmailVerification(u) : Promise.resolve(); };
+/** Depois de clicar no link do e-mail: recarrega a conta (se confirmou, o plano libera). */
+export const jaConfirmei = async () => { const u = auth().currentUser; if (!u) return false; await reload(u); await u.getIdToken(true); return u.emailVerified; };
+
 /** Acompanha a conta e o plano. Devolve a função para parar. */
 export function acompanharConta(mudou: (u: User | null, plano: PlanoServidor | undefined) => void): () => void {
   let pararDoc: (() => void) | undefined;
-  const pararAuth = onAuthStateChanged(auth(), (u) => {
+  // onIdTokenChanged: além de entrar/sair, avisa quando a conta é recarregada (ex.: depois de confirmar o e-mail)
+  let ultimo = '(começo)';
+  const pararAuth = onIdTokenChanged(auth(), (u) => {
+    const chave = u ? `${u.uid}|${u.emailVerified}` : '';
+    if (chave === ultimo) return; // renovação de rotina do token: nada mudou
+    ultimo = chave;
     pararDoc?.(); pararDoc = undefined;
     if (!u) { mudou(null, undefined); return; }
     mudou(u, undefined);
@@ -97,7 +118,15 @@ export function acompanharConta(mudou: (u: User | null, plano: PlanoServidor | u
     restaurarComprasPlay();
     let doUsuario: PlanoServidor | undefined;
     let doPainel: Partial<PlanoServidor> = {};
-    const avisar = () => mudou(u, doUsuario ? { ...doUsuario, ...doPainel } : Object.keys(doPainel).length ? { hasAccess: false, ...doPainel } : undefined);
+    // SEGURANÇA: conta criada com e-mail e senha só ganha o plano pago depois de CONFIRMAR o e-mail
+    // (senão alguém poderia criar conta com o e-mail de um cliente que pagou e pegar o plano dele). Google já vem confirmado.
+    const naoConfirmado = !u.emailVerified && u.providerData.every((p) => p.providerId === 'password');
+    if (naoConfirmado && !avisouVerificacao.has(u.uid)) { avisouVerificacao.add(u.uid); sendEmailVerification(u).catch(() => undefined); }
+    const avisar = () => {
+      const base = doUsuario ? { ...doUsuario, ...doPainel } : Object.keys(doPainel).length ? { hasAccess: false, ...doPainel } : undefined;
+      if (naoConfirmado) mudou(u, { ...(base || { hasAccess: false }), hasAccess: false, testeDono: undefined, precisaConfirmarEmail: true });
+      else mudou(u, base);
+    };
     const p1 = onSnapshot(doc(getFirestore(app()), 'users', u.uid), (snap) => {
       const d = (snap.data() || {}) as Record<string, unknown>;
       const t = d.testePremium as { inicio?: { toMillis?: () => number } | number; dias?: number } | undefined;
@@ -135,7 +164,15 @@ export async function iniciarTesteServidor(): Promise<{ inicio: number; dias: nu
  * Compra pelo Google Play. A casca abre o pagamento e chama window.__vozCompra(json).
  * Depois o servidor confere (verifyGooglePlayPurchase) e libera hasAccess.
  */
-export const comprar = (produto: string, tipo: 'subs' | 'inapp') => new Promise<'ok' | 'cancelado' | 'pendente'>((ok, erro) => {
+let comprando = false;
+export const comprar = (produto: string, tipo: 'subs' | 'inapp') => new Promise<'ok' | 'cancelado' | 'pendente'>((ok0, erro0) => {
+  // SEGURANÇA: vários toques seguidos não abrem várias compras
+  if (comprando) { erro0(new Error('compra-em-andamento')); return; }
+  comprando = true;
+  let acabou = false;
+  const ok = (v: 'ok' | 'cancelado' | 'pendente') => { if (acabou) return; acabou = true; comprando = false; clearTimeout(fim); ok0(v); };
+  const erro = (e: unknown) => { if (acabou) return; acabou = true; comprando = false; clearTimeout(fim); erro0(e); };
+  const fim = setTimeout(() => erro(new Error('tempo-esgotado')), 120000);
   const p = ponte();
   if (!p?.comprar) { erro(new Error('compra-indisponivel')); return; }
   if (!auth().currentUser) { erro(new Error('precisa-entrar')); return; }
@@ -158,9 +195,12 @@ export const comprar = (produto: string, tipo: 'subs' | 'inapp') => new Promise<
  * Restaurar compras: ao entrar na conta, o celular pergunta ao Google Play o que esta conta Google já comprou
  * (vitalício antigo, assinatura ativa) e manda para o servidor conferir e liberar (verifyGooglePlayPurchase).
  */
+let ultimaRestauracao = 0;
 export function restaurarComprasPlay() {
   const p = ponte();
   if (!p?.restaurarCompras || typeof window === 'undefined') return;
+  if (Date.now() - ultimaRestauracao < 20000) return; // SEGURANÇA: no máximo a cada 20 s
+  ultimaRestauracao = Date.now();
   const vistos = new Set<string>();
   (window as unknown as Record<string, unknown>).__vozRestaurar = async (txt: string) => {
     let r: { produto?: string; token?: string; tipo?: string } = {};
@@ -193,7 +233,8 @@ export function lerAnuncios(v: unknown): AnuncioPainel[] {
   for (const [id, raw] of Object.entries(lista)) {
     const o = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
     if (o.ativo !== true) continue;
-    const a = { id: id.slice(0, 40), titulo: t(o.titulo, 60), texto: t(o.texto, 120), imagem: t(o.imagem, 500), link: t(o.link, 500), criadoEm: typeof o.criadoEm === 'number' ? o.criadoEm : 0 };
+    // SEGURANÇA: o app confere de novo (só https/WhatsApp/e-mail no link; só https na foto), mesmo vindo do painel
+    const a = { id: id.replace(/[^\w-]/g, '').slice(0, 40), titulo: t(o.titulo, 60), texto: t(o.texto, 120), imagem: imagemSegura(t(o.imagem, 500)) || '', link: linkSeguro(t(o.link, 500)) || '', criadoEm: typeof o.criadoEm === 'number' && Number.isFinite(o.criadoEm) ? o.criadoEm : 0 };
     if (a.titulo || a.imagem) out.push(a);
   }
   return out.sort((x, y) => y.criadoEm - x.criadoEm).slice(0, 30);

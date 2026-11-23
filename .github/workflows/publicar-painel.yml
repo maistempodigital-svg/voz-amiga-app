@@ -9,6 +9,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
+      - name: Conferir o painel (erro de código não pode ir para o ar)
+        run: |
+          python3 -c "import re;s=open('painel/index.html').read();m=re.findall(r'<script type=\"module\">(.*?)</script>',s,re.S);open('/tmp/p.mjs','w').write(re.sub(r'^import .*$','',m[0],flags=re.M))"
+          node --check /tmp/p.mjs
       - name: Publicar
         env:
           SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}

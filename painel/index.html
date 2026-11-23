@@ -199,7 +199,7 @@ async function carregar() {
     const r = rec[id] || {};
     const v = r.liberado === false ? 'off' : (r.plano || (PADRAO_COMPLETO.includes(id) ? 'completo' : 'gratis'));
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${nome}</td><td><select data-id="${id}" data-orig="${v}"><option value="gratis">Grátis</option><option value="completo">Plano Completo 👑</option><option value="off">Desligada</option></select></td>`;
+    tr.innerHTML = `<td>${nome}</td><td><select data-id="${id}" data-orig="${esc(v)}"><option value="gratis">Grátis</option><option value="completo">Plano Completo 👑</option><option value="off">Desligada</option></select></td>`;
     tr.querySelector('select').value = v; tb.appendChild(tr);
   }
   // sábado
@@ -260,7 +260,6 @@ $('salvarRecursos').onclick = async () => {
 
 // ---------- Anúncios (limitações/anuncios/{id})
 let adEditando = null;
-const esc = (t) => String(t || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 function mostrarAnuncio() {
   const lista = (atual['limitações'] || {}).anuncios || {};
   const box = $('listaAnuncios'); box.textContent = '';
@@ -381,11 +380,11 @@ $('btnEntrar').onclick = async () => {
 };
 onAuthStateChanged(auth, async (u) => {
   if (!u) { $('tudo').classList.add('oculto'); return; }
-  if ((u.email || '').toLowerCase() !== DONO) { $('quem').innerHTML = `<span class="erro">A conta ${u.email} não tem acesso a este painel.</span>`; await auth.signOut(); return; }
+  if ((u.email || '').toLowerCase() !== DONO) { { const sp = document.createElement('span'); sp.className = 'erro'; sp.textContent = `A conta ${u.email} não tem acesso a este painel.`; $('quem').replaceChildren(sp); } await auth.signOut(); return; }
   $('quem').textContent = `Entrou como ${u.email}.`;
   $('btnEntrar').classList.add('oculto');
   $('tudo').classList.remove('oculto');
-  try { await carregar(); await carregarAcessos(); } catch (e) { $('quem').innerHTML = `<span class="erro">Não consegui ler o Firebase: ${e.message}</span>`; }
+  try { await carregar(); await carregarAcessos(); } catch (e) { { const sp = document.createElement('span'); sp.className = 'erro'; sp.textContent = 'Não consegui ler o Firebase: ' + (e && e.message ? e.message : ''); $('quem').replaceChildren(sp); } }
 });
 </script>
 </body>

@@ -48,6 +48,8 @@ jobs:
           echo "Assinado com: $SHA"
           [ "$SHA" = "1D:AB:51:CA:AE:3E:AD:35:57:5C:8B:67:1D:42:D8:18:E7:E7:DD:6E" ] || { echo "::error::assinatura errada"; exit 1; }
       - name: Deixar o .aab num ramo separado (para baixar; depois é substituído)
+        env:
+          VC: ${{ inputs.versao_codigo }}
         run: |
-          mkdir -p /tmp/saida && cp apk-teste/app/build/outputs/bundle/release/app-release.aab "/tmp/saida/VozAmiga-v${{ inputs.versao_codigo }}.aab"
+          mkdir -p /tmp/saida && cp apk-teste/app/build/outputs/bundle/release/app-release.aab "/tmp/saida/VozAmiga-v${VC//[^0-9]/}.aab"
           cd /tmp/saida && git init -q -b aab-saida && git add . && git -c user.name=bot -c user.email=bot@local commit -q -m "aab" && git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" aab-saida

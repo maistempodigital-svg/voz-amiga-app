@@ -4,7 +4,7 @@ import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View 
 import type { User } from 'firebase/auth';
 import {
   acompanharConta, acompanharRemoto, criarConta, entrarEmail, entrarGoogle, erroAmigavel, esqueciSenha, sair,
-  temGoogleNativo, DadosRemotos, PlanoServidor,
+  temGoogleNativo, DadosRemotos, PlanoServidor, reenviarConfirmacao, jaConfirmei,
 } from './conta';
 import { useVoz } from './voz/base';
 import { TelaIdioma } from './boasVindas';
@@ -54,6 +54,14 @@ const TX = {
   es: { bemVindo: '¡Bienvenido a Voz Amiga! 💙 Entra en tu cuenta para empezar. Si ya usabas la app, usa el mismo correo: tus tableros y tu plan siguen contigo.', entrarT: '🔐 Entrar en la cuenta', criarT: '✨ Crear cuenta', google: 'Entrar con Google', email: 'Correo', senha: 'Contraseña', entrar: 'Entrar', criar: 'Crear cuenta', esqueci: 'Olvidé la contraseña', enviado: '✅ Te enviamos un correo para crear una contraseña nueva.', naoTem: '¿No tienes cuenta? Crear cuenta', jaTem: '¿Ya tienes cuenta? Entrar', agoraNao: 'Ahora no', ou: 'o con correo' },
 };
 
+/** Tentativas erradas de login (vale para a tela inteira enquanto o app está aberto). */
+const travaLogin = { erros: 0, ate: 0 };
+const TX_ESPERA = {
+  pt: (s: number) => `Muitas tentativas. Espere ${s} segundos e tente de novo.`,
+  en: (s: number) => `Too many attempts. Wait ${s} seconds and try again.`,
+  es: (s: number) => `Demasiados intentos. Espera ${s} segundos y vuelve a intentar.`,
+};
+
 /** Entrar na conta: e-mail/senha, criar conta, esqueci a senha e Google. */
 export function TelaEntrar({ motivo, fechar, obrigatorio, idioma = 'pt' }: { motivo?: string; fechar: () => void; obrigatorio?: boolean; idioma?: 'pt' | 'en' | 'es' }) {
   const x = TX[idioma];
@@ -63,8 +71,17 @@ export function TelaEntrar({ motivo, fechar, obrigatorio, idioma = 'pt' }: { mot
   const [msg, setMsg] = useState('');
   const [ocupado, setOcupado] = useState(false);
   const rodar = async (f: () => Promise<unknown>, ok?: string) => {
+    // SEGURANÇA contra robô/adivinhar senha: depois de 5 erros, espera 30 s, 1 min, 2 min... (o Firebase também trava do lado dele)
+    const espera = travaLogin.ate - Date.now();
+    if (espera > 0) { setMsg(TX_ESPERA[idioma](Math.ceil(espera / 1000))); return; }
+    if (ocupado) return;
     setOcupado(true); setMsg('');
-    try { await f(); if (ok) setMsg(ok); else fechar(); } catch (e) { setMsg(erroAmigavel(e)); }
+    try { await f(); travaLogin.erros = 0; if (ok) setMsg(ok); else fechar(); }
+    catch (e) {
+      travaLogin.erros += 1;
+      if (travaLogin.erros >= 5) travaLogin.ate = Date.now() + Math.min(15 * 60000, 30000 * 2 ** (travaLogin.erros - 5));
+      setMsg(erroAmigavel(e));
+    }
     setOcupado(false);
   };
   const bt = (cor: string) => ({ marginTop: 10, backgroundColor: cor, borderRadius: 14, paddingVertical: 13, alignItems: 'center' as const, opacity: ocupado ? 0.6 : 1 });
@@ -82,8 +99,8 @@ export function TelaEntrar({ motivo, fechar, obrigatorio, idioma = 'pt' }: { mot
                 <Text style={{ fontSize: 16, fontWeight: '900', color: '#0F172A' }}>G  {x.google}</Text>
               </Pressable>
             ) : null}
-            <TextInput value={email} onChangeText={setEmail} placeholder={x.email} autoCapitalize="none" keyboardType="email-address" accessibilityLabel="e-mail" style={campo} />
-            <TextInput value={senha} onChangeText={setSenha} placeholder={x.senha} secureTextEntry accessibilityLabel="senha" style={campo} />
+            <TextInput value={email} onChangeText={setEmail} placeholder={x.email} maxLength={120} autoCapitalize="none" keyboardType="email-address" accessibilityLabel="e-mail" style={campo} />
+            <TextInput value={senha} onChangeText={setSenha} placeholder={x.senha} maxLength={100} secureTextEntry accessibilityLabel="senha" style={campo} />
             {msg ? <Text accessibilityLabel="mensagem da conta" style={{ marginTop: 8, color: msg.startsWith('✅') ? '#166534' : '#B91C1C', fontWeight: '700' }}>{msg}</Text> : null}
             <Pressable disabled={ocupado} onPress={() => rodar(() => (modo === 'entrar' ? entrarEmail(email, senha) : criarConta(email, senha)))} accessibilityRole="button" style={bt('#2563EB')}>
               {ocupado ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff', fontSize: 16, fontWeight: '900' }}>{modo === 'entrar' ? x.entrar : x.criar}</Text>}
@@ -114,6 +131,15 @@ export function BlocoConta() {
         <>
           <Text style={{ fontSize: 14, fontWeight: '900', color: '#0F172A' }}>👤 {usuario.email}</Text>
           <Text style={{ fontSize: 12.5, color: plano?.hasAccess ? '#166534' : '#475569', marginTop: 2 }}>{plano?.hasAccess ? '👑 Plano Completo ativo' : 'Versão gratuita'}</Text>
+          {plano?.precisaConfirmarEmail ? (
+            <View accessibilityLabel="confirmar e-mail" style={{ marginTop: 8, backgroundColor: '#FFFBEB', borderRadius: 10, borderWidth: 1, borderColor: '#FCD34D', padding: 10 }}>
+              <Text style={{ fontSize: 12.5, color: '#92400E', fontWeight: '800' }}>📧 Confirme o seu e-mail para liberar o seu plano. Enviamos um link para {usuario.email}.</Text>
+              <View style={{ flexDirection: 'row', marginTop: 8 }}>
+                <Pressable onPress={() => { jaConfirmei().catch(() => undefined); }} style={{ marginRight: 16 }}><Text style={{ color: '#2563EB', fontWeight: '900' }}>Já confirmei</Text></Pressable>
+                <Pressable onPress={() => { reenviarConfirmacao().catch(() => undefined); }}><Text style={{ color: '#2563EB', fontWeight: '900' }}>Reenviar e-mail</Text></Pressable>
+              </View>
+            </View>
+          ) : null}
           <Pressable onPress={() => sair()} style={{ marginTop: 8 }}><Text style={{ color: '#B91C1C', fontWeight: '800' }}>Sair da conta</Text></Pressable>
         </>
       ) : (

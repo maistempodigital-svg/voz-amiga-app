@@ -65,6 +65,9 @@ exports.notificacaoPlay = onMessagePublished({ topic: TOPICO_PLAY, region: 'us-c
   const msg = ev.data.message.json || {};
   const n = msg.subscriptionNotification;
   if (!n || msg.packageName !== PACOTE) return;
+  // SEGURANÇA: só assinaturas conhecidas e token com formato válido (o Google confere o token logo abaixo)
+  if (!['voz_amiga_monthly', 'voz_amiga_semiannual', 'voz_amiga_annual'].includes(n.subscriptionId)) return;
+  if (typeof n.purchaseToken !== 'string' || !/^[A-Za-z0-9._-]{20,600}$/.test(n.purchaseToken)) return;
   const r = await play().purchases.subscriptions.get({ packageName: PACOTE, subscriptionId: n.subscriptionId, token: n.purchaseToken });
   const expira = Number(r.data.expiryTimeMillis || 0);
   await admin.firestore().doc(`assinaturasPlay/${n.purchaseToken}`).set({

@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
       override fun shouldInterceptRequest(v: WebView, req: WebResourceRequest): WebResourceResponse? = loader.shouldInterceptRequest(req.url)
       override fun shouldOverrideUrlLoading(v: WebView, req: WebResourceRequest): Boolean {
         val u = req.url
-        if (u.host == "appassets.androidplatform.net") return false
+        if (u.scheme == "https" && u.host == "appassets.androidplatform.net") return false
         abrirFora(u.toString()); return true
       }
     }
