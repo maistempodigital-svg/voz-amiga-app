@@ -6,124 +6,164 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Painel Voz Amiga</title>
 <style>
-  :root { --roxo:#7C3AED; --verde:#16A34A; --tinta:#0F172A; --cinza:#475569; --linha:#E2E8F0; --fundo:#F8FAFC; --azul:#2563EB; --amarelo:#FEF3C7; }
+  /* Cores do autismo (peças do quebra-cabeça) + roxo do Plano Completo */
+  :root { --azul:#1E6FD9; --azul-c:#E8F1FD; --verm:#E0393E; --verm-c:#FDECEC; --amar:#F2B705; --amar-c:#FFF7DB; --verde:#2E9E4F; --verde-c:#E9F7EE;
+          --roxo:#7C3AED; --roxo-c:#F3EEFF; --tinta:#0F172A; --cinza:#475569; --linha:#E2E8F0; --fundo:#F4F7FC; }
   * { box-sizing: border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--fundo); color: var(--tinta); }
-  header { background: linear-gradient(90deg,#2563EB,#7C3AED,#DC2626,#F59E0B); color:#fff; padding:16px; }
-  header h1 { margin:0; font-size:20px; }
-  header p { margin:4px 0 0; opacity:.9; font-size:13px; }
-  main { max-width: 860px; margin: 0 auto; padding: 16px; }
-  section { background:#fff; border:1px solid var(--linha); border-radius:16px; padding:16px; margin-bottom:16px; }
-  h2 { margin:0 0 4px; font-size:17px; }
-  .dica { color: var(--cinza); font-size:13px; margin:0 0 12px; }
+  body { margin:0; font-family: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--fundo); color: var(--tinta); }
+  header { background:#fff; border-bottom:1px solid var(--linha); padding:14px 16px 0; }
+  .faixa { display:flex; height:6px; border-radius:3px; overflow:hidden; margin-top:12px; }
+  .faixa i { flex:1; } .faixa i:nth-child(1){background:var(--azul)} .faixa i:nth-child(2){background:var(--verm)} .faixa i:nth-child(3){background:var(--amar)} .faixa i:nth-child(4){background:var(--verde)}
+  header .topo { max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  header h1 { margin:0; font-size:21px; }
+  header p { margin:2px 0 0; color:var(--cinza); font-size:13px; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  nav.atalhos { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 14px; }
+  nav.atalhos a { text-decoration:none; font-weight:800; font-size:13px; padding:8px 12px; border-radius:999px; border:2px solid var(--linha); color:var(--tinta); background:#fff; }
+  nav.atalhos a:nth-child(4n+1){border-color:var(--azul)} nav.atalhos a:nth-child(4n+2){border-color:var(--verm)} nav.atalhos a:nth-child(4n+3){border-color:var(--amar)} nav.atalhos a:nth-child(4n+4){border-color:var(--verde)}
+  .resumo { display:grid; grid-template-columns: repeat(auto-fill, minmax(190px,1fr)); gap:10px; margin-bottom:16px; }
+  .cartao { background:#fff; border-radius:16px; padding:12px 14px; border:1px solid var(--linha); border-top:6px solid var(--azul); }
+  .cartao:nth-child(4n+2){border-top-color:var(--verm)} .cartao:nth-child(4n+3){border-top-color:var(--amar)} .cartao:nth-child(4n+4){border-top-color:var(--verde)}
+  .cartao b { display:block; font-size:12px; color:var(--cinza); text-transform:uppercase; letter-spacing:.04em; }
+  .cartao span { display:block; font-size:18px; font-weight:900; margin-top:4px; }
+  .cartao small { display:block; font-size:12px; color:var(--cinza); margin-top:2px; }
+  section { background:#fff; border:1px solid var(--linha); border-left:8px solid var(--azul); border-radius:18px; padding:16px; margin-bottom:16px; scroll-margin-top:10px; }
+  section.c-verm{border-left-color:var(--verm)} section.c-amar{border-left-color:var(--amar)} section.c-verde{border-left-color:var(--verde)} section.c-roxo{border-left-color:var(--roxo)}
+  .cab { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  h2 { margin:0; font-size:18px; }
+  .info-btn { border:0; width:26px; height:26px; border-radius:13px; background:var(--azul-c); color:var(--azul); font-weight:900; cursor:pointer; padding:0; font-size:14px; line-height:26px; }
+  .info { background:var(--azul-c); border-radius:12px; padding:10px 12px; font-size:13.5px; line-height:1.5; margin:10px 0; color:#1E3A5F; }
+  .info[hidden] { display:none; }
+  .info ul { margin:6px 0 0; padding-left:18px; }
+  .dica { color: var(--cinza); font-size:13px; margin:6px 0 12px; }
   .grade { display:grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap:10px; }
-  label.campo { display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:700; border:1px solid var(--linha); border-radius:12px; padding:10px; }
-  label.campo small { font-weight:400; color: var(--cinza); }
-  input[type=number], input[type=text], select { font: inherit; padding:8px; border:1.5px solid var(--linha); border-radius:10px; }
+  label.campo { display:flex; flex-direction:column; gap:6px; font-size:13.5px; font-weight:800; border:1.5px solid var(--linha); border-radius:14px; padding:10px; background:#fff; }
+  label.campo .ti { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+  label.campo small { font-weight:600; color: var(--cinza); background:var(--fundo); border-radius:8px; padding:6px 8px; line-height:1.4; }
+  label.campo small[hidden] { display:none; }
+  label { display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:800; }
+  input[type=number], input[type=text], input:not([type]), select { font: inherit; font-weight:700; padding:9px; border:1.5px solid var(--linha); border-radius:10px; background:#fff; }
   .linha { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  button { font: inherit; font-weight:800; border:0; border-radius:12px; padding:10px 14px; cursor:pointer; }
-  .prim { background: var(--roxo); color:#fff; }
+  button { font: inherit; font-weight:800; border:0; border-radius:12px; padding:11px 14px; cursor:pointer; }
+  button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible { outline:3px solid var(--roxo); outline-offset:2px; }
+  .prim { background: var(--azul); color:#fff; }
   .sec { background:#E2E8F0; color: var(--tinta); }
   .ok { background: var(--verde); color:#fff; }
-  .mudou { outline: 3px solid #F59E0B; }
-  .aviso { background: var(--amarelo); border-radius:12px; padding:10px; font-size:13px; }
-  .erro { background:#FEE2E2; color:#991B1B; border-radius:12px; padding:10px; font-size:13px; }
+  .mudou { outline: 3px solid var(--amar); }
+  .aviso { background: var(--amar-c); border-radius:12px; padding:10px; font-size:13px; }
+  .erro { background:var(--verm-c); color:#991B1B; border-radius:12px; padding:10px; font-size:13px; display:block; }
   .escolha { display:grid; gap:8px; margin:12px 0; }
-  .escolha label { border:1.5px solid var(--linha); border-radius:12px; padding:10px; display:flex; gap:8px; align-items:flex-start; cursor:pointer; }
-  .escolha label:has(input:checked) { border-color: var(--roxo); background:#FAF5FF; }
+  .escolha label { border:1.5px solid var(--linha); border-radius:12px; padding:10px; display:flex; flex-direction:row; gap:8px; align-items:flex-start; cursor:pointer; font-weight:600; }
+  .escolha label:has(input:checked) { border-color: var(--roxo); background:var(--roxo-c); }
+  .tabela { overflow-x:auto; }
   table { width:100%; border-collapse: collapse; font-size:13px; }
-  td, th { padding:6px; border-bottom:1px solid var(--linha); text-align:left; }
-  #toast { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); background:#0F172A; color:#fff; padding:10px 16px; border-radius:12px; display:none; }
+  td, th { padding:8px 6px; border-bottom:1px solid var(--linha); text-align:left; }
+  #toast { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); background:#0F172A; color:#fff; padding:10px 16px; border-radius:12px; display:none; z-index:9; }
   .oculto { display:none; }
+  #listaAnuncios button { margin-left:4px; padding:8px 10px; }
 </style>
 </head>
 <body>
 <header>
-  <h1>Painel Voz Amiga</h1>
-  <p>Limites do plano grátis, funções premium, teste premium e sábado — sem atualizar o app.</p>
+  <div class="topo">
+    <div style="flex:1;min-width:220px"><h1>💙 Painel Voz Amiga</h1><p>Mude o app em tempo real, sem atualizar na loja. Toque no <b>ⓘ</b> de cada parte para ver o que ela faz.</p></div>
+  </div>
+  <div class="faixa" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 </header>
 <main>
   <section id="entrar">
-    <h2>Entrar</h2>
-    <p class="dica">Só a conta do dono do app consegue salvar mudanças.</p>
+    <div class="cab"><h2>Entrar</h2></div>
+    <p class="dica">Só a conta do dono do app consegue ver e salvar mudanças.</p>
     <button class="prim" id="btnEntrar">Entrar com Google</button>
     <p id="quem" class="dica"></p>
   </section>
 
   <div id="tudo" class="oculto">
-    <section>
-      <h2>Plano grátis — app novo</h2>
-      <p class="dica">Valem para quem não assina e não está no teste premium. Nada que a família já criou é apagado.</p>
+    <nav class="atalhos" aria-label="Partes do painel">
+      <a href="#sec-gratis">Plano grátis</a><a href="#sec-acessos">Acessos por e-mail</a><a href="#sec-anuncios">Anúncios</a><a href="#sec-planos">Planos</a>
+      <a href="#sec-funcoes">Funções</a><a href="#sec-sabado">Sábado</a><a href="#sec-antigo">App antigo</a>
+    </nav>
+    <div class="resumo" id="resumo" aria-label="Resumo"></div>
+
+    <section id="sec-gratis">
+      <div class="cab"><h2>🟦 Plano grátis</h2><button class="info-btn" data-info="i-gratis" aria-label="O que é esta parte">ⓘ</button></div>
+      <div class="info" id="i-gratis" hidden>Aqui você decide o que a família que <b>não paga</b> pode usar. O que passar do limite aparece com 👑 e o botão "Me leve até o plano".
+        <ul><li>Mudou um número? Ele fica com borda amarela até você salvar.</li><li>Nada que a família já criou é apagado: o que passar do limite fica guardado e volta quando ela assinar.</li><li>Abaixo você escolhe se a mudança vale para todos, só para quem já usa ou só para quem baixar daqui para frente.</li></ul></div>
       <div class="grade" id="gradeRotina"></div>
-      <div class="escolha">
-        <strong>Para quem vale a mudança?</strong>
+      <div class="escolha" role="radiogroup" aria-label="Para quem vale a mudança">
+        <b style="font-size:14px">Para quem vale a mudança?</b>
         <label><input type="radio" name="para" value="todos" checked> <span><b>Para todos</b><br><small>Quem já usa e quem baixar daqui para frente.</small></span></label>
         <label><input type="radio" name="para" value="novos"> <span><b>Só para quem baixar daqui para frente</b><br><small>Quem já usa continua com o valor de antes.</small></span></label>
         <label><input type="radio" name="para" value="antigos"> <span><b>Só para quem já usa</b><br><small>Quem baixar depois fica com o valor atual.</small></span></label>
       </div>
-      <button class="prim" id="salvarRotina">Salvar plano grátis</button>
+      <button class="prim" id="salvarRotina">💾 Salvar plano grátis</button>
       <p class="dica" id="infoPorData"></p>
     </section>
 
-    <section>
-      <h2>Acessos por e-mail</h2>
-      <p class="dica">Dê ou tire acesso de uma pessoa pelo e-mail da conta dela no app. Vale na hora (no app antigo também, para o Vitalício).</p>
+    <section id="sec-acessos" class="c-verm">
+      <div class="cab"><h2>🟥 Acessos por e-mail</h2><button class="info-btn" data-info="i-acessos" aria-label="O que é esta parte">ⓘ</button></div>
+      <div class="info" id="i-acessos" hidden>Dê ou tire acesso de <b>uma pessoa</b>, pelo e-mail da conta dela no app. Vale na hora.
+        <ul><li><b>Vitalício (presente):</b> libera tudo para sempre, sem pagar.</li><li><b>Teste por X dias:</b> libera tudo pelos dias que você escolher.</li><li><b>Deixar só no grátis:</b> mesmo que tenha pago, fica no grátis.</li><li><b>Bloquear:</b> fica sem plano pago e sem teste (a criança continua falando).</li><li><b>Remover:</b> volta ao normal.</li><li>Quem criou conta com e-mail e senha precisa confirmar o e-mail para o plano pago liberar.</li></ul></div>
       <div class="grade">
         <label class="campo"><span>E-mail da pessoa</span><input type="text" id="acEmail" placeholder="nome@gmail.com" autocomplete="off"></label>
         <label class="campo"><span>O que fazer</span><select id="acTipo"></select><small id="acAjuda"></small></label>
         <label class="campo" id="acDiasCampo"><span>Dias de teste</span><input type="number" id="acDias" min="1" max="365" value="30"></label>
         <label class="campo"><span>Observação (opcional)</span><input type="text" id="acNota" placeholder="ex.: parceria, sorteio"></label>
       </div>
-      <p><button class="prim" id="salvarAcesso">Aplicar</button></p>
-      <table id="tabelaAcessos"><thead><tr><th>E-mail</th><th>Situação</th><th>Observação</th><th></th></tr></thead><tbody></tbody></table>
+      <p><button class="prim" id="salvarAcesso">✅ Aplicar para este e-mail</button></p>
+      <div class="tabela"><table id="tabelaAcessos"><thead><tr><th>E-mail</th><th>Situação</th><th>Observação</th><th></th></tr></thead><tbody></tbody></table></div>
     </section>
 
-    <section>
-      <h2>Funções premium (👑)</h2>
-      <p class="dica">“Plano Completo” = só para quem assina ou está no teste. “Desligada” = some para todos. Senha dos pais, emergência e cópia de segurança são sempre grátis.</p>
-      <table id="tabelaRecursos"><thead><tr><th>Função</th><th>Plano</th></tr></thead><tbody></tbody></table>
-      <p><button class="prim" id="salvarRecursos">Salvar funções</button></p>
-    </section>
-
-    <section>
-      <h2>Anúncios e sugestões (parceiros)</h2>
-      <p class="dica">Cada anúncio LIGADO aparece: (1) na tela inicial de quem usa o plano grátis, um por vez, revezando (segurando 5 s para abrir); (2) para todo mundo em Ajustes › SUGESTÕES, com uma bolinha vermelha quando chega um novo. Quem assina não vê na tela inicial, só em Sugestões.</p>
+    <section id="sec-anuncios" class="c-amar">
+      <div class="cab"><h2>🟨 Anúncios e sugestões (parceiros)</h2><button class="info-btn" data-info="i-anuncios" aria-label="O que é esta parte">ⓘ</button></div>
+      <div class="info" id="i-anuncios" hidden>Os anúncios dos seus parceiros. Cada anúncio <b>ligado</b> aparece:
+        <ul><li><b>Plano grátis:</b> na tela inicial, um por vez, revezando. A criança precisa segurar 5 segundos para abrir, e embaixo aparece "Para remover o anúncio, assine".</li><li><b>Todo mundo:</b> em Ajustes › SUGESTÕES, com uma bolinha vermelha quando chega um novo (só os pais veem).</li><li>Quem paga não vê na tela inicial, só em Sugestões.</li><li>A fotinha precisa ser um link que começa com https://. O link pode ser um site (https://) ou WhatsApp (https://wa.me/55...).</li><li>Sem nenhum anúncio ligado, o app mostra o convite do Plano Completo.</li></ul></div>
       <div id="listaAnuncios"></div>
-      <h3 id="adFormTitulo" style="margin-top:14px">Novo anúncio</h3>
+      <h3 id="adFormTitulo" style="margin:14px 0 8px">Novo anúncio</h3>
       <div class="grade">
-        <label>Ligado<select id="adAtivo"><option value="true">Ligado</option><option value="false">Desligado</option></select></label>
-        <label>Título<input id="adTitulo" maxlength="60" placeholder="Ex.: Clínica Parceira"></label>
-        <label>Texto<input id="adTexto" maxlength="120" placeholder="Uma frase curta"></label>
-        <label>Fotinha (link https da imagem)<input id="adImagem" maxlength="500" placeholder="https://..."></label>
-        <label>Link que abre (https ou WhatsApp)<input id="adLink" maxlength="500" placeholder="https://wa.me/55..."></label>
+        <label class="campo">Ligado<select id="adAtivo"><option value="true">Ligado</option><option value="false">Desligado</option></select></label>
+        <label class="campo">Título<input id="adTitulo" maxlength="60" placeholder="Ex.: Clínica Parceira"></label>
+        <label class="campo">Texto<input id="adTexto" maxlength="120" placeholder="Uma frase curta"></label>
+        <label class="campo">Fotinha (link https da imagem)<input id="adImagem" maxlength="500" placeholder="https://..."></label>
+        <label class="campo">Link que abre (site ou WhatsApp)<input id="adLink" maxlength="500" placeholder="https://wa.me/55..."></label>
       </div>
       <div id="adPrevia" style="margin-top:10px"></div>
-      <p><button class="prim" id="salvarAnuncio">Salvar anúncio</button> <button id="novoAnuncio">Limpar / novo</button></p>
+      <p class="linha"><button class="prim" id="salvarAnuncio">💾 Salvar anúncio</button> <button class="sec" id="novoAnuncio">🧹 Limpar / novo</button></p>
     </section>
 
-    <section>
-      <h2>Sábado (sem cobrança)</h2>
-      <p class="dica">O botão de pagar fica travado nesse horário — no horário do cliente e no seu (São Paulo).</p>
-      <div class="grade" id="gradeSabado"></div>
-      <p><button class="prim" id="salvarSabado">Salvar horário do sábado</button></p>
-    </section>
-
-    <section>
-      <h2>App antigo (versão 24 que está na loja hoje)</h2>
-      <p class="dica">Só vale para quem ainda não atualizou.</p>
-      <div class="grade" id="gradeAntigo"></div>
-      <p><button class="prim" id="salvarAntigo">Salvar app antigo</button></p>
-    </section>
-
-    <section>
-      <h2>Planos que aparecem na tela de Assinatura</h2>
-      <p class="dica">Ligue só os planos que estão ATIVOS na Play Console (hoje: Mensal e Vitalício).</p>
+    <section id="sec-planos" class="c-roxo">
+      <div class="cab"><h2>👑 Planos que aparecem no app</h2><button class="info-btn" data-info="i-planos" aria-label="O que é esta parte">ⓘ</button></div>
+      <div class="info" id="i-planos" hidden>Escolha quais planos aparecem para o cliente comprar (na entrada do app, em Minha assinatura e quando o teste acaba). O preço vem sozinho da Play Store, na moeda de cada país.
+        <ul><li><b>Ligue só o que está ATIVO e com preço na Play Console.</b> Hoje: Mensal e Vitalício. Se ligar um plano sem preço na Play, o botão aparece mas a compra não funciona.</li></ul></div>
       <div class="grade" id="gradePlanos"></div>
-      <p><button class="prim" id="salvarPlanos">Salvar planos</button></p>
+      <p><button class="prim" id="salvarPlanos">💾 Salvar planos</button></p>
+    </section>
+
+    <section id="sec-funcoes" class="c-verde">
+      <div class="cab"><h2>🟩 Funções do app</h2><button class="info-btn" data-info="i-funcoes" aria-label="O que é esta parte">ⓘ</button></div>
+      <div class="info" id="i-funcoes" hidden>Para cada função extra do app, escolha:
+        <ul><li><b>Grátis:</b> todo mundo usa.</li><li><b>Plano Completo:</b> só quem assina ou está no teste (aparece com 👑).</li><li><b>Desligada:</b> some para todos.</li><li>Senha dos pais, emergência e backup ficam sempre ligados (proteção da família).</li></ul></div>
+      <div class="tabela"><table id="tabelaRecursos"><thead><tr><th>Função</th><th>Quem usa</th></tr></thead><tbody></tbody></table></div>
+      <p><button class="prim" id="salvarRecursos">💾 Salvar funções</button></p>
+    </section>
+
+    <section id="sec-sabado">
+      <div class="cab"><h2>🌅 Sábado (sem cobrança)</h2><button class="info-btn" data-info="i-sabado" aria-label="O que é esta parte">ⓘ</button></div>
+      <div class="info" id="i-sabado" hidden>Neste horário o botão de pagar fica travado com o aviso "logo logo será liberado", no horário do cliente e no seu (São Paulo).
+        <ul><li>A mensalidade que venceria nesse horário é empurrada pelo servidor para depois, e a pessoa continua com acesso.</li><li>O teste grátis que acabar nesse horário continua liberado até o fim dele.</li></ul></div>
+      <div class="grade" id="gradeSabado"></div>
+      <p><button class="prim" id="salvarSabado">💾 Salvar horário do sábado</button></p>
+    </section>
+
+    <section id="sec-antigo" class="c-verm">
+      <div class="cab"><h2>📱 App antigo (versão 1.0.24)</h2><button class="info-btn" data-info="i-antigo" aria-label="O que é esta parte">ⓘ</button></div>
+      <div class="info" id="i-antigo" hidden>Só vale para quem ainda <b>não atualizou</b> o app. Quando a pessoa atualiza, passa a seguir o "Plano grátis" lá em cima.</div>
+      <div class="grade" id="gradeAntigo"></div>
+      <p><button class="prim" id="salvarAntigo">💾 Salvar app antigo</button></p>
     </section>
   </div>
 </main>
-<div id="toast"></div>
+<div id="toast" role="status"></div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
@@ -139,21 +179,23 @@ const toast = (m) => { const t = $('toast'); t.textContent = m; t.style.display 
 
 // campos do plano grátis (mesmos nomes que o app lê em limitações/rotina)
 const CAMPOS = [
-  ['pranchas', 'num', 'Pranchas (botões)', 'Quantas a família pode ter no grátis'],
-  ['botoesPorVez', 'num', 'Criação rápida: botões por vez', ''],
-  ['rotinas', 'num', 'Rotinas (turnos)', 'Manhã, tarde ou noite'],
-  ['tarefasPorRotina', 'num', 'Tarefas por rotina', ''],
-  ['premios', 'num', 'Prêmios', ''],
-  ['vozGravada', 'num', 'Pranchas com voz gravada', '0 = travado'],
-  ['testePremiumDias', 'num', 'Dias do teste premium', 'Sem cartão. 0 = sem teste'],
-  ['pacotesGratis', 'txt', 'Pacotes grátis', 'Ex.: ACOES,BEBIDAS,HIGIENE'],
-  ['fotos', 'bool', 'Foto, galeria e desenhos', 'Desligado = só emojis'],
-  ['temporizador', 'bool', 'Temporizador nas tarefas', ''],
-  ['horario', 'bool', 'Horário fixo e alarme', ''],
-  ['metas', 'bool', 'Metas e conquistas', ''],
-  ['relatorioCompleto', 'bool', 'Relatório completo', ''],
-  ['frasesPersonalizadas', 'bool', 'Frases personalizadas', ''],
-  ['anuncios', 'bool', 'Mostrar anúncios', 'Só na área dos pais'],
+  ['pranchas', 'num', 'Pranchas (botões)', 'Quantas pranchas a família pode ter no grátis, contando as 3 de sugestão que já vêm no app. As do app antigo não contam.'],
+  ['rotinas', 'num', 'Turnos da rotina', 'Quantos turnos: manhã, tarde, noite ou um momento como "banheiro" ou "escola".'],
+  ['tarefasPorRotina', 'num', 'Tarefas por turno', 'Quantas tarefas cabem em cada turno.'],
+  ['premios', 'num', 'Prêmios por vez', 'Quantos prêmios a criança pode ter esperando. Com 1: depois que ela troca as estrelas pelo prêmio, os pais podem pôr outro.'],
+  ['vozGravada', 'num', 'Pranchas com voz gravada', 'Quantas pranchas podem ter a voz dos pais gravada. 0 = travado (só no pago).'],
+  ['testePremiumDias', 'num', 'Dias do teste grátis', 'Teste do Plano Completo, sem cartão, uma vez por conta. 0 = sem teste.'],
+  ['pacotesGratis', 'txt', 'Pacotes grátis', 'Pacotes de pranchas liberados no grátis, separados por vírgula. Ex.: BEBIDAS ou BEBIDAS,ACOES.'],
+  ['fotos', 'bool', 'Foto, galeria e desenhos', 'Travado = no grátis as pranchas usam só emojis.'],
+  ['criacaoRapida', 'bool', 'Criação rápida', 'Montar várias pranchas de uma vez, só tocando. Travado = só no pago.'],
+  ['botoesPorVez', 'num', 'Criação rápida: pranchas por vez', 'Se a criação rápida estiver liberada, quantas pranchas ela cria de uma vez.'],
+  ['travarApp', 'bool', 'Travar o app', 'Prende a criança dentro do app. Travado = só no pago.'],
+  ['temporizador', 'bool', 'Temporizador nas tarefas', 'Contagem de tempo em cada tarefa da rotina.'],
+  ['horario', 'bool', 'Horário fixo e alarme', 'Tarefa com hora marcada e aviso na hora certa.'],
+  ['metas', 'bool', 'Metas e conquistas', 'Metas da semana e do mês com medalhas.'],
+  ['relatorioCompleto', 'bool', 'Relatório completo', 'Relatório de 30 dias e evolução. Travado = só o resumo de 7 dias.'],
+  ['frasesPersonalizadas', 'bool', 'Frases personalizadas', 'Os pais criarem as próprias frases prontas.'],
+  ['anuncios', 'bool', 'Mostrar anúncios no grátis', 'Liga ou desliga os anúncios na tela inicial de quem usa o grátis.'],
 ];
 const RECURSOS = [
   ['vozes', 'Escolher a voz'], ['vozGravada', 'Voz gravada dos pais'], ['curso', 'Curso para os pais'], ['missaoDia', 'Missão do dia'],
@@ -169,7 +211,13 @@ const DIAS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sáb
 let atual = {};
 const campo = (k, tipo, titulo, ajuda, valor, onde) => {
   const l = document.createElement('label'); l.className = 'campo';
-  l.innerHTML = `<span>${titulo}</span>${ajuda ? `<small>${ajuda}</small>` : ''}`;
+  const ti = document.createElement('span'); ti.className = 'ti'; const nome = document.createElement('span'); nome.textContent = titulo; ti.appendChild(nome);
+  if (ajuda) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'info-btn'; b.textContent = 'ⓘ'; b.setAttribute('aria-label', 'O que é: ' + titulo);
+    const sm = document.createElement('small'); sm.textContent = ajuda; sm.hidden = true;
+    b.addEventListener('click', (e) => { e.preventDefault(); sm.hidden = !sm.hidden; });
+    ti.appendChild(b); l.appendChild(ti); l.appendChild(sm);
+  } else l.appendChild(ti);
   let i;
   if (tipo === 'bool') { i = document.createElement('select'); i.innerHTML = '<option value="true">Liberado</option><option value="false">Travado</option>'; i.value = String(valor === true); }
   else if (tipo === 'dia') { i = document.createElement('select'); i.innerHTML = DIAS.map((d, n) => `<option value="${n}">${d}</option>`).join(''); i.value = String(valor); }
@@ -205,7 +253,7 @@ async function carregar() {
   // sábado
   const sb = { ativo: true, inicioDia: 5, inicioHora: 17, fimDia: 6, fimHora: 20, ...(lim.sabado || {}) };
   $('gradeSabado').innerHTML = '';
-  campo('ativo', 'bool', 'Trava do sábado', 'Liberado = trava ligada', sb.ativo !== false, 'gradeSabado');
+  campo('ativo', 'bool', 'Trava do sábado', 'Liberado = a trava está LIGADA (ninguém paga nesse horário). Travado = desliga a trava.', sb.ativo !== false, 'gradeSabado');
   campo('inicioDia', 'dia', 'Começa no dia', '', sb.inicioDia, 'gradeSabado');
   campo('inicioHora', 'num', 'Começa às (hora)', '0 a 23', sb.inicioHora, 'gradeSabado');
   campo('fimDia', 'dia', 'Termina no dia', '', sb.fimDia, 'gradeSabado');
@@ -221,6 +269,32 @@ async function carregar() {
   $('gradePlanos').innerHTML = '';
   for (const [id, nome] of [['monthly', 'Mensal'], ['semiannual', 'Semestral'], ['annual', 'Anual'], ['lifetime', 'Vitalício']]) campo(`${id}/enabled`, 'bool', `Plano ${nome}`, 'Liberado = aparece no app', ps[id]?.enabled === true, 'gradePlanos');
   try { mostrarAnuncio(); } catch { /* */ }
+  try { montarResumo(null); } catch { /* */ }
+}
+
+document.querySelectorAll('.info-btn[data-info]').forEach((b) => b.addEventListener('click', () => { const d = $(b.dataset.info); if (d) d.hidden = !d.hidden; }));
+
+function cartao(titulo, valor, extra) {
+  const c = document.createElement('div'); c.className = 'cartao';
+  const b = document.createElement('b'); b.textContent = titulo; const sp = document.createElement('span'); sp.textContent = valor; c.append(b, sp);
+  if (extra) { const sm = document.createElement('small'); sm.textContent = extra; c.appendChild(sm); }
+  return c;
+}
+function montarResumo(nAcessos) {
+  const lim = atual['limitações'] || {}; const rot = lim.rotina || {}; const ps = atual.appConfig?.planSelection || {};
+  const nomes = { monthly: 'Mensal', semiannual: 'Semestral', annual: 'Anual', lifetime: 'Vitalício' };
+  const ligados = Object.keys(nomes).filter((k) => ps[k]?.enabled === true).map((k) => nomes[k]);
+  const ads = Object.values(lim.anuncios || {}).filter((a) => a && a.ativo === true).length;
+  const sb = { ativo: true, inicioDia: 5, inicioHora: 17, fimDia: 6, fimHora: 20, ...(lim.sabado || {}) };
+  const v = (k, p) => (rot[k] ?? p);
+  const r = $('resumo'); r.replaceChildren(
+    cartao('Planos à venda', ligados.length ? ligados.join(' + ') : 'Nenhum', 'Preço vem da Play Store'),
+    cartao('Plano grátis', `${v('pranchas', 10)} pranchas`, `${v('rotinas', 1)} turno · ${v('tarefasPorRotina', 5)} tarefas · ${v('premios', 1)} prêmio`),
+    cartao('Anúncios ligados', String(ads), ads ? 'Revezam na tela inicial do grátis' : 'Mostra o convite do plano'),
+    cartao('Sábado', sb.ativo === false ? 'Trava desligada' : `${DIAS[sb.inicioDia]} ${sb.inicioHora}h → ${DIAS[sb.fimDia]} ${sb.fimHora}h`, 'Sem cobrança nesse horário'),
+    cartao('Teste grátis', `${v('testePremiumDias', 30)} dias`, 'Sem cartão, uma vez por conta'),
+    cartao('Acessos por e-mail', nAcessos == null ? '—' : String(nAcessos), 'Presentes, testes e bloqueios'),
+  );
 }
 
 const confirmar = (texto) => window.confirm(texto + '\n\nConfirmar e salvar?');
@@ -243,7 +317,7 @@ $('salvarRotina').onclick = async () => {
   }
   const temAntigos = Object.values(antigos).some((v) => v !== null && v !== undefined);
   upd['limitações/porData'] = temAntigos ? { corte, antigos } : null;
-  const resumo = m.map((e) => `• ${e.parentElement.querySelector('span').textContent}: ${e.dataset.orig || '(vazio)'} → ${e.value}`).join('\n');
+  const resumo = m.map((e) => `• ${(e.parentElement.querySelector('.ti span') || e.parentElement.querySelector('span')).textContent}: ${e.dataset.orig || '(vazio)'} → ${e.value}`).join('\n');
   if (!confirmar(`Mudar o plano grátis (${para === 'todos' ? 'para todos' : para === 'novos' ? 'só para quem baixar daqui para frente' : 'só para quem já usa'}):\n${resumo}`)) return;
   try { await update(ref(db), upd); toast('Salvo! O app pega na próxima abertura.'); await carregar(); } catch (e) { toast('Não salvou: ' + e.message); }
 };
@@ -352,8 +426,9 @@ async function carregarAcessos() {
     linhas[k] = { email: v.email || k.replace(/,/g, '.'), sit: linhas[k] ? linhas[k].sit + ' + ' + sit : sit, nota: v.nota || (linhas[k] && linhas[k].nota) || '' };
   }
   const tb = $('tabelaAcessos').querySelector('tbody');
-  tb.innerHTML = Object.entries(linhas).map(([k, l]) => `<tr><td>${esc(l.email)}</td><td>${esc(l.sit)}</td><td>${esc(l.nota)}</td><td><button class="sec" data-email="${esc(l.email)}">Mudar</button></td></tr>`).join('') || '<tr><td colspan="4">Ninguém ainda.</td></tr>';
+  tb.innerHTML = Object.entries(linhas).map(([k, l]) => `<tr><td>${esc(l.email)}</td><td>${esc(l.sit)}</td><td>${esc(l.nota)}</td><td><button class="sec" data-email="${esc(l.email)}">✏️ Mudar este</button></td></tr>`).join('') || '<tr><td colspan="4">Ninguém ainda.</td></tr>';
   tb.querySelectorAll('button[data-email]').forEach((b) => (b.onclick = () => { $('acEmail').value = b.dataset.email; $('acEmail').focus(); }));
+  try { montarResumo(Object.keys(linhas).length); } catch { /* */ }
 }
 
 $('salvarAcesso').onclick = async () => {
