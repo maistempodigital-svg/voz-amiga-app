@@ -78,9 +78,11 @@ exports.adiarRenovacoesSabado = onSchedule({ schedule: 'every 60 minutes', timeZ
   if (!j.ativo) return;
   const agora = Date.now();
   // olha as renovações das próximas 72 h
-  const q = await admin.firestore().collection('assinaturasPlay').where('renovaSozinha', '==', true).where('expira', '>', agora).where('expira', '<', agora + 72 * 3600000).get();
+  // (só um filtro de faixa: não precisa de índice composto no Firestore)
+  const q = await admin.firestore().collection('assinaturasPlay').where('expira', '>', agora).where('expira', '<', agora + 72 * 3600000).get();
   for (const d of q.docs) {
     const a = d.data();
+    if (a.renovaSozinha !== true) continue;
     const novo = adiarPara(a.expira, j);
     if (!novo || novo <= a.expira) continue;
     try {
