@@ -177,3 +177,36 @@ export const formularFrase = (palavra: string, idioma: Idioma): string[] | undef
   if (cat === 'coisa') return ['Eu', 'quero', w];
   return undefined;
 };
+
+/**
+ * Frases EM VOLTA da palavra que a criança tocou (sem limite): "ÁGUA" → "EU QUERO ÁGUA", "EU NÃO QUERO ÁGUA", "MAIS ÁGUA"…
+ * O app entende o tipo da palavra (coisa, ação, sentimento, pessoa) e monta frases que fazem sentido, nas cores da comunicação.
+ */
+export const frasesEmVolta = (palavra: string, idioma: Idioma): string[][] => {
+  const w = palavra.trim().toUpperCase();
+  if (!w) return [];
+  const cat = categoriaDaPalavra(w);
+  const COM = new Set(['fome', 'sede', 'sono', 'dor', 'medo', 'frio', 'calor', 'hambre', 'sed', 'sueno', 'dolor', 'miedo']);
+  const com = COM.has(sem(w));
+  const T: Record<Idioma, Partial<Record<Categoria, string[][]>>> = {
+    pt: {
+      coisa: [['EU', 'QUERO', w], ['EU', 'NÃO', 'QUERO', w], ['MAIS', w], ['ONDE', 'ESTÁ', w], ['EU', 'GOSTO', 'DE', w], ['ME', 'DÁ', w]],
+      verbo: [['EU', 'QUERO', w], ['EU', 'NÃO', 'QUERO', w], ['VAMOS', w], ['EU', 'POSSO', w], ['AJUDA', 'A', w]],
+      descricao: com ? [['EU', 'ESTOU', 'COM', w], ['EU', 'NÃO', 'ESTOU', 'COM', w], ['ESTOU', 'COM', 'MUITA', w]] : [['EU', 'ESTOU', w], ['EU', 'NÃO', 'ESTOU', w], ['EU', 'QUERO', w]],
+      pessoa: [['EU', 'QUERO', w], ['ONDE', 'ESTÁ', w], ['OI', w], ['TCHAU', w], ['EU', 'AMO', w]],
+    },
+    en: {
+      coisa: [['I', 'WANT', w], ['I', "DON'T", 'WANT', w], ['MORE', w], ['WHERE', 'IS', w], ['I', 'LIKE', w], ['GIVE', 'ME', w]],
+      verbo: [['I', 'WANT', 'TO', w], ['I', "DON'T", 'WANT', 'TO', w], ["LET'S", w], ['CAN', 'I', w], ['HELP', 'ME', w]],
+      descricao: [['I', 'AM', w], ['I', 'AM', 'NOT', w], ['I', 'FEEL', w]],
+      pessoa: [['I', 'WANT', w], ['WHERE', 'IS', w], ['HI', w], ['BYE', w], ['I', 'LOVE', w]],
+    },
+    es: {
+      coisa: [['YO', 'QUIERO', w], ['NO', 'QUIERO', w], ['MÁS', w], ['¿DÓNDE', 'ESTÁ', w + '?'], ['ME', 'GUSTA', w], ['DAME', w]],
+      verbo: [['YO', 'QUIERO', w], ['NO', 'QUIERO', w], ['VAMOS', 'A', w], ['¿PUEDO', w + '?'], ['AYÚDAME', 'A', w]],
+      descricao: com ? [['TENGO', w], ['NO', 'TENGO', w], ['TENGO', 'MUCHA', w]] : [['ESTOY', w], ['NO', 'ESTOY', w], ['QUIERO', w]],
+      pessoa: [['QUIERO', 'A', w], ['¿DÓNDE', 'ESTÁ', w + '?'], ['HOLA', w], ['ADIÓS', w], ['TE', 'QUIERO', w]],
+    },
+  };
+  return (T[idioma] || T.pt)[cat] || [];
+};

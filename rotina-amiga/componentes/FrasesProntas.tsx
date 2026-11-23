@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useRotina } from '../estado';
-import { corDaPalavra, coresDaFrase, FrasePronta, frasesEmUso, GRUPOS } from '../logica/frasesProntas';
+import { corDaPalavra, coresDaFrase, FrasePronta, frasesEmUso, frasesEmVolta, GRUPOS } from '../logica/frasesProntas';
 import { AlvoTour } from '../tour';
 import { px } from './ui';
 
@@ -46,10 +46,12 @@ export function PalavrasColoridas({ palavras, tamanho = px(26), vazio, sugeridas
  *    (frases prontas dos pais + o que o app aprendeu). Sugere mesmo palavras que ainda não têm prancha.
  * Palavra: entra na frase. Frase: é montada palavra por palavra e falada no fim.
  */
-export function BarraSugestoesFrase({ frase, vocab, aoComecar, aoPalavra, aoFalarFrase, intervaloMs = 300, max = 6 }: {
+export function BarraSugestoesFrase({ frase, vocab, aoComecar, aoPalavra, aoFalarFrase, intervaloMs = 300, max = 6, emojis }: {
   frase: string[]; vocab: string[]; aoComecar?: () => void; aoPalavra: (w: string) => void; aoFalarFrase: (palavras: string[]) => void; intervaloMs?: number; max?: number;
+  /** desenho de cada palavra (texto da prancha em minúsculas → emoji), para a frase sugerida mostrar o desenho */
+  emojis?: Record<string, string>;
 }) {
-  const { sugerirFrase } = useRotina();
+  const { sugerirFrase, idioma } = useRotina();
   const { ligado, frases: prontas } = useFrasesProntas();
   const [montando, setMontando] = useState<string>();
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -67,11 +69,14 @@ export function BarraSugestoesFrase({ frase, vocab, aoComecar, aoPalavra, aoFala
   }
   const vistos = new Set<string>();
   const frasesSug: string[][] = [];
-  for (const ws of [...daLista, ...sug.frases]) { const c = k(ws); if (!vistos.has(c) && c !== prefixo) { vistos.add(c); frasesSug.push(ws); } }
+  // v2.0.6: a criança tocou UMA palavra (ex.: ÁGUA) → frases em volta dela ("EU QUERO ÁGUA", "EU NÃO QUERO ÁGUA", "MAIS ÁGUA"...)
+  // + frases prontas que têm essa palavra em qualquer lugar. Sem limite: a fileira desliza para o lado.
+  const emVolta = frase.length === 1 ? frasesEmVolta(frase[0], idioma) : [];
+  const comPalavra = ligado && frase.length === 1 ? prontas.map((f) => f.palavras).filter((ws) => ws.length > 1 && ws.some((w) => k([w]) === prefixo)) : [];
+  for (const ws of [...emVolta, ...daLista, ...comPalavra, ...sug.frases]) { const c = k(ws); if (!vistos.has(c) && c !== prefixo) { vistos.add(c); frasesSug.push(ws); } }
   // tela inicial fácil: sem frase => só as frases prontas como botões; com frase => poucas palavras + poucas frases (sem rolar, sem janela)
   const palavras = frase.length ? sug.palavras.slice(0, 4) : [];
-  const nFrases = frase.length ? 3 : max;
-  const lista = frasesSug.slice(0, nFrases);
+  const lista = frase.length ? frasesSug.slice(0, 40) : frasesSug.slice(0, max);
   if (!palavras.length && !lista.length) return null;
   const falar = (ws: string[]) => {
     if (montando) return;
@@ -100,6 +105,7 @@ export function BarraSugestoesFrase({ frase, vocab, aoComecar, aoPalavra, aoFala
           return (
             <Pressable key={`f-${id}`} onPress={() => falar(ws)} accessibilityRole="button" accessibilityLabel={`frase ${id}`}
               style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderWidth: px(2), borderBottomWidth: px(4), borderColor: '#C4B5FD', borderRadius: px(16), paddingHorizontal: px(12), height: px(54), marginRight: px(8), opacity: montando && montando !== id ? 0.5 : pressed ? 0.85 : 1 })}>
+              {(() => { const e = ws.map((w) => emojis?.[w.toLowerCase()]).find(Boolean); return e ? <Text style={{ fontSize: px(24), marginRight: px(8) }}>{e}</Text> : null; })()}
               {/* compacto: só o texto colorido (cores da comunicação), sem caixinha em cada palavra */}
               {ws.map((w, i) => <View key={i} style={{ borderBottomWidth: px(4), borderColor: cores[i].borda, marginRight: i < ws.length - 1 ? px(7) : 0 }}><Text style={{ fontSize: px(20), fontWeight: '900', color: cores[i].texto }}>{w.toUpperCase()}</Text></View>)}
             </Pressable>

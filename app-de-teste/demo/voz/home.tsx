@@ -240,6 +240,7 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
   // 1 palavra só já foi falada no toque; frase incompleta = 2 palavras ou mais sem FALAR
   const descartarFrase = () => { if (frase.length) registrarFraseIncompleta(frase); setFrase([]); setAuto(0); sugUsadas.current = 0; };
   const vocab = React.useMemo(() => s.pranchas.map((p) => p.texto), [s.pranchas]);
+  const emojisPorTexto = React.useMemo(() => Object.fromEntries(s.pranchas.filter((p) => p.emoji).map((p) => [p.texto.toLowerCase(), p.emoji as string])), [s.pranchas]);
   // largura igual para todos os quadradinhos: 5 por linha
   const lt = Math.floor((largMenu - 4 * GAP) / 5);
   const travar = () => adulto(() => {
@@ -327,7 +328,7 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
             </View>
           ) : null}
           {/* UM bloco só de sugestões, botões fixos na tela: frases prontas + o que o app entende (até palavras sem prancha) */}
-          {s.defs.sugestoes && !sos && nivel === 3 ? <BarraSugestoesFrase frase={frase} vocab={vocab}
+          {s.defs.sugestoes && !sos && nivel === 3 ? <BarraSugestoesFrase frase={frase} vocab={vocab} emojis={emojisPorTexto}
             aoComecar={() => { descartarFrase(); setAuto(0); inicioFrase.current = Date.now(); }}
             aoPalavra={(w) => { sugUsadas.current++; adicionarPalavra(w); }}
             aoFalarFrase={() => { /* v14.2: a sugestão só monta a frase; fala no FALAR */ }} /> : null}
