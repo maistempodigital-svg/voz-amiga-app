@@ -280,7 +280,9 @@ function cartao(titulo, valor, extra) {
   if (extra) { const sm = document.createElement('small'); sm.textContent = extra; c.appendChild(sm); }
   return c;
 }
+let ultAcessos = null;
 function montarResumo(nAcessos) {
+  if (nAcessos == null) nAcessos = ultAcessos; else ultAcessos = nAcessos;
   const lim = atual['limitações'] || {}; const rot = lim.rotina || {}; const ps = atual.appConfig?.planSelection || {};
   const nomes = { monthly: 'Mensal', semiannual: 'Semestral', annual: 'Anual', lifetime: 'Vitalício' };
   const ligados = Object.keys(nomes).filter((k) => ps[k]?.enabled === true).map((k) => nomes[k]);
