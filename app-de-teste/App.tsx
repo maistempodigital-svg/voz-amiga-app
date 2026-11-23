@@ -17,7 +17,9 @@ import { estadoDemo } from './demo/dados';
 import { estadoPadrao, modelosRotina } from './src/rotina-amiga/padroes';
 import { AvisoFimTeste, usePremiumDemo } from './demo/premium';
 import { ContaProvider, useConta } from './demo/contaUI';
-import { BoasVindas } from './demo/boasVindas';
+import { BoasVindas, TelaPlanos } from './demo/boasVindas';
+import { Modal as ModalRN, View as ViewRN } from 'react-native';
+import { lerJanelaSabado } from './src/rotina-amiga/v14/premium';
 import { limitesDoFirebase } from './src/rotina-amiga/logica/plano';
 import { avisoFimTeste } from './src/rotina-amiga/v14/premium';
 
@@ -205,8 +207,17 @@ function ComRotina() {
       <Raiz />
       <RotinaTelas />
       <Aviso />
-      {verBoasVindas ? <BoasVindasNaRotina idioma={s.defs.idioma} pago={pagou} podeTestar={pm.podeTestar} dias={pm.dias}
-        fim={() => mudar((x) => ({ ...x, defs: { ...x.defs, boasVindasVista: true } }))} verPlanos={() => irParaTour.planos()} testar={() => pm.iniciar()} /> : null}
+      {verBoasVindas ? <BoasVindasNaRotina idioma={s.defs.idioma} pago={pagou} podeTestar={pm.podeTestar} dias={pm.dias} aviso={toast} janela={lerJanelaSabado(conta.remoto.sabado)}
+        fim={() => mudar((x) => ({ ...x, defs: { ...x.defs, boasVindasVista: true } }))} testar={() => pm.iniciar()} /> : null}
+      {/* o teste grátis acabou: mostra os planos uma vez (com "Continuar no plano gratuito") */}
+      {!verBoasVindas && !primeiraAbertura && !pagou && teste.fase === 'acabou' && !s.defs.fimTesteVisto ? (
+        <ModalRN visible animationType="none" onRequestClose={() => mudar((x) => ({ ...x, defs: { ...x.defs, fimTesteVisto: true } }))}>
+          <ViewRN accessibilityLabel="planos fim do teste" style={{ flex: 1, backgroundColor: '#F4F7FC' }}>
+            <TelaPlanos acabou idioma={s.defs.idioma} podeTestar={false} dias={pm.dias} testar={() => undefined} aviso={toast} janela={lerJanelaSabado(conta.remoto.sabado)}
+              continuarGratis={() => mudar((x) => ({ ...x, defs: { ...x.defs, fimTesteVisto: true } }))} />
+          </ViewRN>
+        </ModalRN>
+      ) : null}
       {avisoTeste !== undefined ? <AvisoFimTeste dias={avisoTeste} idioma={s.defs.idioma} fechar={() => setAvisoTeste(undefined)} irPlano={() => { setAvisoTeste(undefined); irParaTour.planos(); }} /> : null}
     </RotinaAmigaProvider>
   );
@@ -215,7 +226,8 @@ function ComRotina() {
 /** Boas-vindas dentro da rotina: se escolher "ver planos", o tour não puxa a pessoa de volta (fica para Ajustes › Tour). */
 function BoasVindasNaRotina(p: React.ComponentProps<typeof BoasVindas>) {
   const { mudar } = useRotina();
-  return <BoasVindas {...p} verPlanos={() => { mudar((e) => ({ ...e, config: { ...e.config, tourVisto: true } })); p.verPlanos(); }} />;
+  void mudar;
+  return <BoasVindas {...p} />;
 }
 
 const MAPA: Record<string, TelaRotina> = {

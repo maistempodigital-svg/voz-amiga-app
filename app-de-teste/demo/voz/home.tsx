@@ -106,7 +106,7 @@ function CartaoPrancha({ p, t, lado, raio, calma, estilo, destaque, vis, modo, a
 
 export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInicial?: string }) {
   const { s, mudar, tocar, falar, toast } = useVoz();
-  const { registrarFala, registrarPrancha, registrarFraseIncompleta, pedirAdulto, msAdulto, sugerirFrase, idioma, recurso, v14, registrarModelo, registrarV14, estado: estRotina, assinante: premium, limites, pode } = useRotina();
+  const { registrarFala, registrarPrancha, registrarFraseIncompleta, pedirAdulto, msAdulto, sugerirFrase, idioma, recurso, v14, registrarModelo, registrarV14, estado: estRotina, assinante: premium, limites, pode, pedirPlano } = useRotina();
   // v14.8: no grátis (ou quando o teste premium acaba) a criança CONTINUA falando com as pranchas do limite:
   // as escolhidas pelos pais + as mais usadas. As outras ficam guardadas (nunca apagadas) e voltam ao assinar.
   // anúncios dos parceiros (painel): no grátis, um por vez na tela inicial, revezando a cada abertura; sem anúncio, o convite do Plano Completo
@@ -243,11 +243,11 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
   const emojisPorTexto = React.useMemo(() => Object.fromEntries(s.pranchas.filter((p) => p.emoji).map((p) => [p.texto.toLowerCase(), p.emoji as string])), [s.pranchas]);
   // largura igual para todos os quadradinhos: 5 por linha
   const lt = Math.floor((largMenu - 4 * GAP) / 5);
-  const travar = () => adulto(() => {
+  const travar = () => (!travado && !pode('travarApp') ? pedirPlano('travarApp') : adulto(() => {
     const p = ponte();
     if (!travado) { try { p?.travar?.(); } catch { /* */ } setTravado(true); toast('App travado. Segure de novo para destravar.'); }
     else { try { p?.destravar?.(); } catch { /* */ } setTravado(false); toast('App destravado.'); }
-  }, travado ? 'Destravar app' : 'Travar app');
+  }, travado ? 'Destravar app' : 'Travar app'));
 
   // EM CIMA: botões dos pais (segurar) e funções
   const topo = [

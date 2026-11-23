@@ -133,7 +133,7 @@ export const veioProntaV24 = (id: string) => id.startsWith('v24_default:');
 export const contarParaLimite = (pranchas: { id: string }[]) => pranchas.filter((p) => !veioProntaV24(p.id)).length;
 
 /** Instalação nova: começa com POUCO — só 3 pranchas de sugestão ("Eu", "Quero", "Água"), para a criança aprender aos poucos.
- *  Têm id "v24_default:…", então não contam no limite do plano grátis. */
+ *  Elas CONTAM no limite do plano grátis (decisão do dono: 10 no total, com as 3). */
 export function pranchasProntas(idioma: Idioma): PranchaMig[] {
   const escolha: [string, number, string][] = [['COMUNICACAO', 0, 'pessoas'], ['COMUNICACAO', 2, 'acoes'], ['ALIMENTOS', 0, 'descricao']];
   const out: PranchaMig[] = [];
@@ -141,7 +141,7 @@ export function pranchasProntas(idioma: Idioma): PranchaMig[] {
     const par = (PADROES_V24[idioma][cat] || [])[n];
     if (!par) continue;
     const [texto, emoji] = par;
-    out.push({ id: `v24_${idPadraoV24(cat, texto)}`.replace(/[^\w:.%-]/g, '_').slice(0, 80), texto, emoji, abaId: aba });
+    out.push({ id: `sug_${cat}_${n}`, texto, emoji, abaId: aba });
   }
   return out;
 }

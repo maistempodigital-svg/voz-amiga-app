@@ -239,15 +239,16 @@ export function TelaIA() {
 // =============================================================== DESTAQUE DENTRO DO CRIAR PRANCHA
 /** v14.6: "CRIAÇÃO RÁPIDA" — o pai vai tocando nas perguntas da rotina (substitui o "criar falando"). */
 export function DestaqueCriacaoRapida({ antes }: { /** o app fecha a tela dele antes (ex.: Criar prancha), para voltar direto à tela da criança no fim */ antes?: () => void }) {
-  const { idioma, abrir } = useRotina();
+  const { idioma, abrir, pode, pedirPlano } = useRotina();
+  const livre = pode('criacaoRapida');
   return (
     <AlvoTour id="cp_rapida">
-      <Pressable onPress={() => { antes?.(); abrir({ nome: 'v14', tela: 'rapida' }); }} accessibilityRole="button" accessibilityLabel="CRIAÇÃO RÁPIDA"
+      <Pressable onPress={() => { if (!livre) { pedirPlano('criacaoRapida'); return; } antes?.(); abrir({ nome: 'v14', tela: 'rapida' }); }} accessibilityRole="button" accessibilityLabel="CRIAÇÃO RÁPIDA"
         style={({ pressed }) => [{ borderRadius: 22, backgroundColor: '#7C3AED', padding: 14, marginBottom: 12, flexDirection: 'row', alignItems: 'center', borderWidth: 3, borderColor: '#F97316', transform: [{ scale: pressed ? 0.97 : 1 }] }]}>
         <Mascote tam={64} vivo />
         <View style={{ flex: 1, marginLeft: 10 }}>
           <View style={{ alignSelf: 'flex-start', backgroundColor: '#F97316', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 1 }}><Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 10.5 }}>✨ {X(idioma, 'MAIS FÁCIL: SÓ TOCAR', 'EASIEST: JUST TAP', 'MÁS FÁCIL: SOLO TOCAR')}</Text></View>
-          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 19, marginTop: 4 }}>⚡ {X(idioma, 'CRIAÇÃO RÁPIDA', 'QUICK CREATE', 'CREACIÓN RÁPIDA')}</Text>
+          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 19, marginTop: 4 }}>⚡ {X(idioma, 'CRIAÇÃO RÁPIDA', 'QUICK CREATE', 'CREACIÓN RÁPIDA')}{livre ? '' : ' 👑'}</Text>
           <Text style={{ color: '#EDE9FE', fontSize: 13, lineHeight: 18, marginTop: 2 }}>{X(idioma, 'O app pergunta a rotina (manhã, escola, tarde, noite) e você só toca nos botões. Cada um já vai para a categoria certa.', 'The app asks about the routine (morning, school, afternoon, night) and you just tap the buttons. Each goes to the right category.', 'La app pregunta la rutina (mañana, escuela, tarde, noche) y tú solo tocas los botones. Cada uno va a la categoría correcta.')}</Text>
         </View>
       </Pressable>

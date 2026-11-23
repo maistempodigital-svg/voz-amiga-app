@@ -65,7 +65,8 @@ export interface DefsVoz { idioma: 'pt' | 'en' | 'es'; colunasAuto: boolean; col
   /** v14.8: pranchas que os pais escolheram para ficar no plano grátis */ pranchasFixas?: string[];
   /** v14.8: quando a família começou a usar (0 = veio do app antigo 1.0.24) e quando migrou */ inicioUso?: number; migradoV24?: number; pediuEntrarV24?: boolean;
   /** v2.0.2: 1ª abertura — escolheu o idioma e já viu as telas de boas-vindas */ idiomaEscolhido?: boolean; boasVindasVista?: boolean;
-  /** última vez que os pais abriram Ajustes › Sugestões (bolinha vermelha some) */ sugestoesVistasEm?: number }
+  /** última vez que os pais abriram Ajustes › Sugestões (bolinha vermelha some) */ sugestoesVistasEm?: number;
+  /** já viu a tela de planos de quando o teste grátis acabou */ fimTesteVisto?: boolean }
 export interface EstadoVoz { abas: AbaVoz[]; pranchas: PranchaVoz[]; defs: DefsVoz; modo: 'normal' | 'editar' | 'excluir'; editarAbas: boolean; seguinte: Record<string, Record<string, number>>;
   /** v14.2: dicas da primeira vez ("comece por aqui" e "segure 3 s") */
   dicas?: { criou?: boolean; toques?: Record<string, number> } }

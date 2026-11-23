@@ -31,6 +31,10 @@ export interface LimitesRotina {
   pacotesGratis: string[];
   /** v14.8: tirar foto e escolher da galeria. Sem ele: só emojis. */
   fotos: boolean;
+  /** Criação rápida (montar várias pranchas só tocando) */
+  criacaoRapida: boolean;
+  /** Travar o app (a criança não sai) */
+  travarApp: boolean;
   /** v14.8: dias do teste premium (sem cartão, começa quando os pais quiserem). 0 = sem teste. */
   testePremiumDias: number;
 }
@@ -39,7 +43,7 @@ export interface LimitesRotina {
 export const LIMITES_GRATIS: LimitesRotina = {
   rotinas: 1,
   tarefasPorRotina: 5,
-  premios: 3,
+  premios: 1,
   temporizador: false,
   horario: false,
   metas: false,
@@ -47,10 +51,12 @@ export const LIMITES_GRATIS: LimitesRotina = {
   anuncios: true,
   frasesPersonalizadas: false,
   botoesPorVez: 10,
-  pranchas: 15,
+  pranchas: 10,
   vozGravada: 0,
-  pacotesGratis: ['ACOES', 'BEBIDAS', 'HIGIENE'],
+  pacotesGratis: ['BEBIDAS'],
   fotos: false,
+  criacaoRapida: false,
+  travarApp: false,
   testePremiumDias: 30,
 };
 
@@ -70,6 +76,8 @@ export const LIMITES_COMPLETO: LimitesRotina = {
   vozGravada: 99999,
   pacotesGratis: ['*'],
   fotos: true,
+  criacaoRapida: true,
+  travarApp: true,
   testePremiumDias: 0,
 };
 
@@ -101,7 +109,7 @@ export const lerLimitesFirebase = (no: unknown): Partial<LimitesRotina> => {
     out.pacotesGratis = lista;
   }
   if ('testePremiumDias' in o) out.testePremiumDias = Math.min(365, num(o.testePremiumDias, LIMITES_GRATIS.testePremiumDias));
-  for (const k of ['temporizador', 'horario', 'metas', 'relatorioCompleto', 'anuncios', 'frasesPersonalizadas', 'fotos'] as const) {
+  for (const k of ['temporizador', 'horario', 'metas', 'relatorioCompleto', 'anuncios', 'frasesPersonalizadas', 'fotos', 'criacaoRapida', 'travarApp'] as const) {
     if (k in o) out[k] = bool(o[k], LIMITES_GRATIS[k]);
   }
   return out;
@@ -149,6 +157,6 @@ export const imagemSegura = (url: unknown): string | undefined => {
   return undefined;
 };
 
-export type Recurso = 'rotina' | 'tarefa' | 'premio' | 'temporizador' | 'horario' | 'metas' | 'relatorio' | 'frases' | 'prancha' | 'pacote' | 'vozGravada' | 'foto' | 'funcao';
+export type Recurso = 'rotina' | 'tarefa' | 'premio' | 'temporizador' | 'horario' | 'metas' | 'relatorio' | 'frases' | 'prancha' | 'pacote' | 'vozGravada' | 'foto' | 'funcao' | 'criacaoRapida' | 'travarApp';
 /** O pacote é grátis neste plano? */
 export const pacoteGratis = (l: LimitesRotina, id: string) => l.pacotesGratis.includes('*') || l.pacotesGratis.includes(id);
