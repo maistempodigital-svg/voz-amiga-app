@@ -86,6 +86,22 @@
     </section>
 
     <section>
+      <h2>Anúncios e sugestões (parceiros)</h2>
+      <p class="dica">Cada anúncio LIGADO aparece: (1) na tela inicial de quem usa o plano grátis, um por vez, revezando (segurando 5 s para abrir); (2) para todo mundo em Ajustes › SUGESTÕES, com uma bolinha vermelha quando chega um novo. Quem assina não vê na tela inicial, só em Sugestões.</p>
+      <div id="listaAnuncios"></div>
+      <h3 id="adFormTitulo" style="margin-top:14px">Novo anúncio</h3>
+      <div class="grade">
+        <label>Ligado<select id="adAtivo"><option value="true">Ligado</option><option value="false">Desligado</option></select></label>
+        <label>Título<input id="adTitulo" maxlength="60" placeholder="Ex.: Clínica Parceira"></label>
+        <label>Texto<input id="adTexto" maxlength="120" placeholder="Uma frase curta"></label>
+        <label>Fotinha (link https da imagem)<input id="adImagem" maxlength="500" placeholder="https://..."></label>
+        <label>Link que abre (https ou WhatsApp)<input id="adLink" maxlength="500" placeholder="https://wa.me/55..."></label>
+      </div>
+      <div id="adPrevia" style="margin-top:10px"></div>
+      <p><button class="prim" id="salvarAnuncio">Salvar anúncio</button> <button id="novoAnuncio">Limpar / novo</button></p>
+    </section>
+
+    <section>
       <h2>Sábado (sem cobrança)</h2>
       <p class="dica">O botão de pagar fica travado nesse horário — no horário do cliente e no seu (São Paulo).</p>
       <div class="grade" id="gradeSabado"></div>
@@ -204,6 +220,7 @@ async function carregar() {
   const ps = atual.appConfig?.planSelection || {};
   $('gradePlanos').innerHTML = '';
   for (const [id, nome] of [['monthly', 'Mensal'], ['semiannual', 'Semestral'], ['annual', 'Anual'], ['lifetime', 'Vitalício']]) campo(`${id}/enabled`, 'bool', `Plano ${nome}`, 'Liberado = aparece no app', ps[id]?.enabled === true, 'gradePlanos');
+  try { mostrarAnuncio(); } catch { /* */ }
 }
 
 const confirmar = (texto) => window.confirm(texto + '\n\nConfirmar e salvar?');
@@ -238,6 +255,53 @@ $('salvarRecursos').onclick = async () => {
   for (const s of sel) upd[`limitações/recursos/${s.dataset.id}`] = s.value === 'off' ? { liberado: false } : { plano: s.value };
   if (!confirmar(sel.map((s) => `• ${s.closest('tr').firstChild.textContent}: ${s.value}`).join('\n'))) return;
   try { await update(ref(db), upd); toast('Funções salvas!'); await carregar(); } catch (e) { toast('Não salvou: ' + e.message); }
+};
+
+
+// ---------- Anúncios (limitações/anuncios/{id})
+let adEditando = null;
+const esc = (t) => String(t || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function mostrarAnuncio() {
+  const lista = (atual['limitações'] || {}).anuncios || {};
+  const box = $('listaAnuncios'); box.textContent = '';
+  const ids = Object.keys(lista).sort((a, b) => (lista[b].criadoEm || 0) - (lista[a].criadoEm || 0));
+  if (!ids.length) { box.innerHTML = '<p class="dica">Nenhum anúncio ainda. Sem anúncio ligado, o app mostra o convite do Plano Completo.</p>'; }
+  for (const id of ids) {
+    const a = lista[id];
+    const d = document.createElement('div'); d.style.cssText = 'border:1px solid #cbd5e1;border-radius:14px;padding:10px;display:flex;gap:10px;align-items:center;margin:6px 0;background:#fff';
+    d.innerHTML = (/^https:\/\//.test(a.imagem || '') ? `<img src="${esc(a.imagem)}" style="width:56px;height:56px;object-fit:cover;border-radius:10px">` : '<div style="width:56px;height:56px;border-radius:10px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-weight:900">AD</div>')
+      + `<div style="flex:1"><b>${esc(a.titulo)}</b> ${a.ativo ? '<span style="color:#166534">● ligado</span>' : '<span style="color:#b91c1c">● desligado</span>'}<div style="font-size:13px">${esc(a.texto)}</div><div style="font-size:12px;color:#64748b">${esc(a.link)}</div></div>`;
+    const ed = document.createElement('button'); ed.textContent = 'Editar'; ed.onclick = () => editarAnuncio(id, a);
+    const tg = document.createElement('button'); tg.textContent = a.ativo ? 'Desligar' : 'Ligar';
+    tg.onclick = async () => { try { await update(ref(db), { [`limitações/anuncios/${id}/ativo`]: !a.ativo }); toast('Feito!'); await carregar(); } catch (e) { toast('Não salvou: ' + e.message); } };
+    const rm = document.createElement('button'); rm.textContent = 'Apagar';
+    rm.onclick = async () => { if (!confirmar('Apagar o anúncio "' + (a.titulo || '') + '"?')) return; try { await update(ref(db), { [`limitações/anuncios/${id}`]: null }); toast('Apagado.'); await carregar(); } catch (e) { toast('Não apagou: ' + e.message); } };
+    d.append(ed, tg, rm); box.appendChild(d);
+  }
+  if (!adEditando) limparAnuncio();
+}
+function limparAnuncio() { adEditando = null; $('adFormTitulo').textContent = 'Novo anúncio'; $('adAtivo').value = 'true'; for (const k of ['adTitulo', 'adTexto', 'adImagem', 'adLink']) $(k).value = ''; previaAnuncio(); }
+function editarAnuncio(id, a) { adEditando = id; $('adFormTitulo').textContent = 'Editando: ' + (a.titulo || ''); $('adAtivo').value = a.ativo ? 'true' : 'false'; $('adTitulo').value = a.titulo || ''; $('adTexto').value = a.texto || ''; $('adImagem').value = a.imagem || ''; $('adLink').value = a.link || ''; previaAnuncio(); $('adTitulo').scrollIntoView({ block: 'center' }); }
+function previaAnuncio() {
+  const img = $('adImagem').value.trim(); const box = $('adPrevia'); box.textContent = '';
+  const d = document.createElement('div'); d.style.cssText = 'border:1px dashed #94a3b8;border-radius:14px;padding:10px;display:flex;gap:10px;align-items:center;max-width:420px;background:#fff';
+  if (/^https:\/\//.test(img)) { const i = document.createElement('img'); i.src = img; i.style.cssText = 'width:70px;height:70px;object-fit:cover;border-radius:10px'; d.appendChild(i); }
+  const t = document.createElement('div'); const b = document.createElement('b'); b.textContent = $('adTitulo').value || '(sem título)'; const p = document.createElement('div'); p.textContent = $('adTexto').value; p.style.fontSize = '13px';
+  t.append(b, p); d.appendChild(t); box.appendChild(d);
+}
+['adTitulo', 'adTexto', 'adImagem'].forEach((k) => { $(k).oninput = previaAnuncio; });
+$('novoAnuncio').onclick = () => limparAnuncio();
+$('salvarAnuncio').onclick = async () => {
+  const img = $('adImagem').value.trim(), link = $('adLink').value.trim();
+  if (img && !/^https:\/\//.test(img)) return toast('A fotinha precisa ser um link que começa com https://');
+  if (link && !/^(https:\/\/|mailto:|whatsapp:)/.test(link)) return toast('O link precisa começar com https://');
+  const titulo = $('adTitulo').value.trim().slice(0, 60);
+  if (!titulo && !img) return toast('Coloque pelo menos um título ou uma fotinha.');
+  const id = adEditando || ('a' + Date.now());
+  const antigo = ((atual['limitações'] || {}).anuncios || {})[id] || {};
+  const v = { ativo: $('adAtivo').value === 'true', titulo, texto: $('adTexto').value.trim().slice(0, 120), imagem: img, link, criadoEm: antigo.criadoEm || Date.now(), atualizadoEm: Date.now() };
+  if (!confirmar(adEditando ? 'Salvar as mudanças deste anúncio?' : 'Publicar este anúncio? (os pais veem uma bolinha vermelha em Ajustes › Sugestões)')) return;
+  try { await update(ref(db), { [`limitações/anuncios/${id}`]: v }); toast('Anúncio salvo! O app pega na hora.'); adEditando = null; await carregar(); } catch (e) { toast('Não salvou: ' + e.message); }
 };
 
 $('salvarSabado').onclick = async () => {

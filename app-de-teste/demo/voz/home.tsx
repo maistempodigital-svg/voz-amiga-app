@@ -5,7 +5,9 @@ import { Feather } from '@expo/vector-icons';
 import { Animated, Easing, Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AlvoTour, AnuncioProtegido, BarraSugestoesFrase, formularFrase, useTour, BotaoMenuVoz, PalavrasColoridas, ProximoPasso, Segurar, TecladoAmigo, useItensMenuRotina, useRotina } from '../../src/rotina-amiga';
-import { BotaoCor, PranchaVoz, ponte, tema, useVoz } from './base';
+import { abrirLink, BotaoCor, PranchaVoz, ponte, tema, useVoz } from './base';
+import { useConta } from '../contaUI';
+import { lerAnuncios } from '../conta';
 import { NovaAbaModal, TelaVoz } from './telas';
 import { maxPalavras, pranchasVisiveis, somarPalavra, VISUAIS } from '../../src/rotina-amiga/v14/crescer';
 import { pranchasQueFicam } from '../../src/rotina-amiga/v14/premium';
@@ -107,6 +109,15 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
   const { registrarFala, registrarPrancha, registrarFraseIncompleta, pedirAdulto, msAdulto, sugerirFrase, idioma, recurso, v14, registrarModelo, registrarV14, estado: estRotina, assinante: premium, limites, pode } = useRotina();
   // v14.8: no grátis (ou quando o teste premium acaba) a criança CONTINUA falando com as pranchas do limite:
   // as escolhidas pelos pais + as mais usadas. As outras ficam guardadas (nunca apagadas) e voltam ao assinar.
+  // anúncios dos parceiros (painel): no grátis, um por vez na tela inicial, revezando a cada abertura; sem anúncio, o convite do Plano Completo
+  const conta = useConta();
+  const anuncios = lerAnuncios(conta.remoto.anuncio);
+  const [vez] = useState(() => Math.floor(Math.random() * 1000));
+  const anuncioPainel = anuncios.length ? anuncios[vez % anuncios.length] : undefined;
+  const abrirAnuncio = (a: { link?: string }) => {
+    if (!anuncioPainel || !a.link) return adulto(() => ir({ n: 'assinatura' } as TelaVoz), 'Planos');
+    abrirLink(a.link);
+  };
   const pranchasDoPlano = React.useMemo(() => {
     if (premium || contarParaLimite(s.pranchas) <= limites.pranchas) return s.pranchas;
     const usos: Record<string, number> = {};
@@ -249,7 +260,7 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
   // EM CIMA, 2ª linha: as abas (a criança mexe) — mesmo tamanho dos de cima
   const tileAba = (a: typeof s.abas[number], i: number) => {
     const t = tema(a.tema);
-    return <Tile key={a.id} largura={lt} ultimo={i === s.abas.length - 1} tour={i === 0 ? 'abas' : undefined} n={a.nome.toUpperCase()} i={t.iconeNome} c={t.borda} b={calma ? '#FFFFFF' : t.claro} ativo={a.id === abaAtual?.id} lapis={s.editarAbas && a.id !== 'geral'}
+    return <Tile key={a.id} largura={Math.max(lt, 70)} ultimo={i === s.abas.length - 1} tour={i === 0 ? 'abas' : undefined} n={a.nome.toUpperCase()} i={t.iconeNome} c={t.borda} b={calma ? '#FFFFFF' : t.claro} ativo={a.id === abaAtual?.id} lapis={s.editarAbas && a.id !== 'geral'}
       onPress={() => (s.editarAbas && a.id !== 'geral' ? setEditAba(a.id) : setAba(a.id))} />;
   };
 
@@ -347,7 +358,12 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
       {/* NOVO (Rotina Amiga): área dos anúncios — próxima etapa da rotina; sem etapa, o anúncio */}
       {/* versão gratuita: anúncio (fictício no teste) que só abre segurando 5 s; assinante não vê */}
       {/* tela calma: sem anúncio piscando */}
-      <ProximoPasso anuncio={calma ? undefined : <AnuncioProtegido anuncio={ANUNCIO_PLANO} aoAbrir={() => adulto(() => ir({ n: 'assinatura' } as TelaVoz), 'Planos')} />} />
+      <ProximoPasso anuncio={calma ? undefined : <AnuncioProtegido anuncio={anuncioPainel || ANUNCIO_PLANO} aoAbrir={(a) => abrirAnuncio(a)} />} />
+      {!calma && limites.anuncios ? (
+        <Pressable onPress={() => adulto(() => ir({ n: 'assinatura' } as TelaVoz), 'Planos')} accessibilityRole="button" accessibilityLabel="remover anúncio" style={{ alignSelf: 'center', paddingVertical: 4, paddingHorizontal: 10, marginTop: -6, marginBottom: 6 }}>
+          <Text style={{ fontSize: 11.5, color: '#64748B', fontWeight: '700', textAlign: 'center' }}>{TX_REMOVER[s.defs.idioma] || TX_REMOVER.pt}</Text>
+        </Pressable>
+      ) : null}
 
       <TecladoAmigo visivel={teclado} fechar={() => setTeclado(false)} avancado={s.defs.tecladoAvancado} sugestoes={s.defs.sugestoes} vocab={vocab}
         aoFalar={(texto, ws) => { falar(texto); registrarFala(ws); lembrar(ws); }} />
@@ -376,4 +392,5 @@ const fsPrancha = (texto: string, lado: number) => {
 };
 
 /** Faixa da versão gratuita: convite para o Plano Completo (some para quem assina). */
+const TX_REMOVER: Record<string, string> = { pt: '👑 Para remover o anúncio desta tela, assine o Plano Completo', en: '👑 To remove the ad from this screen, get the Full Plan', es: '👑 Para quitar el anuncio de esta pantalla, suscríbete al Plan Completo' };
 const ANUNCIO_PLANO = { titulo: '👑 Plano Completo', texto: 'Todas as funções liberadas. Segure 5 s para ver os planos.' };

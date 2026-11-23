@@ -2,6 +2,7 @@
 // → 4) no fim, o convite: Plano Completo / teste grátis / seguir no grátis (quem já pagou pula) → 5) tour do mascote.
 import React, { useRef, useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { Mascote } from '../src/rotina-amiga/v14/Mascote';
 
 type L = 'pt' | 'en' | 'es';
 
@@ -34,46 +35,49 @@ export function TelaIdioma({ atual, escolher }: { atual: L; escolher: (l: L) => 
   );
 }
 
-const PASSOS: Record<L, { e: string; t: string; d: string }[]> = {
+export const PASSOS_DICAS: Record<string, { e: string; t: string; d: string }[]> = {
   pt: [
     { e: '💬', t: 'O que é CAA', d: 'Comunicação Alternativa (CAA) dá à criança outro jeito de se expressar: com imagens e voz. Ela não atrapalha a fala. Ao contrário, ajuda a fala a aparecer.' },
+    { e: 'MASCOTE', t: 'Voz Amiga + Rotina Amiga', d: 'Dois em um, com o nosso mascote ajudando. O Voz Amiga dá voz à criança com as pranchas. A Rotina Amiga organiza o dia com tarefas, horários e prêmios.' },
     { e: '👆', t: 'Como o Voz Amiga funciona', d: 'A criança toca na prancha e o app fala. Juntando pranchas, ela monta frases como "eu quero água".' },
     { e: '🌱', t: 'Comece com pouco', d: 'Comece com 3 ou 4 pranchas do dia a dia: água, comer, banheiro, mamãe. Quando ela usar bem, acrescente mais. Muitas pranchas de uma vez confundem.' },
     { e: '📖', t: 'É como aprender a ler', d: 'Não acontece da noite para o dia. Pode levar semanas. Tenha paciência: mostre como usar, fale junto e comemore cada tentativa.' },
     { e: '☀️', t: 'Rotina sempre no mesmo horário', d: 'Monte a rotina da manhã, da tarde ou da noite. O app lembra a próxima tarefa na hora certa, e a criança sabe o que vem depois. Isso traz calma.' },
     { e: '🎁', t: 'Prêmios e recompensas', d: 'Cada tarefa feita vira estrela. Vocês escolhem os prêmios: um passeio, um desenho, um brinquedo. Recompense o esforço, não só o acerto.' },
-    { e: '💙', t: 'Dicas para os pais', d: 'Deixe o celular sempre por perto. Use o app vocês também, para a criança copiar. Espere a resposta com calma, sem pressa.' },
+    { e: '💙', t: 'Dicas para os pais', d: 'Deixe o celular sempre por perto. Use o app vocês também, para a criança copiar. Espere a resposta com calma. E olhe os Ajustes de vez em quando: sempre chegam novidades e sugestões.' },
   ],
   en: [
     { e: '💬', t: 'What is AAC', d: 'Augmentative and Alternative Communication (AAC) gives the child another way to express themselves, with pictures and voice. It does not hold speech back. It helps speech come.' },
+    { e: 'MASCOTE', t: 'Voz Amiga + Rotina Amiga', d: 'Two in one, with our mascot helping. Voz Amiga gives the child a voice with boards. Rotina Amiga organizes the day with tasks, times and prizes.' },
     { e: '👆', t: 'How Voz Amiga works', d: 'The child taps a board and the app speaks. Putting boards together, they build sentences like "I want water".' },
     { e: '🌱', t: 'Start small', d: 'Start with 3 or 4 everyday boards: water, eat, bathroom, mom. When the child uses them well, add more. Too many boards at once is confusing.' },
     { e: '📖', t: 'It is like learning to read', d: 'It does not happen overnight. It can take weeks. Be patient: show how to use it, speak along and celebrate every try.' },
     { e: '☀️', t: 'Same routine, same time', d: 'Build a morning, afternoon or night routine. The app reminds the next task on time, so the child knows what comes next. That brings calm.' },
     { e: '🎁', t: 'Prizes and rewards', d: 'Every task done earns a star. You choose the prizes: a walk, a cartoon, a toy. Reward the effort, not only the result.' },
-    { e: '💙', t: 'Tips for parents', d: 'Keep the phone always nearby. Use the app yourselves so the child can copy you. Wait calmly for the answer, with no rush.' },
+    { e: '💙', t: 'Tips for parents', d: 'Keep the phone always nearby. Use the app yourselves so the child can copy you. Wait calmly for the answer. And check Settings now and then: there are always news and suggestions.' },
   ],
   es: [
     { e: '💬', t: 'Qué es la CAA', d: 'La Comunicación Aumentativa y Alternativa (CAA) le da al niño otra forma de expresarse: con imágenes y voz. No frena el habla. Al contrario, ayuda a que aparezca.' },
+    { e: 'MASCOTE', t: 'Voz Amiga + Rotina Amiga', d: 'Dos en uno, con nuestra mascota ayudando. Voz Amiga le da voz al niño con los tableros. Rotina Amiga organiza el día con tareas, horarios y premios.' },
     { e: '👆', t: 'Cómo funciona Voz Amiga', d: 'El niño toca un tablero y la app habla. Juntando tableros forma frases como "yo quiero agua".' },
     { e: '🌱', t: 'Empieza con poco', d: 'Empieza con 3 o 4 tableros del día a día: agua, comer, baño, mamá. Cuando los use bien, añade más. Muchos tableros a la vez confunden.' },
     { e: '📖', t: 'Es como aprender a leer', d: 'No pasa de un día para otro. Puede llevar semanas. Ten paciencia: muestra cómo usarla, habla junto y celebra cada intento.' },
     { e: '☀️', t: 'Rutina siempre a la misma hora', d: 'Arma la rutina de la mañana, la tarde o la noche. La app recuerda la próxima tarea a su hora y el niño sabe qué viene después. Eso trae calma.' },
     { e: '🎁', t: 'Premios y recompensas', d: 'Cada tarea hecha es una estrella. Ustedes eligen los premios: un paseo, un dibujo, un juguete. Premia el esfuerzo, no solo el acierto.' },
-    { e: '💙', t: 'Consejos para los padres', d: 'Deja el celular siempre cerca. Usen la app ustedes también, para que el niño copie. Espera la respuesta con calma, sin prisa.' },
+    { e: '💙', t: 'Consejos para los padres', d: 'Deja el celular siempre cerca. Usen la app ustedes también, para que el niño copie. Espera la respuesta con calma. Y mira los Ajustes de vez en cuando: siempre llegan novedades y sugerencias.' },
   ],
 };
 const UI = {
-  pt: { prox: 'Próximo', volt: 'Voltar', pular: 'Pular', planoT: 'Quer tudo liberado?', planoD: 'No Plano Completo você tem pranchas sem limite, fotos e voz gravada, rotinas completas, relatórios e sem anúncios.', verPlanos: '👑 Ver o Plano Completo', testar: (d: number) => `🎁 Testar grátis por ${d} dias`, testarSub: 'Sem cartão. Você escolhe depois.', gratis: 'Continuar no plano grátis', gratisSub: 'Grátis: 15 pranchas, só emojis e 1 rotina com 5 tarefas.' },
-  en: { prox: 'Next', volt: 'Back', pular: 'Skip', planoT: 'Want everything unlocked?', planoD: 'With the Full Plan you get unlimited boards, photos and recorded voice, full routines, reports and no ads.', verPlanos: '👑 See the Full Plan', testar: (d: number) => `🎁 Try it free for ${d} days`, testarSub: 'No card needed. Decide later.', gratis: 'Continue with the free plan', gratisSub: 'Free: 15 boards, emojis only and 1 routine with 5 tasks.' },
-  es: { prox: 'Siguiente', volt: 'Atrás', pular: 'Saltar', planoT: '¿Quieres todo liberado?', planoD: 'Con el Plan Completo tienes tableros sin límite, fotos y voz grabada, rutinas completas, informes y sin anuncios.', verPlanos: '👑 Ver el Plan Completo', testar: (d: number) => `🎁 Probar gratis ${d} días`, testarSub: 'Sin tarjeta. Decides después.', gratis: 'Seguir con el plan gratis', gratisSub: 'Gratis: 15 tableros, solo emojis y 1 rutina con 5 tareas.' },
+  pt: { prox: 'Próximo', volt: 'Voltar', pular: 'Pular', planoT: 'Quer tudo liberado?', planoD: 'No Plano Completo você tem pranchas sem limite, fotos e voz gravada, rotinas completas, relatórios e sem anúncios.', verPlanos: '👑 Ver o Plano Completo', testar: (d: number) => `🎁 Testar grátis por ${d} dias`, testarSub: 'Sem cartão. Você escolhe depois.', gratis: 'Continuar no plano grátis', gratisSub: 'Grátis: 15 pranchas, só emojis e 1 turno da rotina (manhã, tarde ou noite) com até 5 tarefas.' },
+  en: { prox: 'Next', volt: 'Back', pular: 'Skip', planoT: 'Want everything unlocked?', planoD: 'With the Full Plan you get unlimited boards, photos and recorded voice, full routines, reports and no ads.', verPlanos: '👑 See the Full Plan', testar: (d: number) => `🎁 Try it free for ${d} days`, testarSub: 'No card needed. Decide later.', gratis: 'Continue with the free plan', gratisSub: 'Free: 15 boards, emojis only and 1 routine period (morning, afternoon or night) with up to 5 tasks.' },
+  es: { prox: 'Siguiente', volt: 'Atrás', pular: 'Saltar', planoT: '¿Quieres todo liberado?', planoD: 'Con el Plan Completo tienes tableros sin límite, fotos y voz grabada, rutinas completas, informes y sin anuncios.', verPlanos: '👑 Ver el Plan Completo', testar: (d: number) => `🎁 Probar gratis ${d} días`, testarSub: 'Sin tarjeta. Decides después.', gratis: 'Seguir con el plan gratis', gratisSub: 'Gratis: 15 tableros, solo emojis y 1 turno de la rutina (mañana, tarde o noche) con hasta 5 tareas.' },
 };
 
 /** Telas de boas-vindas depois do login. `pago` = já tem o Plano Completo (pula o convite do final). */
 export function BoasVindas({ idioma, pago, podeTestar, dias, fim, verPlanos, testar }: {
   idioma: L; pago: boolean; podeTestar: boolean; dias: number; fim: () => void; verPlanos: () => void; testar: () => void;
 }) {
-  const passos = PASSOS[idioma]; const u = UI[idioma];
+  const passos = PASSOS_DICAS[idioma]; const u = UI[idioma];
   const total = passos.length + (pago ? 0 : 1);
   const [i, setI] = useState(0);
   const x0 = useRef(0);
@@ -91,7 +95,7 @@ export function BoasVindas({ idioma, pago, podeTestar, dias, fim, verPlanos, tes
             </View>
             {i < passos.length ? (
               <>
-                <Text style={{ fontSize: 64, textAlign: 'center' }}>{passos[i].e}</Text>
+                {passos[i].e === 'MASCOTE' ? <View style={{ alignItems: 'center' }}><Mascote tam={96} /></View> : <Text style={{ fontSize: 64, textAlign: 'center' }}>{passos[i].e}</Text>}
                 <Text style={{ fontSize: 22, fontWeight: '900', color: '#0F172A', textAlign: 'center', marginTop: 8 }}>{passos[i].t}</Text>
                 <Text style={{ fontSize: 16, color: '#334155', textAlign: 'center', marginTop: 10, lineHeight: 23 }}>{passos[i].d}</Text>
                 <Pressable onPress={proximo} accessibilityRole="button" accessibilityLabel={u.prox} style={bt('#2563EB')}>

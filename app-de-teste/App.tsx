@@ -10,7 +10,7 @@ import { abrirLink, Aviso, falarTexto, pararFalaTexto, listarVozes, LOCALE, novo
 import type { HostV14 } from './src/rotina-amiga/v14/estadoV14';
 import { VozHome } from './demo/voz/home';
 import { hostIA, hostSegredo } from './demo/ia';
-import { AjustesVoz, Assinatura, CriarPrancha, Curso, Definicoes, GerirAbas, Pacotes, Sobre, TelaVoz } from './demo/voz/telas';
+import { AjustesVoz, Assinatura, CriarPrancha, Curso, Definicoes, GerirAbas, Pacotes, Sobre, Sugestoes, TelaVoz } from './demo/voz/telas';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CHAVE_ARMAZENAMENTO, lerLimitesFirebase } from './src/rotina-amiga';
 import { estadoDemo } from './demo/dados';
@@ -291,6 +291,7 @@ function Raiz() {
       case 'sobre': return <Sobre {...nav} />;
       case 'curso': return <Curso {...nav} />;
       case 'definicoes': return <Definicoes {...nav} />;
+      case 'sugestoes': return <Sugestoes {...nav} />;
       default: return <VozHome key={abaVoz || 'home'} ir={nav.ir} abaInicial={abaVoz} />;
     }
   })();

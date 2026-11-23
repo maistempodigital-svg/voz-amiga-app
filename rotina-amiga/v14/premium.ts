@@ -162,3 +162,14 @@ export const TEXTOS_PREMIUM: Record<string, T3> = {
   poucosBotoes: { pt: 'Dica: comece com poucos botões. A criança aprende melhor assim, e você vai aumentando aos poucos.', es: 'Consejo: empieza con pocos botones. El niño aprende mejor así, y vas sumando poco a poco.', en: 'Tip: start with few buttons. Children learn better this way, and you add more little by little.' },
 };
 export const tp = (k: keyof typeof TEXTOS_PREMIUM, l: Idioma, n?: number) => (TEXTOS_PREMIUM[k][l] ?? TEXTOS_PREMIUM[k].pt).replace('{n}', String(n ?? ''));
+
+/**
+ * Teste que ACABA no horário do sábado (sexta 17h → sábado 20h): continua liberado até o pagamento abrir de novo,
+ * porque nesse horário ninguém consegue assinar. Fora disso, devolve o mesmo estado.
+ */
+export const testeComSabado = (e: EstadoTeste, agora: number, fusoClienteMin: number, j: JanelaSabado = JANELA_PADRAO): EstadoTeste => {
+  if (e.fase !== 'acabou' || typeof e.fim !== 'number') return e;
+  if (!pagamentoTravado(agora, fusoClienteMin, j) || !pagamentoTravado(e.fim, fusoClienteMin, j)) return e;
+  const libera = pagamentoLiberaEm(agora, fusoClienteMin, j) ?? agora;
+  return { fase: 'ativo', diasRestantes: 1, fim: libera };
+};

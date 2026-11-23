@@ -1,7 +1,7 @@
 // v14.8 — avisos do teste premium e bloco de planos com a trava do sábado (no app real: planos do Google Play).
 import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
-import { pagamentoTravado, pagamentoLiberaEm, tp, JanelaSabado, JANELA_PADRAO, EstadoTeste, estadoTeste, temPremium, podeOferecerTeste } from '../src/rotina-amiga/v14/premium';
+import { pagamentoTravado, pagamentoLiberaEm, tp, JanelaSabado, JANELA_PADRAO, EstadoTeste, estadoTeste, temPremium, podeOferecerTeste, testeComSabado, lerJanelaSabado } from '../src/rotina-amiga/v14/premium';
 import { useVoz } from './voz/base';
 import { useConta } from './contaUI';
 import { iniciarTesteServidor, temCompraNativa } from './conta';
@@ -22,11 +22,13 @@ export function usePremiumDemo() {
   const atras = Number(P.get('testeInicioDiasAtras'));
   // o início do teste vale do servidor (não volta ao reinstalar); sem servidor, o do celular
   const inicio = Number.isFinite(atras) && P.get('testeInicioDiasAtras') ? Date.now() - atras * 86400000 : conta.plano?.testePremium?.inicio ?? s.defs.testeInicio;
-  const teste = estadoTeste({ inicio, dias: conta.plano?.testePremium?.dias ?? s.defs.testeDias ?? dias }, Date.now(), dias);
+  // teste que acaba no horário do sábado continua até o pagamento abrir de novo (sábado 20h)
+  const janelaSab = lerJanelaSabado(conta.remoto.sabado); const fusoCli = -new Date().getTimezoneOffset();
+  const teste = testeComSabado(estadoTeste({ inicio, dias: conta.plano?.testePremium?.dias ?? s.defs.testeDias ?? dias }, Date.now(), dias), Date.now(), fusoCli, janelaSab);
   // pago de verdade = servidor (Google Play, Kiwify, liberado no painel). O "simular" só existe fora da loja.
   const simulado = !temCompraNativa() && (P.get('plano') === 'completo' || s.defs.assinanteTeste === true);
   const travado = conta.plano?.bloqueado === true || conta.plano?.soGratis === true; // escolhido pelo dono no painel
-  const testeDono = conta.plano?.testeDono ? estadoTeste(conta.plano.testeDono, Date.now(), dias) : undefined;
+  const testeDono = conta.plano?.testeDono ? testeComSabado(estadoTeste(conta.plano.testeDono, Date.now(), dias), Date.now(), fusoCli, janelaSab) : undefined;
   const pago = !travado && (conta.plano?.hasAccess === true || simulado || testeDono?.fase === 'ativo');
   return {
     teste, pago, premium: !travado && temPremium(pago, teste), dias, simulado: !temCompraNativa(),

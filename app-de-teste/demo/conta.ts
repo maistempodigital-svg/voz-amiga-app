@@ -50,7 +50,7 @@ export const lerControle = (v: unknown): Partial<PlanoServidor> => {
   if (o.tipo === 'teste' && typeof o.inicio === 'number' && typeof o.dias === 'number' && o.dias > 0 && o.dias <= 365) return { testeDono: { inicio: o.inicio, dias: o.dias } };
   return {};
 };
-export interface DadosRemotos { rotina?: unknown; recursos?: unknown; porData?: unknown; sabado?: unknown; planos?: Record<string, { enabled?: boolean; title?: string; subtitle?: string; googleProductId?: string; productType?: string }> }
+export interface DadosRemotos { rotina?: unknown; recursos?: unknown; porData?: unknown; sabado?: unknown; anuncio?: unknown; planos?: Record<string, { enabled?: boolean; title?: string; subtitle?: string; googleProductId?: string; productType?: string }> }
 
 /** Mensagens de erro do Firebase em português simples. */
 export const erroAmigavel = (e: unknown): string => {
@@ -120,6 +120,7 @@ export function acompanharRemoto(mudou: (d: DadosRemotos) => void): () => void {
     onValue(ref(db, 'limitações/recursos'), (s) => { atual.recursos = s.val(); mudou({ ...atual }); }, () => undefined),
     onValue(ref(db, 'limitações/porData'), (s) => { atual.porData = s.val(); mudou({ ...atual }); }, () => undefined),
     onValue(ref(db, 'limitações/sabado'), (s) => { atual.sabado = s.val(); mudou({ ...atual }); }, () => undefined),
+    onValue(ref(db, 'limitações/anuncios'), (s) => { atual.anuncio = s.val(); mudou({ ...atual }); }, () => undefined),
     onValue(ref(db, 'appConfig/planSelection'), (s) => { atual.planos = (s.val() || {}) as DadosRemotos['planos']; mudou({ ...atual }); }, () => undefined),
   ];
   return () => paradas.forEach((p) => p());
@@ -182,3 +183,18 @@ export const lerPrecos = (ids: string[]) => new Promise<Record<string, string>>(
   (window as unknown as Record<string, unknown>).__vozPrecos = (txt: string) => { clearTimeout(h); try { ok(JSON.parse(txt)); } catch { ok({}); } };
   try { p.precos(JSON.stringify(ids)); } catch { clearTimeout(h); ok({}); }
 });
+
+export interface AnuncioPainel { id: string; titulo?: string; texto?: string; imagem?: string; link?: string; criadoEm: number }
+/** Anúncios dos parceiros que o dono colocou no painel (limitações/anuncios/{id}). Só os LIGADOS, o mais novo primeiro. */
+export function lerAnuncios(v: unknown): AnuncioPainel[] {
+  const lista = v && typeof v === 'object' ? (v as Record<string, unknown>) : {};
+  const t = (x: unknown, n: number) => (typeof x === 'string' ? x.trim().slice(0, n) : '');
+  const out: AnuncioPainel[] = [];
+  for (const [id, raw] of Object.entries(lista)) {
+    const o = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
+    if (o.ativo !== true) continue;
+    const a = { id: id.slice(0, 40), titulo: t(o.titulo, 60), texto: t(o.texto, 120), imagem: t(o.imagem, 500), link: t(o.link, 500), criadoEm: typeof o.criadoEm === 'number' ? o.criadoEm : 0 };
+    if (a.titulo || a.imagem) out.push(a);
+  }
+  return out.sort((x, y) => y.criadoEm - x.criadoEm).slice(0, 30);
+}

@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { BlocoPlanos, EscolherFixas, PlanoVenda, usePremiumDemo } from '../premium';
 import { BlocoConta, useConta } from '../contaUI';
+import { lerAnuncios } from '../conta';
+import { PASSOS_DICAS } from '../boasVindas';
 import { comprar, lerPrecos, restaurarComprasPlay, sair as sairDaConta, temCompraNativa } from '../conta';
 import { lerJanelaSabado } from '../../src/rotina-amiga/v14/premium';
 import { tp } from '../../src/rotina-amiga/v14/premium';
@@ -22,7 +24,7 @@ import {
 
 export type TelaVoz =
   | { n: 'home' } | { n: 'ajustes' } | { n: 'criar'; id?: string; abaId?: string; foto?: boolean } | { n: 'abas' } | { n: 'pacotes' }
-  | { n: 'assinatura' } | { n: 'sobre' } | { n: 'curso' } | { n: 'definicoes' };
+  | { n: 'assinatura' } | { n: 'sobre' } | { n: 'curso' } | { n: 'definicoes' } | { n: 'sugestoes' };
 
 type Nav = { ir: (t: TelaVoz) => void; voltar: () => void; casa: () => void };
 
@@ -31,10 +33,11 @@ const Fundo = ({ children }: { children: React.ReactNode }) => (
 );
 
 // ------------------------------------------------------------ AJUSTES E OPÇÕES
-function Quadro({ titulo, icone, cor, claro, fundoIcone, onPress, ativo, f = 'feather', tour }: { titulo: string; icone: string; cor: string; claro: string; fundoIcone: string; onPress: () => void; ativo?: boolean; f?: 'feather' | 'mci'; tour?: string }) {
+function Quadro({ titulo, icone, cor, claro, fundoIcone, onPress, ativo, f = 'feather', tour, novo }: { titulo: string; icone: string; cor: string; claro: string; fundoIcone: string; onPress: () => void; ativo?: boolean; f?: 'feather' | 'mci'; tour?: string; novo?: number }) {
   return (
     <AlvoTour id={tour || titulo} style={{ width: '48.5%', marginBottom: 9 }}>
     <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={titulo} style={({ pressed }) => [{ width: '100%', height: 82, borderRadius: 14, borderWidth: ativo ? 2.5 : 1.2, borderColor: ativo ? '#7E22CE' : cor, backgroundColor: ativo ? '#FAF5FF' : claro, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.8 : 1 }]}>
+      {novo ? <View accessibilityLabel={`${novo} novidade(s)`} style={{ position: 'absolute', top: 6, right: 8, minWidth: 20, height: 20, borderRadius: 10, backgroundColor: '#DC2626', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 }}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '900' }}>{novo}</Text></View> : null}
       {ativo ? <View style={{ position: 'absolute', top: 6, right: 8, backgroundColor: '#7E22CE', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 1 }}><Text style={{ color: '#fff', fontSize: 8, fontWeight: '900' }}>ATIVO</Text></View> : null}
       <View style={{ width: 37, height: 37, borderRadius: 11, backgroundColor: ativo ? '#F3E8FF' : fundoIcone, alignItems: 'center', justifyContent: 'center' }}>
         {f === 'mci' ? <MaterialCommunityIcons name={icone as never} size={19} color={cor} /> : <Feather name={(ativo ? 'check-circle' : icone) as never} size={18} color={ativo ? '#7E22CE' : cor} />}
@@ -62,6 +65,7 @@ export function AjustesVoz({ ir, casa }: Nav) {
   const { s, mudar, toast } = useVoz();
   const conta = useConta();
   const [apagar, setApagar] = useState(0);
+  const anunciosNovos = lerAnuncios(conta.remoto.anuncio).filter((a) => a.criadoEm > (s.defs.sugestoesVistasEm || 0)).length;
   const novos = useItensAjustesRotina(); // ROTINA AMIGA (o relatório unificado fica lá dentro)
   const { recurso, idioma, estado: estR, abrir } = useRotina();
   const hoje = chaveDia(new Date());
@@ -100,10 +104,12 @@ export function AjustesVoz({ ir, casa }: Nav) {
           <Quadro tour="aj_editarAbas" titulo={s.editarAbas ? 'SAIR DE EDITAR ABAS' : 'EDITAR ABAS'} ativo={s.editarAbas} icone="layers" cor="#7E22CE" claro="#FAF5FF" fundoIcone="#F3E8FF" onPress={() => { mudar((x) => ({ ...x, editarAbas: !x.editarAbas })); if (!s.editarAbas) { casa(); toast('Toque numa aba lá em cima para editar.'); } }} />
           <Quadro tour="aj_pacotes" titulo="BAIXAR PACOTES" icone="package" cor="#F59E0B" claro="#FFF7ED" fundoIcone="#FFEDD5" onPress={() => ir({ n: 'pacotes' })} />
           <Quadro tour="aj_assinatura" titulo="MINHA ASSINATURA" icone="credit-card" cor="#22C55E" claro="#F0FDF4" fundoIcone="#DCFCE7" onPress={() => ir({ n: 'assinatura' })} />
+          <Quadro tour="aj_sugestoes" titulo="SUGESTÕES" icone="gift" cor="#DB2777" claro="#FDF2F8" fundoIcone="#FCE7F3" novo={anunciosNovos} onPress={() => ir({ n: 'sugestoes' })} />
           <Quadro tour="aj_sobre" titulo="SOBRE A CAA" icone="info" cor="#22D3EE" claro="#ECFEFF" fundoIcone="#CFFAFE" onPress={() => ir({ n: 'sobre' })} />
           {/* NOVO (Rotina Amiga) — mesmo formato dos outros quadros */}
           {novos.filter((it) => it.id !== 'conquistasPremios').map((it) => <Quadro key={it.id} tour={({ ajustesRotina: 'aj_rotina', relatorio: 'aj_relatorio', ajuda: 'aj_ajuda', cursoPais: 'aj_curso' } as Record<string, string>)[it.id] || it.id} titulo={it.rotulo} f={it.icone.f} icone={it.icone.n} cor={it.cor} claro={it.fundo} fundoIcone={it.fundoIcone} onPress={it.aoTocar} />)}
         </View>
+        <Text style={{ fontSize: 11.5, color: '#475569', textAlign: 'center', marginBottom: 8 }}>💡 Olhe os Ajustes de vez em quando: sempre chegam novidades, dicas e sugestões.</Text>
         <AlvoTour id="aj_definicoes"><Linha titulo="DEFINIÇÕES" icone="sliders" cor="#0F172A" claro="#FFFFFF" borda="#CBD5E1" onPress={() => ir({ n: 'definicoes' })} /></AlvoTour>
         <Linha titulo="SUPORTE (SEG-SEX 08H-16H)" icone="mail" cor="#059669" claro="#ECFDF5" borda="#34D399" onPress={() => abrirLink('mailto:grupoamigapp@gmail.com')} />
         <Linha titulo="CONHEÇA NOSSO INSTAGRAM!" icone="instagram" cor="#4F46E5" claro="#EEF2FF" borda="#818CF8" onPress={() => abrirLink('https://www.instagram.com/appvoz_amiga/')} />
@@ -603,6 +609,45 @@ export function Assinatura({ voltar, casa }: Nav) {
 // ------------------------------------------------------------ SOBRE A CAA + CURSO
 const DICAS = ['Seja o modelo: use o app no dia a dia para mostrar como funciona.', 'Dê tempo de espera para a pessoa processar e responder.', 'Evite transformar tudo em teste; comunicação precisa ser natural.', 'Mantenha o dispositivo acessível e disponível.'];
 const CONCEITOS = ['Vocabulário essencial ajuda em várias situações do cotidiano.', 'Gestos, olhares e sons também são comunicação.', 'Presuma competência e ofereça ferramentas adequadas.'];
+/** Ajustes › SUGESTÕES: anúncios dos parceiros (do painel, sincronizados) + dicas para os pais. Abrir apaga a bolinha vermelha. */
+export function Sugestoes({ voltar }: Nav) {
+  const { s, mudar } = useVoz();
+  const conta = useConta();
+  const lista = lerAnuncios(conta.remoto.anuncio);
+  const vistoAntes = s.defs.sugestoesVistasEm || 0;
+  React.useEffect(() => { mudar((x) => ({ ...x, defs: { ...x.defs, sugestoesVistasEm: Date.now() } })); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const dicas = PASSOS_DICAS[s.defs.idioma] || PASSOS_DICAS.pt;
+  return (
+    <Fundo>
+      <Cab icone="gift" cor="#DB2777" fundo="#FCE7F3" titulo="Sugestões" onVoltar={voltar} onFechar={voltar} />
+      <ScrollView contentContainerStyle={{ padding: 12, paddingBottom: 40 }}>
+        <Text style={{ fontSize: 13, color: '#475569', marginBottom: 10 }}>💡 Aqui chegam as novidades, sugestões e parceiros do Voz Amiga. Olhe sempre: a bolinha vermelha nos Ajustes avisa quando tem coisa nova.</Text>
+        {lista.length ? lista.map((a) => (
+          <Pressable key={a.id} onPress={() => (a.link ? abrirLink(a.link) : undefined)} accessibilityRole="button" accessibilityLabel={`Sugestão: ${a.titulo || ''}`}
+            style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 16, borderWidth: a.criadoEm > vistoAntes ? 2 : 1, borderColor: a.criadoEm > vistoAntes ? '#DC2626' : '#E2E8F0', padding: 10, marginBottom: 10 }}>
+            {a.imagem ? <Image source={{ uri: a.imagem }} style={{ width: 64, height: 64, borderRadius: 12, backgroundColor: '#F1F5F9' }} /> : <View style={{ width: 64, height: 64, borderRadius: 12, backgroundColor: '#E2E8F0', alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontWeight: '900', color: '#475569' }}>AD</Text></View>}
+            <View style={{ flex: 1, marginLeft: 12 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: '900', color: '#0F172A', flexShrink: 1 }}>{a.titulo}</Text>
+                {a.criadoEm > vistoAntes ? <View style={{ marginLeft: 6, backgroundColor: '#DC2626', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 1 }}><Text style={{ color: '#fff', fontSize: 9, fontWeight: '900' }}>NOVO</Text></View> : null}
+              </View>
+              {a.texto ? <Text style={{ fontSize: 13, color: '#475569', marginTop: 2 }}>{a.texto}</Text> : null}
+            </View>
+            {a.link ? <Feather name="external-link" size={18} color="#475569" /> : null}
+          </Pressable>
+        )) : <Text style={{ fontSize: 13, color: '#64748B', marginBottom: 10 }}>Nenhuma sugestão nova por enquanto.</Text>}
+        <Text style={{ fontSize: 15, fontWeight: '900', color: '#0F172A', marginTop: 8, marginBottom: 6 }}>Dicas para os pais</Text>
+        {dicas.map((d) => (
+          <View key={d.t} style={{ flexDirection: 'row', backgroundColor: '#fff', borderRadius: 14, borderWidth: 1, borderColor: '#E2E8F0', padding: 10, marginBottom: 8 }}>
+            <Text style={{ fontSize: 24 }}>{d.e === 'MASCOTE' ? '🤖' : d.e}</Text>
+            <View style={{ flex: 1, marginLeft: 10 }}><Text style={{ fontWeight: '900', color: '#0F172A' }}>{d.t}</Text><Text style={{ fontSize: 13, color: '#475569', marginTop: 2 }}>{d.d}</Text></View>
+          </View>
+        ))}
+      </ScrollView>
+    </Fundo>
+  );
+}
+
 export function Sobre({ voltar, casa, ir }: Nav) {
   const Bloco = ({ t, c, b, children }: { t: string; c: string; b: string; children: React.ReactNode }) => (
     <View style={{ backgroundColor: b, borderRadius: 16, padding: 12, marginBottom: 10 }}><Text style={{ fontSize: 14, fontWeight: '900', color: c }}>{t}</Text><View style={{ marginTop: 4 }}>{children}</View></View>
