@@ -48,6 +48,8 @@ export interface Recompensa {
   icone: string; // emoji
   /** Minutos de espera antes de receber (ex.: "Ver desenho" = 5). */
   esperaMin: number;
+  /** v2.0.7: quando a criança trocou este prêmio. No plano grátis o prêmio trocado sai da loja (1 por vez). */
+  trocadoEm?: number;
 }
 
 export type TipoMeta = 'frases' | 'tarefas' | 'rotinas' | 'palavras_novas' | 'pranchas';

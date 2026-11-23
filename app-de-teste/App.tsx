@@ -130,12 +130,18 @@ const LIMITES_TESTE = (() => { try { const r = params.get('limites'); return r ?
 const RECURSOS_TESTE = (() => { try { const r = params.get('recursos'); return r ? JSON.parse(r) : undefined; } catch { return undefined; } })();
 
 function ComRotina() {
-  const { s, mudar, rev, toast } = useVoz();
+  const { s, mudar, rev, toast, pronto: vozPronto } = useVoz();
   // v14: o que o Voz entrega ao módulo (backup, vozes, pranchas por tema)
   const hostV14: HostV14 = {
     lerDadosVoz: () => ({ abas: s.abas, pranchas: s.pranchas, defs: s.defs }),
     versaoVoz: rev,
-    restaurarDadosVoz: (d) => { const v = sanearVoz(d); if (!v) return false; mudar(() => ({ ...v, defs: { ...v.defs, assinanteTeste: s.defs.assinanteTeste, testeInicio: s.defs.testeInicio, testeDias: s.defs.testeDias, avisosTeste: s.defs.avisosTeste } })); return true; }, // o teste premium nunca vem do backup
+    restaurarDadosVoz: (d) => {
+      const v = sanearVoz(d); if (!v) return false;
+      // do backup vêm só as pranchas, abas e 8 ajustes; o resto (início de uso, idioma escolhido, dicas vistas, teste premium) fica como está
+      const doBackup = (({ idioma, colunasAuto, colunas, sugestoes, tecladoAvancado, bloquearApp, voz, volume }) => ({ idioma, colunasAuto, colunas, sugestoes, tecladoAvancado, bloquearApp, voz, volume }))(v.defs);
+      mudar((x) => ({ ...x, abas: v.abas, pranchas: v.pranchas, modo: 'normal', editarAbas: false, defs: { ...x.defs, ...doBackup } }));
+      return true;
+    },
     compartilharArquivo: (nome, conteudo) => compartilharArquivoWeb(nome, conteudo, toast),
     escolherArquivo: lerArquivoTexto,
     listarVozes: () => listarVozes(s.defs.idioma),
@@ -191,8 +197,8 @@ function ComRotina() {
   const ofertaTeste = { podeOferecer: pm.podeTestar, dias: pm.dias, iniciar: pm.iniciar };
   // depois do login: telas de boas-vindas (como funciona + recomendações + convite do plano). Só uma vez.
   const semFb = !!TELA || params.has('semFirebase');
-  const verBoasVindas = TELA === 'boasVindas' ? !s.defs.boasVindasVista : !semFb && !!conta.usuario && !conta.precisaIdioma && !s.defs.boasVindasVista; // ?tela=boasVindas só nos testes
-  const primeiraAbertura = !semFb && (conta.precisaIdioma || conta.precisaEntrar || !conta.pronto || verBoasVindas);
+  const verBoasVindas = TELA === 'boasVindas' ? !s.defs.boasVindasVista : !semFb && vozPronto && !!conta.usuario && !conta.precisaIdioma && !s.defs.boasVindasVista; // ?tela=boasVindas só nos testes
+  const primeiraAbertura = !semFb && (conta.precisaIdioma || conta.precisaEntrar || !conta.pronto || !vozPronto || verBoasVindas);
   return (
     <RotinaAmigaProvider idioma={params.get('idioma') || s.defs.idioma} estadoInicial={TELA ? inicial : undefined} armazenamento={armazenamentoDemo}
       falar={(t) => falarTexto(t, s.defs)} pararVoz={pararFalaTexto} segurarTour={primeiraAbertura} salvarImagem={(u) => reduzirImagem(u)}
@@ -210,7 +216,7 @@ function ComRotina() {
       {verBoasVindas ? <BoasVindasNaRotina idioma={s.defs.idioma} pago={pagou} podeTestar={pm.podeTestar} dias={pm.dias} aviso={toast} janela={lerJanelaSabado(conta.remoto.sabado)}
         fim={() => mudar((x) => ({ ...x, defs: { ...x.defs, boasVindasVista: true } }))} testar={() => pm.iniciar()} /> : null}
       {/* o teste grátis acabou: mostra os planos uma vez (com "Continuar no plano gratuito") */}
-      {!verBoasVindas && !primeiraAbertura && !pagou && teste.fase === 'acabou' && !s.defs.fimTesteVisto ? (
+      {!verBoasVindas && !primeiraAbertura && conta.plano !== undefined && !pagou && teste.fase === 'acabou' && !s.defs.fimTesteVisto ? (
         <ModalRN visible animationType="none" onRequestClose={() => mudar((x) => ({ ...x, defs: { ...x.defs, fimTesteVisto: true } }))}>
           <ViewRN accessibilityLabel="planos fim do teste" style={{ flex: 1, backgroundColor: '#F4F7FC' }}>
             <TelaPlanos acabou idioma={s.defs.idioma} podeTestar={false} dias={pm.dias} testar={() => undefined} aviso={toast} janela={lerJanelaSabado(conta.remoto.sabado)}

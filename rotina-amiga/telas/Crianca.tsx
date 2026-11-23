@@ -41,7 +41,7 @@ const Estrela = ({ n, cor = C.starDark, tam = 26 }: { n: number | string; cor?: 
 // ------------------------------------------------------------------ LOJA
 
 function LojaLista({ seletor }: { seletor: React.ReactNode }) {
-  const { estado, t, voltar, mudar, agora, falar, idioma } = useRotina();
+  const { estado, t, voltar, mudar, agora, falar, idioma, limites } = useRotina();
   const [confirmar, setConfirmar] = useState<Recompensa>();
   // regra dos pais "intervalo entre prêmios": a loja espera um pouco até o próximo
   const faltaMs = A.faltaProximoPremio(estado, agora);
@@ -79,7 +79,10 @@ function LojaLista({ seletor }: { seletor: React.ReactNode }) {
           </View>
         ) : null}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: px(28), marginTop: px(16), justifyContent: 'space-between' }}>
-          {estado.recompensas.map((r) => {
+          {A.premiosNaLoja(estado, limites.premios).length === 0 ? (
+            <Text accessibilityLabel="sem prêmio na loja" style={{ width: '100%', marginTop: px(24), fontSize: px(26), fontWeight: '900', color: '#3730A3', textAlign: 'center' }}>{tx(idioma, 'premVazio')}</Text>
+          ) : null}
+          {A.premiosNaLoja(estado, limites.premios).map((r) => {
             const pode = !faltaMs && r.custo <= estado.estrelas;
             return (
               <View key={r.id} style={[{ width: '48.5%', marginTop: px(24), borderRadius: px(44), padding: px(30), alignItems: 'center', backgroundColor: pode ? C.white : 'rgba(224,226,250,0.82)' }, sombra(6, '#000', 0.15)]}>

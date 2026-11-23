@@ -72,7 +72,7 @@ try:
         pg.get_by_text('49').first.wait_for()
     caso('loja-compra', f5)
     def f6(pg):
-        pg.goto(U + '?tela=loja'); pg.get_by_text('Loja de estrelas').wait_for()
+        pg.goto(U + '?tela=loja&plano=completo'); pg.get_by_text('Loja de estrelas').wait_for()
         pg.get_by_role('button', name='Resgatar').nth(1).click(); pg.get_by_role('button', name='Confirmar').click()
         pg.get_by_text('Falta pouco...').first.wait_for()
     caso('loja-espera', f6)
@@ -152,6 +152,13 @@ try:
         assert pg.get_by_label('DESTRAVAR').count() == 0, 'grátis não pode travar'
         pg.get_by_text(re.compile('Travar o app .*Plano Completo')).first.wait_for()
     caso('travar-app-e-do-plano-pago', f17b)
+    def f17c(pg):
+        pg.goto(U + '?tela=home'); pg.get_by_label('PRÊMIOS').click(); pg.get_by_text('Loja de estrelas').wait_for()
+        n = pg.get_by_role('button', name='Resgatar').count()
+        assert n == 1, f'grátis: 1 prêmio por vez na loja (veio {n})'
+        pg.goto(U + '?tela=home&plano=completo'); pg.get_by_label('PRÊMIOS').click(); pg.get_by_text('Loja de estrelas').wait_for()
+        assert pg.get_by_role('button', name='Resgatar').count() > 1, 'pago vê todos os prêmios'
+    caso('premio-1-por-vez-no-gratis', f17c)
     def f18(pg):
         pg.goto(U + '?tela=home'); pill = pg.get_by_label(re.compile('ESCOLA|Escola'))
         segurar(pg, pill.first, 1600); pg.wait_for_timeout(300)

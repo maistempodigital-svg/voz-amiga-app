@@ -188,11 +188,13 @@ export const frasesEmVolta = (palavra: string, idioma: Idioma): string[][] => {
   const cat = categoriaDaPalavra(w);
   const COM = new Set(['fome', 'sede', 'sono', 'dor', 'medo', 'frio', 'calor', 'hambre', 'sed', 'sueno', 'dolor', 'miedo']);
   const com = COM.has(sem(w));
+  // MUITA fome/sede/dor; MUITO sono/medo/frio/calor (es: MUCHA hambre/sed; MUCHO sueño/miedo/dolor)
+  const fem = ['fome', 'sede', 'dor', 'hambre', 'sed'].includes(sem(w));
   const T: Record<Idioma, Partial<Record<Categoria, string[][]>>> = {
     pt: {
       coisa: [['EU', 'QUERO', w], ['EU', 'NÃO', 'QUERO', w], ['MAIS', w], ['ONDE', 'ESTÁ', w], ['EU', 'GOSTO', 'DE', w], ['ME', 'DÁ', w]],
       verbo: [['EU', 'QUERO', w], ['EU', 'NÃO', 'QUERO', w], ['VAMOS', w], ['EU', 'POSSO', w], ['AJUDA', 'A', w]],
-      descricao: com ? [['EU', 'ESTOU', 'COM', w], ['EU', 'NÃO', 'ESTOU', 'COM', w], ['ESTOU', 'COM', 'MUITA', w]] : [['EU', 'ESTOU', w], ['EU', 'NÃO', 'ESTOU', w], ['EU', 'QUERO', w]],
+      descricao: com ? [['EU', 'ESTOU', 'COM', w], ['EU', 'NÃO', 'ESTOU', 'COM', w], ['ESTOU', 'COM', fem ? 'MUITA' : 'MUITO', w]] : [['EU', 'ESTOU', w], ['EU', 'NÃO', 'ESTOU', w], ['EU', 'QUERO', w]],
       pessoa: [['EU', 'QUERO', w], ['ONDE', 'ESTÁ', w], ['OI', w], ['TCHAU', w], ['EU', 'AMO', w]],
     },
     en: {
@@ -204,7 +206,7 @@ export const frasesEmVolta = (palavra: string, idioma: Idioma): string[][] => {
     es: {
       coisa: [['YO', 'QUIERO', w], ['NO', 'QUIERO', w], ['MÁS', w], ['¿DÓNDE', 'ESTÁ', w + '?'], ['ME', 'GUSTA', w], ['DAME', w]],
       verbo: [['YO', 'QUIERO', w], ['NO', 'QUIERO', w], ['VAMOS', 'A', w], ['¿PUEDO', w + '?'], ['AYÚDAME', 'A', w]],
-      descricao: com ? [['TENGO', w], ['NO', 'TENGO', w], ['TENGO', 'MUCHA', w]] : [['ESTOY', w], ['NO', 'ESTOY', w], ['QUIERO', w]],
+      descricao: com ? [['TENGO', w], ['NO', 'TENGO', w], ['TENGO', fem ? 'MUCHA' : 'MUCHO', w]] : [['ESTOY', w], ['NO', 'ESTOY', w], ['QUIERO', w]],
       pessoa: [['QUIERO', 'A', w], ['¿DÓNDE', 'ESTÁ', w + '?'], ['HOLA', w], ['ADIÓS', w], ['TE', 'QUIERO', w]],
     },
   };

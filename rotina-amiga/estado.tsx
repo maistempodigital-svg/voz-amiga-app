@@ -322,10 +322,8 @@ export function RotinaAmigaProvider({ children, idioma: idiomaVoz, falar: falarV
       case 'rotina': return s.abas.length < limites.rotinas;
       case 'tarefa': return s.tarefas.filter((x) => !abaId || x.abaId === abaId).length < limites.tarefasPorRotina;
       // prêmios "na fila" = os que a criança ainda não trocou. No grátis (1), depois que ela troca o prêmio, os pais podem pôr outro.
-      case 'premio': {
-        const trocados = new Set((s.log || []).filter((e) => e.tipo === 'resgate' && e.rotulo).map((e) => String(e.rotulo).toLowerCase()));
-        return s.recompensas.filter((x) => !trocados.has(x.titulo.toLowerCase())).length < limites.premios;
-      }
+      // No grátis (1), depois que a criança troca o prêmio, ele sai da loja e os pais podem pôr outro. Conta por prêmio, não pelo nome.
+      case 'premio': return limites.premios >= 99 || A.premiosNaFila(s) < limites.premios;
       case 'criacaoRapida': return limites.criacaoRapida === true;
       case 'travarApp': return limites.travarApp === true;
       case 'temporizador': return limites.temporizador;

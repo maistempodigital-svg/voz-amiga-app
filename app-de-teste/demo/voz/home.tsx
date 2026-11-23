@@ -245,8 +245,8 @@ export function VozHome({ ir, abaInicial }: { ir: (t: TelaVoz) => void; abaInici
   const lt = Math.floor((largMenu - 4 * GAP) / 5);
   const travar = () => (!travado && !pode('travarApp') ? pedirPlano('travarApp') : adulto(() => {
     const p = ponte();
-    if (!travado) { try { p?.travar?.(); } catch { /* */ } setTravado(true); toast('App travado. Segure de novo para destravar.'); }
-    else { try { p?.destravar?.(); } catch { /* */ } setTravado(false); toast('App destravado.'); }
+    if (!travado) { try { p?.travar?.(); } catch { /* */ } setTravado(true); toast({ pt: 'App travado. Segure de novo para destravar.', en: 'App locked. Hold again to unlock.', es: 'App bloqueada. Mantén pulsado de nuevo para desbloquear.' }[idioma] || 'App travado.'); }
+    else { try { p?.destravar?.(); } catch { /* */ } setTravado(false); toast({ pt: 'App destravado.', en: 'App unlocked.', es: 'App desbloqueada.' }[idioma] || 'App destravado.'); }
   }, travado ? 'Destravar app' : 'Travar app'));
 
   // EM CIMA: botões dos pais (segurar) e funções

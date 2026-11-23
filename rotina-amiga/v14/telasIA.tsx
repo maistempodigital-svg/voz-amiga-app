@@ -258,8 +258,11 @@ export function DestaqueCriacaoRapida({ antes }: { /** o app fecha a tela dele a
 
 // =============================================================== CRIAÇÃO RÁPIDA (tocando)
 export function TelaCriacaoRapida() {
-  const { idioma, hostV14, mudar, estado, mostrarAviso, fecharTudo, falar, limites, assinante, pode, responderPlano } = useRotina();
+  const { idioma, hostV14, mudar, estado, mostrarAviso, fecharTudo, falar, limites, assinante, pode, responderPlano, pedirPlano, voltar } = useRotina();
   const limite = assinante ? 999 : Math.max(1, limites.botoesPorVez || 10);
+  // v2.0.7: a criação rápida é do Plano Completo, por qualquer caminho que abrir esta tela
+  const livre = pode('criacaoRapida');
+  useEffect(() => { if (!livre) { voltar(); pedirPlano('criacaoRapida'); } }, [livre]); // eslint-disable-line react-hooks/exhaustive-deps
   // passo 0 = boas-vindas; 1..N = perguntas; N+1 = revisar
   const [passo, setPasso] = useState(0);
   const [esc, setEsc] = useState<string[]>([]);

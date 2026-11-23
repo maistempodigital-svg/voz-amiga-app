@@ -586,3 +586,22 @@ ok('relatório: hoje, 7/15/30 dias, 2 meses e datas livres', () => {
 });
 
 console.log(`\n${n} grupos de testes passaram.`);
+
+ok('v2.0.7: grátis = 1 prêmio por vez; trocado sai da loja e libera outro; pago vê todos', () => {
+  const T = Date.parse('2026-11-23T12:00:00Z');
+  let s = { ...estadoPadrao('pt'), estrelas: 50, config: { ...estadoPadrao('pt').config, premioModo: 'livre' as never } };
+  const n = s.recompensas.length;
+  assert.ok(n >= 2, 'o padrão tem vários prêmios');
+  assert.equal(A.premiosNaLoja(s, 1).length, 1, 'grátis mostra só 1');
+  assert.equal(A.premiosNaLoja(s, 999).length, n, 'pago mostra todos');
+  assert.equal(A.premiosNaFila(s), n);
+  const primeiro = A.premiosNaLoja(s, 1)[0];
+  const c = A.comprar({ ...primeiro.esperaMin ? { ...s, recompensas: s.recompensas.map((r) => ({ ...r, esperaMin: 0 })) } : s }, primeiro.id, T);
+  assert.equal(c.ok, true); s = c.estado;
+  assert.ok(s.recompensas.find((r) => r.id === primeiro.id)!.trocadoEm, 'fica marcado como trocado');
+  assert.notEqual(A.premiosNaLoja(s, 1)[0]?.id, primeiro.id, 'o trocado sai da loja do grátis');
+  assert.equal(A.premiosNaFila(s), n - 1);
+  // mesmo nome não engana a conta (conta por prêmio)
+  const s2 = { ...s, recompensas: [...s.recompensas, { ...primeiro, id: 'novo', trocadoEm: undefined }] };
+  assert.equal(A.premiosNaFila(s2), n);
+});

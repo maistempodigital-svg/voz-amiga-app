@@ -121,7 +121,7 @@ export function TelaPlanos({ idioma, podeTestar, dias, testar, continuarGratis, 
   idioma: L; podeTestar: boolean; dias: number; testar: () => void; continuarGratis: () => void; aviso: (t: string) => void; janela?: JanelaSabado; acabou?: boolean;
 }) {
   const u = UI[idioma];
-  const { planos, fazerCompra, comprando } = usePlanosVenda(aviso);
+  const { planos, fazerCompra, comprando } = usePlanosVenda(aviso, idioma);
   const travado = pagamentoTravado(Date.now(), -new Date().getTimezoneOffset(), janela);
   return (
     <View style={{ flex: 1 }}>

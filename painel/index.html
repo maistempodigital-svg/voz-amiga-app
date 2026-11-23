@@ -197,6 +197,9 @@ const CAMPOS = [
   ['frasesPersonalizadas', 'bool', 'Frases personalizadas', 'Os pais criarem as próprias frases prontas.'],
   ['anuncios', 'bool', 'Mostrar anúncios no grátis', 'Liga ou desliga os anúncios na tela inicial de quem usa o grátis.'],
 ];
+// padrão do app quando o campo não existe no Firebase (igual a LIMITES_GRATIS em rotina-amiga/logica/plano.ts)
+const PADRAO_GRATIS = { rotinas: 1, tarefasPorRotina: 5, premios: 1, temporizador: false, horario: false, metas: false, relatorioCompleto: false, anuncios: true,
+  frasesPersonalizadas: false, botoesPorVez: 10, pranchas: 10, vozGravada: 0, pacotesGratis: 'BEBIDAS', fotos: false, criacaoRapida: false, travarApp: false, testePremiumDias: 30 };
 const RECURSOS = [
   ['vozes', 'Escolher a voz'], ['vozGravada', 'Voz gravada dos pais'], ['curso', 'Curso para os pais'], ['missaoDia', 'Missão do dia'],
   ['lembretePais', 'Lembrete para os pais'], ['modoExemplo', 'Modo exemplo'], ['mensagensApoio', 'Mensagens de apoio'], ['avisoSemanas', 'Aviso "é normal demorar"'],
@@ -237,7 +240,7 @@ async function carregar() {
   const lim = atual['limitações'] || {};
   const rot = lim.rotina || {};
   $('gradeRotina').innerHTML = '';
-  for (const [k, t, ti, aj] of CAMPOS) campo(k, t, ti, aj, rot[k], 'gradeRotina');
+  for (const [k, t, ti, aj] of CAMPOS) campo(k, t, ti, aj, rot[k] ?? PADRAO_GRATIS[k], 'gradeRotina');
   const pd = lim.porData;
   $('infoPorData').textContent = pd && pd.corte ? `Regra "antigos" ativa: quem começou antes de ${new Date(pd.corte).toLocaleString('pt-BR')} usa ${JSON.stringify(pd.antigos || {})}.` : '';
   // recursos
@@ -290,7 +293,7 @@ function montarResumo(nAcessos) {
   const sb = { ativo: true, inicioDia: 5, inicioHora: 17, fimDia: 6, fimHora: 20, ...(lim.sabado || {}) };
   const v = (k, p) => (rot[k] ?? p);
   const r = $('resumo'); r.replaceChildren(
-    cartao('Planos à venda', ligados.length ? ligados.join(' + ') : 'Nenhum', 'Preço vem da Play Store'),
+    cartao('Planos à venda', ligados.length ? ligados.join(' + ') : 'Nenhum ligado', ligados.length ? 'Preço vem da Play Store' : 'O app mostra Mensal + Vitalício'),
     cartao('Plano grátis', `${v('pranchas', 10)} pranchas`, `${v('rotinas', 1)} turno · ${v('tarefasPorRotina', 5)} tarefas · ${v('premios', 1)} prêmio`),
     cartao('Anúncios ligados', String(ads), ads ? 'Revezam na tela inicial do grátis' : 'Mostra o convite do plano'),
     cartao('Sábado', sb.ativo === false ? 'Trava desligada' : `${DIAS[sb.inicioDia]} ${sb.inicioHora}h → ${DIAS[sb.fimDia]} ${sb.fimHora}h`, 'Sem cobrança nesse horário'),
@@ -314,7 +317,7 @@ $('salvarRotina').onclick = async () => {
   for (const e of m) {
     const k = e.dataset.k, v = ler(e);
     if (para === 'todos') { upd[`limitações/rotina/${k}`] = v; delete antigos[k]; }
-    if (para === 'novos') { upd[`limitações/rotina/${k}`] = v; if (!(k in antigos)) antigos[k] = rot[k] ?? null; }
+    if (para === 'novos') { upd[`limitações/rotina/${k}`] = v; if (!(k in antigos)) antigos[k] = rot[k] ?? PADRAO_GRATIS[k] ?? null; }
     if (para === 'antigos') { antigos[k] = v; }
   }
   const temAntigos = Object.values(antigos).some((v) => v !== null && v !== undefined);

@@ -151,6 +151,12 @@ export const minutosPremio = (s: EstadoRotina) => Math.min(120, Math.max(1, Math
 export const faltaProximoPremio = (s: EstadoRotina, agora = Date.now()) =>
   // nunca espera mais que a regra atual (relógio errado ou dado adulterado não travam a loja)
   s.config.premioModo === 'intervalo' && s.proximoPremioEm ? Math.min(minutosPremio(s) * 60000, Math.max(0, s.proximoPremioEm - agora)) : 0;
+/** v2.0.7: prêmios que aparecem na loja. Plano grátis: só os ainda não trocados, até o limite (1 por vez). */
+export const premiosNaLoja = (s: EstadoRotina, limite: number) =>
+  limite >= 99 ? s.recompensas : s.recompensas.filter((r) => !r.trocadoEm).slice(0, Math.max(0, limite));
+/** prêmios esperando a criança trocar (conta para o limite do grátis) */
+export const premiosNaFila = (s: EstadoRotina) => s.recompensas.filter((r) => !r.trocadoEm).length;
+const marcarTrocado = (s: EstadoRotina, id: string, agora: number): EstadoRotina => ({ ...s, recompensas: s.recompensas.map((r) => (r.id === id ? { ...r, trocadoEm: agora } : r)) });
 const depoisDoResgate = (s: EstadoRotina, agora: number): EstadoRotina =>
   s.config.premioModo === 'intervalo' ? { ...s, proximoPremioEm: agora + minutosPremio(s) * 60000 } : { ...s, proximoPremioEm: undefined };
 
@@ -162,7 +168,7 @@ export const comprar = (s: EstadoRotina, recompensaId: string, agora = Date.now(
   if (esperaMin > 0) {
     return { estado: comLog({ ...s, esperaAtiva: { recompensaId, inicio: agora, fim: agora + esperaMin * 60000 } }, { t: agora, tipo: 'espera_inicio', rotulo: r.titulo, esperouMin: esperaMin }), ok: true, espera: true };
   }
-  return { estado: depoisDoResgate(comLog({ ...s, estrelas: Math.max(0, s.estrelas - r.custo) }, { t: agora, tipo: 'resgate', rotulo: r.titulo, estrelas: -r.custo, esperouMin: 0 }), agora), ok: true, espera: false };
+  return { estado: depoisDoResgate(comLog({ ...marcarTrocado(s, r.id, agora), estrelas: Math.max(0, s.estrelas - r.custo) }, { t: agora, tipo: 'resgate', rotulo: r.titulo, estrelas: -r.custo, esperouMin: 0 }), agora), ok: true, espera: false };
 };
 
 /** Fim da espera: confirma o prêmio e desconta as estrelas. */
@@ -172,7 +178,7 @@ export const confirmarEspera = (s: EstadoRotina, agora = Date.now()): EstadoRoti
   const r = s.recompensas.find((x) => x.id === e.recompensaId);
   if (!r) return { ...s, esperaAtiva: undefined };
   const esperou = Math.round((agora - e.inicio) / 60000);
-  return depoisDoResgate(comLog({ ...s, esperaAtiva: undefined, estrelas: Math.max(0, s.estrelas - r.custo) }, { t: agora, tipo: 'resgate', rotulo: r.titulo, estrelas: -r.custo, esperouMin: esperou }), agora);
+  return depoisDoResgate(comLog({ ...marcarTrocado(s, r.id, agora), esperaAtiva: undefined, estrelas: Math.max(0, s.estrelas - r.custo) }, { t: agora, tipo: 'resgate', rotulo: r.titulo, estrelas: -r.custo, esperouMin: esperou }), agora);
 };
 
 export const desistirEspera = (s: EstadoRotina, agora = Date.now()): EstadoRotina => {
@@ -325,7 +331,7 @@ export const sanear = (bruto: unknown, padrao: EstadoRotina): EstadoRotina => {
     ...b,
     abas: comId(arr<EstadoRotina['abas'][number]>(b.abas, padrao.abas)).map((a) => ({ ...a, nome: corta(a.nome, LIMITE_NOME) })),
     tarefas,
-    recompensas: comId(arr<EstadoRotina['recompensas'][number]>(b.recompensas, padrao.recompensas)).map((r) => ({ ...r, titulo: corta(r.titulo, LIMITE_NOME), icone: txt(r.icone, 40, '🎁'), custo: inteiro(r.custo, 1, 999, 5), esperaMin: inteiro(r.esperaMin, 0, 120, 0) })),
+    recompensas: comId(arr<EstadoRotina['recompensas'][number]>(b.recompensas, padrao.recompensas)).map((r) => ({ ...r, titulo: corta(r.titulo, LIMITE_NOME), icone: txt(r.icone, 40, '🎁'), custo: inteiro(r.custo, 1, 999, 5), esperaMin: inteiro(r.esperaMin, 0, 120, 0), trocadoEm: typeof r.trocadoEm === 'number' && Number.isFinite(r.trocadoEm) ? r.trocadoEm : undefined })),
     metas: comId(arr<EstadoRotina['metas'][number]>(b.metas, padrao.metas)).map((m) => ({ ...m, titulo: corta(m.titulo, LIMITE_NOME), icone: txt(m.icone, 40, '🎯'), tipo: TIPOS_META.includes(m.tipo) ? m.tipo : 'frases', periodo: m.periodo === 'semana' ? 'semana' : 'dia', ativa: bool(m.ativa, false), alvo: inteiro(m.alvo, 1, 500, 1), premio: inteiro(m.premio, 0, 100, 0) })),
     config,
     v14: sanearConfigV14(b.v14),

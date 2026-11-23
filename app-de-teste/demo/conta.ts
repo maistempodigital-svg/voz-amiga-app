@@ -184,6 +184,16 @@ export const comprar = (produto: string, tipo: 'subs' | 'inapp') => new Promise<
   (window as unknown as Record<string, unknown>).__vozCompra = async (txt: string) => {
     let r: { estado?: string; produto?: string; token?: string; motivo?: string } = {};
     try { r = JSON.parse(txt); } catch { /* */ }
+    // v2.0.7: compra que estava "pendente" (boleto/Pix) e o Google aprovou depois, com o app aberto: libera na hora
+    if (acabou) {
+      if (r.estado === 'comprado' && r.token && auth().currentUser) {
+        try {
+          await httpsCallable(getFunctions(app(), 'us-central1'), 'verifyGooglePlayPurchase')({ productId: r.produto || produto, purchaseToken: r.token, productType: tipo === 'inapp' ? 'inapp' : 'subscription' });
+          try { p.confirmarCompra?.(r.token); } catch { /* o servidor também confirma */ }
+        } catch { /* tenta de novo ao abrir o app (restaurar) */ }
+      }
+      return;
+    }
     if (r.estado === 'cancelado') { ok('cancelado'); return; }
     if (r.estado === 'pendente') { ok('pendente'); return; }
     if (r.estado !== 'comprado' || !r.token) { erro(new Error(r.motivo || 'erro')); return; }

@@ -105,7 +105,7 @@ export const lerLimitesFirebase = (no: unknown): Partial<LimitesRotina> => {
     // lista de ids (ou texto "ACOES,BEBIDAS"); só letras/números/_; no máximo 60
     const v = o.pacotesGratis;
     const lista = (Array.isArray(v) ? v : typeof v === 'string' ? v.split(',') : v && typeof v === 'object' ? Object.keys(v as object).filter((k) => (v as Record<string, unknown>)[k] === true) : [])
-      .filter((x): x is string => typeof x === 'string').map((x) => x.trim()).filter((x) => /^[A-Za-z0-9_*]{1,30}$/.test(x)).slice(0, 60);
+      .filter((x): x is string => typeof x === 'string').map((x) => x.trim().toUpperCase()).filter((x) => /^[A-Z0-9_*]{1,30}$/.test(x)).slice(0, 60);
     out.pacotesGratis = lista;
   }
   if ('testePremiumDias' in o) out.testePremiumDias = Math.min(365, num(o.testePremiumDias, LIMITES_GRATIS.testePremiumDias));
@@ -159,4 +159,4 @@ export const imagemSegura = (url: unknown): string | undefined => {
 
 export type Recurso = 'rotina' | 'tarefa' | 'premio' | 'temporizador' | 'horario' | 'metas' | 'relatorio' | 'frases' | 'prancha' | 'pacote' | 'vozGravada' | 'foto' | 'funcao' | 'criacaoRapida' | 'travarApp';
 /** O pacote é grátis neste plano? */
-export const pacoteGratis = (l: LimitesRotina, id: string) => l.pacotesGratis.includes('*') || l.pacotesGratis.includes(id);
+export const pacoteGratis = (l: LimitesRotina, id: string) => l.pacotesGratis.includes('*') || l.pacotesGratis.includes(id.toUpperCase());
